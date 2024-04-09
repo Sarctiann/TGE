@@ -3,6 +3,7 @@ local term = require("plterm")
 local text = "Hello Terminal Game Engine\n"
 
 term.setrawmode()
+
 term.hide()
 term.clear()
 
@@ -16,4 +17,4 @@ term.golc(l, c)
 term.show()
 
 term.setsanemode()
-term.out("\n\n")
+print("")

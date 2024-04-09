@@ -1,3 +1,5 @@
 -- local term = require("TGE.plterm.plterm")
 
-print("Hello Terminal Game Engine")
+local term = require("plterm")
+
+print("mello Terminal Game Engine")

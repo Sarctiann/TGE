@@ -17,3 +17,7 @@ build = {
 		main = "src/main.lua",
 	},
 }
+dependencies = {
+	"lua >= 5.3",
+	"plterm >= 0.3",
+}

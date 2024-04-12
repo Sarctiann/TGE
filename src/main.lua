@@ -1,6 +1,6 @@
 local term = require("plterm")
 
-local text = "Hello Terminal Game Engine\n"
+local text = "Hello Terminal Game Engine \u{f256} \n"
 
 term.setrawmode()
 

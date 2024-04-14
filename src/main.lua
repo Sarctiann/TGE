@@ -24,7 +24,18 @@ term.color(term.colors.black, term.colors.bgyellow, term.colors.bold)
 write_as_human(term.outf, text, 50)
 
 sleep(300)
-term.golc(l, c)
+term.golc(l, 0)
+
+local nextc = term.input()
+term.color(term.colors.reset)
+io.write('Press "Q" (uppercase) to quit: ')
+while true do
+	local i = nextc()
+	if i == string.byte("Q") then
+		break
+	end
+	io.write(string.char(i))
+end
 
 -- term.reset()
 term.setsanemode()

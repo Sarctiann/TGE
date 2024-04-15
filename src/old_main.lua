@@ -1,6 +1,6 @@
 local term = require("plterm")
-local sleep = require("./src/utils").sleep
-local write_as_human = require("./src/utils").write_as_human
+local sleep = require("src/utils").sleep
+local write_as_human = require("src/utils").write_as_human
 
 local text = "  Hello Terminal Game Engine \u{f256}  "
 

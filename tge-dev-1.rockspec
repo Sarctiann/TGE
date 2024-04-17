@@ -19,6 +19,5 @@ build = {
 }
 dependencies = {
 	"lua >= 5.3",
-	"plterm >= 0.3",
 	"luabox >= 1.3-1",
 }

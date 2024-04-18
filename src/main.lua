@@ -1,3 +1,4 @@
+local console = require("src/console")
 local box = require("luabox")
 local write_as_human = require("src/utils").write_as_human
 local tanky = require("src/tanky/index")
@@ -9,10 +10,6 @@ local cursor = box.cursor
 local colors = box.colors
 
 local f = string.format
-
-local stdin, stdout = util.getHandles()
-
-local console = box.Console.new(stdin, stdout)
 
 local init = function()
     console:setMode(1)
@@ -62,6 +59,7 @@ console.onData = function(data)
 
             os.exit()
         elseif keyData.key == "char" then
+            console.clearAll()
             tanky(keyData.char)
         end
     end

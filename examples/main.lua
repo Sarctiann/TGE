@@ -1,5 +1,5 @@
 local box = require("luabox")
-local write_as_human = require("src/utils").write_as_human
+local write_as_human = require("tge.utils").write_as_human
 
 local text = "  Hello Terminal Game Engine \u{f256}  "
 

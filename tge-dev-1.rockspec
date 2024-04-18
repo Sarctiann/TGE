@@ -1,7 +1,7 @@
 package = "TGE"
 version = "dev-1"
 source = {
-	url = "git+ssh://git@github.com/Sarctiann/TGE.git",
+	url = "https://github.com/Sarctiann/TGE.git",
 }
 description = {
 	summary = "> [Text | Terminal] Game Engine",
@@ -14,7 +14,9 @@ description = {
 build = {
 	type = "builtin",
 	modules = {
-		main = "src/main.lua",
+		tge = "tge.lua",
+		["tge.init"] = "tge/init.lua",
+		["tge.utils"] = "tge/utils.lua",
 	},
 }
 dependencies = {

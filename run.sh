@@ -7,4 +7,4 @@ else
 fi
 
 eval "$(luarocks path --bin)"
-lua "src/$EXE"
+lua "examples/$EXE"

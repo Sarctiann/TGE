@@ -10,6 +10,6 @@ An attempt to create a simple text-based game engine
 
 ## Run it
 
-1. luarocks init
-1. luarocks make
-1. ./lua examples/main.lua
+1. `luarocks init`
+1. `luarocks make`
+1. `./lua examples/main.lua` or `./lua examples/tanky.lua`

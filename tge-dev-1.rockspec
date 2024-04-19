@@ -17,6 +17,8 @@ build = {
 	type = "builtin",
 	modules = {
 		tge = "tge.lua",
+		["tge.brief_queue"] = "tge/brief_queue.lua",
+		["tge.entities"] = "tge/entities.lua",
 		["tge.init"] = "tge/init.lua",
 		["tge.utils"] = "tge/utils.lua",
 	},

@@ -78,7 +78,7 @@ return function(keyChar)
 
 			local dotopleftcolide = collisiontopleft == 1
 			local dobottomrightcolide = collisionbottomright == 1
-			if ((dotopleftcolide == false) and (dobottomrightcolide == false)) then
+			if (not dotopleftcolide and not dobottomrightcolide) then
 				coords[1] = wouldbecoords[1]
 				coords[2] = wouldbecoords[2]
 			end

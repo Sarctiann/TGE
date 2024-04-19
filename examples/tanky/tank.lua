@@ -2,6 +2,7 @@ local box = require("luabox")
 local console = require("examples.tanky.console").console
 
 local cursor = box.cursor
+local colors = box.colors
 
 local f = string.format
 
@@ -44,31 +45,40 @@ SHOW_COORDS = false
 return function(keyChar)
 	if keyChar == "w" then
 		if currentTankArray == tankArrayNorth then
-			coords[2] = coords[2] - 1
+			-- coords[2] = 2 < coords[2] ? coords[2] - 1 : coords[2]
+			coords[2] = 2 < coords[2] and coords[2] - 1 or coords[2]
 		else
 			currentTankArray = tankArrayNorth
 		end
 	elseif keyChar == "a" then
 		if currentTankArray == tankArrayWest then
-			coords[1] = coords[1] - 1
+			coords[1] = 2 < coords[1] and coords[1] - 1 or coords[1]
 		else
 			currentTankArray = tankArrayWest
 		end
 	elseif keyChar == "s" then
 		if currentTankArray == tankArraySouth then
-			coords[2] = coords[2] + 1
+			coords[2] = y - 1 > coords[2] and coords[2] + 1 or coords[2]
 		else
 			currentTankArray = tankArraySouth
 		end
 	elseif keyChar == "d" then
 		if currentTankArray == tankArrayEast then
-			coords[1] = coords[1] + 1
+			coords[1] = x / 2 - 1 > coords[1] and coords[1] + 1 or coords[1]
 		else
 			currentTankArray = tankArrayEast
 		end
 	elseif keyChar == "h" then
 		SHOW_COORDS = not SHOW_COORDS
 	end
+	console:write(cursor.goTo(2, 2))
+	console:write(
+		f(
+			'%s(Move it with WASD | press "h" to show/hide coords | [Ctrl]+[C] to quit)%s',
+			colors.fg(colors.yellow),
+			colors.resetFg
+		)
+	)
 	pixelprintmatrix(currentTankArray, coords[1] - 1, coords[2] - 1, pixel)
 	if SHOW_COORDS then
 		console:write(f(coords[1]) .. ";" .. f(coords[2]))

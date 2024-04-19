@@ -37,11 +37,11 @@ local init = function()
 	console:write(cursor.goTo(2, 3))
 	console:write(
 		f(
-			'%s(Press any key to spawn tank | move it with WASD | press "h" to show/hide coords)',
-			colors.fg(colors.yellow)
+			'%s(Press any key to spawn tank | move it with WASD | press "h" to show/hide coords)%s',
+			colors.fg(colors.yellow),
+			colors.resetFg
 		)
 	)
-	console:write(colors.resetFg)
 end
 
 init()
@@ -64,6 +64,7 @@ console.onData = function(data)
 
 	if keyData ~= nil then
 		if keyData.key == "ctrl" and keyData.char == "c" then
+			console:write("\x1b[H") -- Clear the screen and returns the prompt to the top
 			console:write(cursor.show)
 			console:setMode(0)
 			console:exitMouseMode()

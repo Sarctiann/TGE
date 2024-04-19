@@ -65,6 +65,8 @@ console.onData = function(data)
 	if keyData ~= nil then
 		if keyData.key == "ctrl" and keyData.char == "c" then
 			console:write("\x1b[H") -- Clear the screen and returns the prompt to the top
+			cursor.goTo(1, 1)
+			console:write("\n")
 			console:write(cursor.show)
 			console:setMode(0)
 			console:exitMouseMode()

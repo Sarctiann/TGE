@@ -1,5 +1,5 @@
-package = "TGE"
-version = "dev-1"
+-- package = "TGE"
+-- version = "dev-1"
 source = {
 	url = "https://github.com/Sarctiann/TGE.git",
 }
@@ -13,13 +13,13 @@ dependencies = {
 	"lua >= 5.3",
 	"luabox >= 1.3-1",
 }
-build = {
-	type = "builtin",
-	modules = {
-		tge = "tge.lua",
-		["tge.brief_queue"] = "tge/brief_queue.lua",
-		["tge.entities"] = "tge/entities.lua",
-		["tge.init"] = "tge/init.lua",
-		["tge.utils"] = "tge/utils.lua",
-	},
-}
+-- build = {
+-- 	type = "builtin",
+-- 	modules = {
+-- 		tge = "tge.lua",
+-- 		["tge.brief_queue"] = "tge/brief_queue.lua",
+-- 		["tge.entities"] = "tge/entities.lua",
+-- 		["tge.init"] = "tge/init.lua",
+-- 		["tge.utils"] = "tge/utils.lua",
+-- 	},
+-- }

@@ -12,13 +12,12 @@ Game = {}
 Game.__index = Game
 
 --- Creates a new game window.
---- @param width integer The width of the game window in characters.
---- @param height integer The height of the game window in characters.
-function Game.New(width, height)
+--- @param init {width: integer, height: integer, frame_rate: integer}
+function Game.New(init)
 	local self = setmetatable({}, Game)
 	local utils = require("tge.utils")
 
-	if utils.checkDimensions(width, height) == false then
+	if utils.checkDimensions(init.width, init.height) == false then
 		utils:exit_with_error("The terminal is too small to create the game window.")
 	end
 
@@ -29,7 +28,7 @@ function Game.New(width, height)
 	self.state = require("tge.state")
 	self.utils = utils
 
-	self.dimensions = self.entities.Dimensions.New(width, height)
+	self.dimensions = self.entities.Dimensions.New(init.width, init.height)
 
 	return self
 end

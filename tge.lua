@@ -1,1 +1,1 @@
-return require("tge.init")
+return require("tge.game")

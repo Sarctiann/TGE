@@ -14,7 +14,7 @@ Game.__index = Game
 --- Creates a new game window.
 --- @param width integer The width of the game window in characters.
 --- @param height integer The height of the game window in characters.
-function Game.NewGame(width, height)
+function Game.New(width, height)
 	local self = setmetatable({}, Game)
 	local utils = require("tge.utils")
 

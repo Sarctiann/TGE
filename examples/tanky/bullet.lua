@@ -1,16 +1,10 @@
-local directionOffsets = {
-    ["north"] = { 0, -1 },
-    ["west"] = { -1, 0 },
-    ["south"] = { 0, 1 },
-    ["east"] = { 1, 0 }
-}
+local sumOffsetToCoords = require("examples.tanky.utils.math").sumOffsetToCoords
 
 Bullet = {
     coords = {},
     direction = {},
     move = function(self)
-        self.coords[1] = self.coords[1] + self.direction[1]
-        self.coords[2] = self.coords[2] + self.direction[2]
+        self.coords = sumOffsetToCoords(self.coords, self.direction)
     end
 }
 
@@ -24,19 +18,7 @@ function Bullet:new(coords, direction)
     return new_bullet
 end
 
--- Creación de una instancia de Bullet
-local bullet1 = Bullet:new({ 14, 17 }, { 1, 0 })
-
--- Llamada al método move de la instancia
-bullet1:move()
-
--- Creación de un array para almacenar las instancias de Persona
+-- Creación de un array para almacenar las instancias de Bullet
 local bullets = {}
---[[
-table.insert(bullets, Bullet:new({ 14, 17 }, { 1, 0 }))
 
-for _, bullet in ipairs(bullets) do
-    bullet:move()
-end
-]]
 return { Bullet = Bullet, bullets = bullets }

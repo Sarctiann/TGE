@@ -17,11 +17,12 @@ build = {
 	type = "builtin",
 	modules = {
 		tge = "tge.lua",
-		["tge.brief_queue"] = "tge/brief_queue.lua",
 		["tge.connection"] = "tge/connection.lua",
 		["tge.entities"] = "tge/entities.lua",
+		["tge.entities.dimensions"] = "tge/entities/dimensions.lua",
 		["tge.init"] = "tge/init.lua",
 		["tge.loader"] = "tge/loader.lua",
+		["tge.queues"] = "tge/queues.lua",
 		["tge.state"] = "tge/state.lua",
 		["tge.utils"] = "tge/utils.lua",
 	},

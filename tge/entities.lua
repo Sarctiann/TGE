@@ -1,4 +1,8 @@
-local entities = {}
+--- @class Entities
+--- @field Dimensions Dimensions
+return {
+	Dimensions = require("tge.entities.dimensions"),
+}
 
 -- TODO: create a `Point` object-like table as an entity
 -- to represent and perform operations on a point in 2D
@@ -29,5 +33,3 @@ local entities = {}
 -- TODO: create an `NF_Icon` object-like table as an entity
 -- to put/more/remove text-based and unit-based icons on
 -- screen ( size: [ 1,1 | 2,1 ] )
-
-return entities

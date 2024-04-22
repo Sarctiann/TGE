@@ -10,7 +10,7 @@ description = {
 	license = "*** not yet ***",
 }
 dependencies = {
-	"lua >= 5.3",
+	"lua >= 5.4",
 	"luabox >= 1.3-1",
 }
 build = {

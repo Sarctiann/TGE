@@ -33,4 +33,8 @@ function Game.New(init)
 	return self
 end
 
+function Game:run()
+	local lbc = self.utils
+end
+
 return Game

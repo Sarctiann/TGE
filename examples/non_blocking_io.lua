@@ -1,4 +1,4 @@
-local tge = require("tge")
+local tge = require("..tge")
 
 local game = tge.New({
 	width = 120,

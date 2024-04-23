@@ -7,7 +7,7 @@
 --- @field public utils Utils
 --
 --- @field public dimensions {width: integer, height: integer} The dimensions of the game window in characters
---- @field public on_event (fun(data: (keyboardEvent | mouseEvent | nil)): nil) | nil The hook that is called when data from stdin is received. (Alias for luabux.Console -> console.onData).
+--- @field public on_event (fun(event: (keyboardEvent | mouseEvent)): nil) | nil The hook that is called when data from stdin is received. (Alias for luabux.Console -> console.onData).
 --
 --- @field private __index Game
 Game = {}

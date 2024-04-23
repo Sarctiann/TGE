@@ -20,4 +20,11 @@ local function sumOffsetToCoords(coords, offset)
     return resultCoords
 end
 
-return { createEmptyRectangle = createEmptyRectangle, sumOffsetToCoords = sumOffsetToCoords }
+local function spaceIncludesPoint(pointCoords, spaceTopleftCoords, spaceBottomrightCoord)
+	local pointX, pointY = pointCoords[1], pointCoords[2]
+	local topleftX, topleftY = spaceTopleftCoords[1], spaceTopleftCoords[2]
+	local bottomrightX, bottomrightY = spaceBottomrightCoord[1], spaceBottomrightCoord[2]
+	return pointX >= topleftX and pointX <= bottomrightX and pointY >= topleftY and pointY <= bottomrightY
+end
+
+return { createEmptyRectangle = createEmptyRectangle, sumOffsetToCoords = sumOffsetToCoords, spaceIncludesPoint = spaceIncludesPoint }

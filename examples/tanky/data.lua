@@ -26,7 +26,11 @@ local keyDirectionMapping = {
 
 local pixel = "%s\u{2588}\u{2588}"
 local border = "%s\u{2592}\u{2592}"
-local textures = { ["pixel"] = pixel, ["border"] = border }
+local bullet = "%s\u{0028}\u{0029}"
+local bullet2 = "%s\u{25D6}\u{25D7}"
+local bullet3 = "%s\u{0020}\u{2022}"
+local bullet4 = "%s\u{0020}\u{1F785}"
+local textures = { ["pixel"] = pixel, ["border"] = border, bullet = bullet }
 
 return {
     directionOffsets = directionOffsets,

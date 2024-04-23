@@ -5,19 +5,46 @@ local Tank = require("examples.tanky.thetank").Tank
 local data = require("examples.tanky.data")
 local directionOffsets, tankSprites, keyDirectionMapping, textures  = data.directionOffsets, data.tankSprites,
 	data.keyDirectionMapping, data.textures
-local pixel, border = textures.pixel, textures.border
+local pixel, border, bulletTexture = textures.pixel, textures.border, textures.bullet
 local mathutils = require("examples.tanky.utils.math")
-local createEmptyRectangle, sumOffsetToCoords = mathutils.createEmptyRectangle, mathutils.sumOffsetToCoords
+local createEmptyRectangle, sumOffsetToCoords, spaceIncludesPoint = mathutils.createEmptyRectangle, mathutils.sumOffsetToCoords, mathutils.spaceIncludesPoint
 local renderutils = require("examples.tanky.utils.render")
 local pixelprint, pixelprintmatrix = renderutils.pixelprint, renderutils.pixelprintmatrix
+
+table.insert(bullets, Bullet:new({ 14, 18 }, { 1, 0 }))
 
 local f = string.format
 
 SHOW_COORDS = false
-local x, y = console:getDimensions()
-local mapBorders = createEmptyRectangle(x / 2, y)
+local consoleX, consoleY = console:getDimensions()
+local mapX, mapY = consoleX / 2, consoleY
+local mapBorders = createEmptyRectangle(mapX, mapY)
 
-local playerTank = Tank:new({ math.floor(x / 4 + 1), math.floor(y / 2 + 1) }, "north")
+local function isOutOfBounds(coords)
+	local x, y = coords[1], coords[2]
+	return x < 1 or x > mapX or y < 1 or y > mapY
+end
+
+local tanks = {}
+table.insert(tanks, Tank:new({ math.floor(mapX / 2 + 1), math.floor(mapY / 2 + 1) }, "north"))
+
+local function verifCollisions(tanksParam, bulletsParam)
+    for i, tank in ipairs(tanksParam) do
+        for j, bullet in ipairs(bulletsParam) do
+			local tankTopleft = sumOffsetToCoords(tank.coords, {- 1, - 1})
+			local tankBottomRight = sumOffsetToCoords(tank.coords, {1, 1})
+			local isCollision = spaceIncludesPoint(bullet.coords, tankTopleft, tankBottomRight)
+			if isCollision then
+                table.remove(bulletsParam, j)
+                table.remove(tanksParam, i)
+				table.insert(tanks, Tank:new({ math.floor(mapX / 2 + 1), math.floor(mapY / 2 + 1) }, "north"))
+            end
+			if isOutOfBounds(bullet.coords) then
+                table.remove(bulletsParam, j)
+			end
+        end
+    end
+end
 
 local function shotBullet(TDirection, TCoords)
 	local Offset = directionOffsets[TDirection]
@@ -38,13 +65,15 @@ end
 
 local function render()
 	pixelprintmatrix(mapBorders, {1, 1}, border)
-	pixelprintmatrix(tankSprites[playerTank.direction], sumOffsetToCoords(playerTank.coords, {- 1, - 1}), pixel)
-	if SHOW_COORDS then
-		console:write(f(playerTank.coords[1]) .. ";" .. f(playerTank.coords[2]))
+	for _, tank in ipairs(tanks) do
+		pixelprintmatrix(tankSprites[tank.direction], sumOffsetToCoords(tank.coords, {- 1, - 1}), pixel)
+		if SHOW_COORDS then
+			console:write(f(tank.coords[1]) .. ";" .. f(tank.coords[2]))
+		end
 	end
 
 	for _, bullet in ipairs(bullets) do
-		pixelprint(bullet.coords, border)
+		pixelprint(bullet.coords, bulletTexture)
 		bullet:move()
 	end
 end
@@ -52,6 +81,7 @@ end
 return function(keyChar)
 	if keyDirectionMapping[keyChar] then
 		local keyDirection = keyDirectionMapping[keyChar]
+		local playerTank = tanks[1]
 		if playerTank.direction == keyDirection then
 			local wouldbecoords = {}
 			local Offset = directionOffsets[keyDirection]
@@ -64,10 +94,12 @@ return function(keyChar)
 			playerTank.direction = keyDirection
 		end
 	elseif keyChar == "k" then
+		local playerTank = tanks[1]
 		shotBullet(playerTank.direction, playerTank.coords)
 	elseif keyChar == "h" then
 		SHOW_COORDS = not SHOW_COORDS
 	end
+	verifCollisions(tanks, bullets)
 
 	render()
 end

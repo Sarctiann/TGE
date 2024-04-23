@@ -18,6 +18,6 @@ print(game.dimensions)
 
 -- game.on_init = function() my_game_init() end
 
--- game.on_events = function(event) my_game_handle(event) end
+-- game.on_event = function(event) my_game_handle(event) end
 
--- game.run()
+-- game:run()

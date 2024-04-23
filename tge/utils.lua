@@ -51,4 +51,30 @@ function Utils:exit_with_error(err, ...)
 	os.exit(1)
 end
 
+--- Initialize the envent handler
+--- @param handler fun(data: any): nil
+function Utils:make_event_handler(handler)
+	local function main_event_loop(data)
+		local first
+		local rest = {}
+
+		for char in data:gmatch(".") do
+			if not first then
+				first = char
+			else
+				table.insert(rest, char)
+			end
+		end
+		local iter = self.luabox_util.StringIterator(table.concat(rest))
+		local event = self.event.parse(first, iter)
+
+		if event == nil then
+			return
+		end
+
+		handler(event)
+	end
+	self.console.onData = main_event_loop
+end
+
 return Utils

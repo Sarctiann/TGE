@@ -34,7 +34,9 @@ function Game.New(init)
 end
 
 function Game:run()
-	local lbc = self.utils
+	-- TODO: implement the main loop
+	local lbc = self.utils.console
+	lbc.run()
 end
 
 return Game

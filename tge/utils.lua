@@ -1,7 +1,7 @@
 local clock = os.clock
 local luabox = require("luabox")
 
---- @alias Utils table
+--- @class Utils
 Utils = {}
 
 Utils.clear = luabox.clear

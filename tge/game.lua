@@ -7,7 +7,7 @@
 --- @field public utils Utils
 --
 --- @field public dimensions {width: integer, height: integer} The dimensions of the game window in characters
---- @field public on_event (fun(data): nil) | nil The hook that is called when data from stdin is received. (Alias for luabux.Console -> console.onData).
+--- @field public on_event (fun(data: (keyboardEvent | mouseEvent | nil)): nil) | nil The hook that is called when data from stdin is received. (Alias for luabux.Console -> console.onData).
 --
 --- @field private __index Game
 Game = {}
@@ -39,14 +39,13 @@ end
 
 --- Starts the game.
 function Game:run()
-	-- TODO: implement the main loop
 	if not self.on_event then
 		self.utils:exit_with_error("The on_event hook is not defined.")
 	end
-
 	local lbc = self.utils.console
-
 	self.utils:make_event_handler(self.on_event)
+
+	-- TODO: implement the main loop
 
 	lbc.run()
 end

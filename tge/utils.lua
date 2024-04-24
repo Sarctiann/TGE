@@ -12,6 +12,7 @@ Utils.event = luabox.event
 Utils.scroll = luabox.scroll
 Utils.luabox_util = luabox.util
 
+--- @deprecated
 --- function that sleep for the given cents of seconds
 --- @param n number duration in cents of seconds
 Utils.sleep = function(n)
@@ -20,6 +21,7 @@ Utils.sleep = function(n)
 	end
 end
 
+--- @deprecated
 --- function that write the text on the given time in cents of seconds
 --- @param write_fn function to put the text in the screen
 --- @param text string to put in the screen
@@ -27,6 +29,7 @@ end
 Utils.write_as_human = function(write_fn, text, speed)
 	for char = 1, #text - 1 do
 		write_fn(text:sub(char, char))
+		--- @diagnostic disable-next-line: deprecated
 		Utils.sleep(speed / #text)
 	end
 	write_fn(text:sub(#text, #text) .. "\n")

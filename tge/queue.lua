@@ -2,14 +2,15 @@
 --- @field private queue Brief[]
 Queue = {}
 
+--- @return Queue queue
 function Queue.New()
-	return setmetatable({}, {
+	return setmetatable({
+		queue = {},
+	}, {
 		__index = Queue,
 		__tostring = function(self)
 			return string.format("The Queue has %d briefs", #self.queue)
 		end,
-
-		queue = {},
 	})
 end
 

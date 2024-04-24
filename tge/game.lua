@@ -8,31 +8,34 @@
 --
 --- @field public dimensions {width: integer, height: integer} The dimensions of the game window in characters
 --- @field public on_event (fun(event: (keyboardEvent | mouseEvent)): nil) | nil The hook that is called when data from stdin is received. (Alias for luabux.Console -> console.onData).
---
---- @field private __index Game
 Game = {}
-
-Game.__index = Game
 
 --- Creates a new game window.
 --- @param init {width: integer, height: integer, frame_rate: integer}
+--- @return Game game
 function Game.New(init)
-	local self = setmetatable({}, Game)
 	local utils = require("tge.utils")
 
 	if utils.checkDimensions(init.width, init.height) == false then
 		utils:exit_with_error("The terminal is too small to create the game window.")
 	end
+	local entities = require("tge.entities")
+	local queue = require("tge.queue")
 
-	self.entities = require("tge.entities")
-	self.queue = require("tge.queue")
-	self.connection = require("tge.connection")
-	self.loader = require("tge.loader")
-	self.state = require("tge.state")
-	self.utils = utils
+	local self = setmetatable({
+		connection = require("tge.connection"),
+		loader = require("tge.loader"),
+		state = require("tge.state"),
 
-	self.dimensions = self.entities.Dimensions.New(init.width, init.height)
-	self.on_event = nil
+		entities = entities,
+		utils = utils,
+
+		dimensions = entities.Dimensions.New(init.width, init.height),
+		on_event = nil,
+		queue = queue.New(),
+	}, {
+		__index = Game,
+	})
 
 	return self
 end
@@ -43,9 +46,15 @@ function Game:run()
 		self.utils:exit_with_error("The on_event hook is not defined.")
 	end
 	local lbc = self.utils.console
+	local cursor_hide = self.utils.cursor.hide
+	local clear_all = self.utils.clear.all
+
+	lbc:setMode(1)
+	lbc:intoMouseMode()
+	lbc:write(string.format("%s%s", cursor_hide, clear_all))
 	self.utils:make_event_handler(self.on_event)
 
-	-- TODO: implement the main loop
+	-- TODO: implement the main loop using `uv.run("nowait")`
 
 	lbc.run()
 end

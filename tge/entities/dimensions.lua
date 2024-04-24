@@ -14,7 +14,7 @@ Dimensions = {}
 
 --- @param width integer
 --- @param height integer
---- @return {width: integer, height: integer} inmutable
+--- @return Dimensions dimensions
 function Dimensions.New(width, height)
 	return setmetatable({}, {
 		__index = {

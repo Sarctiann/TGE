@@ -1,5 +1,5 @@
 local box = require("luabox")
-local write_as_human = require("tge.utils").write_as_human
+local write_as_human = require("tge.utils").write_as_human_old
 
 local c = require("examples.tanky.console")
 local tanky = require("examples.tanky.tank")

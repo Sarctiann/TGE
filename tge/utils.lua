@@ -26,7 +26,7 @@ end
 --- @param write_fn function to put the text in the screen
 --- @param text string to put in the screen
 --- @param speed number in cents of seconds to write the text
-Utils.write_as_human = function(write_fn, text, speed)
+Utils.write_as_human_old = function(write_fn, text, speed)
 	for char = 1, #text - 1 do
 		write_fn(text:sub(char, char))
 		--- @diagnostic disable-next-line: deprecated

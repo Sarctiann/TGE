@@ -1,6 +1,6 @@
 --- @class Game
 --- @field public entities Entities
---- @field public queues Queues
+--- @field public queue Queue
 --- @field public connection Connection
 --- @field public loader Loader
 --- @field public state State
@@ -25,7 +25,7 @@ function Game.New(init)
 	end
 
 	self.entities = require("tge.entities")
-	self.queues = require("tge.queues")
+	self.queue = require("tge.queue")
 	self.connection = require("tge.connection")
 	self.loader = require("tge.loader")
 	self.state = require("tge.state")

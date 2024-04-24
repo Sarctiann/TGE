@@ -13,17 +13,42 @@ function Queue.New()
 	})
 end
 
+--- queue a new report in its corresponding order based on its "when" attribute.
+--- @param brief Brief
 function Queue:enqueue(brief)
-	-- TODO: insert the vrief in before the brief with less "wait" and after the brief with more "wait"
-	table.insert(self.queue, brief)
+	if #self.queue == 0 then
+		table.insert(self.queue, brief)
+	else
+		for i, q_brief in ipairs(self.queue) do
+			if brief.when < q_brief then
+				table.insert(self.queue, i, brief)
+				break
+			end
+			if i == #self.queue then
+				table.insert(self.queue, brief)
+			end
+		end
+	end
 end
 
+--- dequeues (and returns) the briefs that should be executed
 function Queue:dequeue()
-	-- TODO: remove & return a list of briefs that have "wait" == 0
+	local now = os.time()
+	local exec_brief_list = {}
+
 	if #self.queue == 0 then
 		return nil
 	end
-	return table.remove(self.queue, 1)
+	for i, q_brief in ipairs(self.queue) do
+		if q_brief.when < now then
+			table.insert(exec_brief_list, table.remove(self.queue, i))
+		end
+	end
+	if #exec_brief_list == 0 then
+		return nil
+	end
+
+	return exec_brief_list
 end
 
 return Queue

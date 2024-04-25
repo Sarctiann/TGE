@@ -52,4 +52,8 @@ function Queue:dequeue()
 	return exec_brief_list
 end
 
+--- starts the main buble to handle incoming events and brief queue
+--- @param frames integer frames per second
+function Queue:start_main_loop(frames) end
+
 return Queue

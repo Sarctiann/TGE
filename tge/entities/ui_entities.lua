@@ -1,5 +1,5 @@
---- @class UI_Entity
-local UI_Entity = {}
+--- @class UIEntity
+local UIEntity = {}
 
 -- TODO: create a `Text` object-like table as an entity
 -- to put/move/remove text on screen ( size: 1,1 )
@@ -25,5 +25,5 @@ local UI_Entity = {}
 -- screen ( size: [ 1,1 | 2,1 ] )
 
 return {
-	UI_Entity = UI_Entity,
+	UIEntity = UIEntity,
 }

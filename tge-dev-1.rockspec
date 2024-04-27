@@ -18,15 +18,16 @@ build = {
 	modules = {
 		tge = "tge.lua",
 		["tge.connection"] = "tge/connection.lua",
+		["tge.core"] = "tge/core.lua",
 		["tge.entities"] = "tge/entities.lua",
 		["tge.entities.brief"] = "tge/entities/brief.lua",
 		["tge.entities.dimensions"] = "tge/entities/dimensions.lua",
 		["tge.entities.point"] = "tge/entities/point.lua",
+		["tge.entities.seconds_frames"] = "tge/entities/seconds_frames.lua",
 		["tge.entities.ui_entities"] = "tge/entities/ui_entities.lua",
 		["tge.game"] = "tge/game.lua",
 		["tge.loader"] = "tge/loader.lua",
 		["tge.queue"] = "tge/queue.lua",
 		["tge.state"] = "tge/state.lua",
-		["tge.utils"] = "tge/utils.lua",
 	},
 }

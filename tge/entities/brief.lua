@@ -1,13 +1,13 @@
-local utils = require("tge.utils")
+local core = require("tge.core")
 
 --- @class Brief
---- @field public element UI_Entity
+--- @field public element UIEntity
 --- @field public to Point
 --- @field public from Point | nil
 --- @field public when number
 local Brief = {}
 
---- @param element UI_Entity The element to put in the screen
+--- @param element UIEntity The element to put in the screen
 --- @param to Point The position for the element
 --- @param from Point | nil The previous position of the element (required by the `move` method)
 --- @param wait integer | nil The delay time before puting the element (in cents of seconds)
@@ -18,7 +18,7 @@ function Brief.new(element, to, from, wait)
 	return setmetatable({}, {
 		__index = { element = element, to = to, from = from, when = when },
 		__newindex = function()
-			utils:exit_with_error("Brief are inmutables")
+			core:exit_with_error("Brief are inmutables")
 		end,
 	})
 end

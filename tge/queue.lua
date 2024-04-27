@@ -1,11 +1,11 @@
 --- @class Queue
---- @field private queue Brief[]
+--- @field private brief_queue Brief[]
 Queue = {}
 
 --- @return Queue queue
 function Queue.New()
 	return setmetatable({
-		queue = {},
+		brief_queue = {},
 	}, {
 		__index = Queue,
 		__tostring = function(self)
@@ -17,16 +17,16 @@ end
 --- queue a new report in its corresponding order based on its "when" attribute.
 --- @param brief Brief
 function Queue:enqueue(brief)
-	if #self.queue == 0 then
-		table.insert(self.queue, brief)
+	if #self.brief_queue == 0 then
+		table.insert(self.brief_queue, brief)
 	else
-		for i, q_brief in ipairs(self.queue) do
+		for i, q_brief in ipairs(self.brief_queue) do
 			if brief.when < q_brief then
-				table.insert(self.queue, i, brief)
+				table.insert(self.brief_queue, i, brief)
 				break
 			end
-			if i == #self.queue then
-				table.insert(self.queue, brief)
+			if i == #self.brief_queue then
+				table.insert(self.brief_queue, brief)
 			end
 		end
 	end
@@ -37,12 +37,12 @@ function Queue:dequeue()
 	local now = os.time()
 	local exec_brief_list = {}
 
-	if #self.queue == 0 then
+	if #self.brief_queue == 0 then
 		return nil
 	end
-	for i, q_brief in ipairs(self.queue) do
+	for i, q_brief in ipairs(self.brief_queue) do
 		if q_brief.when < now then
-			table.insert(exec_brief_list, table.remove(self.queue, i))
+			table.insert(exec_brief_list, table.remove(self.brief_queue, i))
 		end
 	end
 	if #exec_brief_list == 0 then

@@ -1,12 +1,14 @@
 local ui_enttities = require("tge.entities.ui_entities")
 
 --- @class Entities
---- @field Brief Brief
---- @field Dimensions Dimensions
---- @field UI_Entity UI_Entity
+--- @field public Brief Brief
+--- @field public Dimensions Dimensions
+--- @field public SecondsFrames SecondsFrames
+--- @field public UIEntity UIEntity
 return {
 	Brief = require("tge.entities.brief"),
 	Dimensions = require("tge.entities.dimensions"),
 	Point = require("tge.entities.point"),
-	UI_Entity = ui_enttities.UI_Entity,
+	SecondsFrames = require("tge.entities.seconds_frames"),
+	UIEntity = ui_enttities.UIEntity,
 }

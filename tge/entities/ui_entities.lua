@@ -12,12 +12,23 @@ local ACTION = {
 	copy = 4,
 }
 
---- @enum DIRECTION
-local DIRECTION = {
-	up = 1,
-	down = 2,
-	left = 3,
-	right = 4,
+local call_action = {
+	--- Draws the UI entity on the screen
+	[1] = function(ui_element, data)
+		ui_element["draw"](ui_element, data)
+	end,
+	--- Clears the UI entity from the screen
+	[2] = function(ui_element)
+		ui_element["clear"](ui_element)
+	end,
+	--- Moves the UI entity in the specified direction
+	[3] = function(ui_element, data)
+		ui_element["move"](ui_element, data)
+	end,
+	--- Creates a copy of the UI entity
+	[4] = function(ui_element)
+		ui_element["copy"](ui_element)
+	end,
 }
 
 local function not_implemented(...)
@@ -26,15 +37,15 @@ local function not_implemented(...)
 end
 
 --- @class UIEntity
---- @field public [ACTION.draw] fun(self, data: any): nil Draws the UI entity on the screen
---- @field public [ACTION.clear] fun(self): nil Clears the UI entity from the screen
---- @field public [ACTION.move] fun(self, direction: DIRECTION, units: integer): nil Moves the UI entity in the specified direction
---- @field public [ACTION.copy] fun(self): nil Creates a copy of the UI entity
+--- @field public draw fun(self, data: any): nil Draws the UI entity on the screen
+--- @field public clear fun(self): nil Clears the UI entity from the screen
+--- @field public move fun(self, data: any): nil Moves the UI entity in the specified direction
+--- @field public copy fun(self): nil Creates a copy of the UI entity
 local UIEntity = {
-	[ACTION.draw] = not_implemented,
-	[ACTION.clear] = not_implemented,
-	[ACTION.move] = not_implemented,
-	[ACTION.copy] = not_implemented,
+	draw = not_implemented,
+	clear = not_implemented,
+	move = not_implemented,
+	copy = not_implemented,
 }
 UIEntity.__index = UIEntity
 
@@ -44,7 +55,7 @@ UIEntity.__index = UIEntity
 --- @field public start_point Point
 --- @field public end_point Point
 local Text = {
-	[ACTION.draw] = function(self, data)
+	draw = function(self, data)
 		self.start_point = data.start_point
 		self.end_point = data.start_point.x + #data.text
 		con:write(
@@ -58,7 +69,7 @@ setmetatable(Text, UIEntity)
 --- Creates a new Text UI entity.
 function Text.new()
 	local self = setmetatable({
-		start_point = 2,
+		start_point = nil,
 		end_point = nil,
 	}, Text)
 	return self
@@ -101,14 +112,10 @@ setmetatable(NF_Icon, UIEntity)
 
 ---------------------------------------------------------------------------------------------------------
 
--- TODO: Testing... This works but is ugly
-local t = Text.new()
-t[ACTION.draw](t, { start_point = { x = 20, y = 30 }, text = "Hello World!\n", color = col.blue })
-
 return {
-	-- Enums
+	-- Other
 	ACTION = ACTION,
-	DIRECTION = DIRECTION,
+	call_action = call_action,
 	-- UI Entities
 	Text = Text,
 	Unit = Unit,

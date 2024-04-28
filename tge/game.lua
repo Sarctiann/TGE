@@ -2,6 +2,7 @@
 --- @field public connection Connection
 --- @field public loader Loader
 --- @field public state State
+--- @field public utils Utils
 --
 --- @field public entities Entities
 --- @field public queue Queue
@@ -29,6 +30,7 @@ function Game.New(init)
 		connection = require("tge.connection"),
 		loader = require("tge.loader"),
 		state = require("tge.state"),
+		utils = require("tge.utils"),
 
 		entities = entities,
 		queue = queue.New(),
@@ -37,7 +39,7 @@ function Game.New(init)
 		dimensions = entities.Dimensions.New(init.width, init.height),
 		frame_rate = init.frame_rate,
 		on_event = nil,
-		sf = entities.SecondsFrames.new(),
+		sf = entities.SecondsFrames.new(init.frame_rate),
 	}, {
 		__index = Game,
 	})

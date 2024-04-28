@@ -1,4 +1,3 @@
-local clock = os.clock
 local uv = require("luv")
 local luabox = require("luabox")
 
@@ -27,40 +26,6 @@ end
 function Core:clear_main_loop()
 	self.timer:stop()
 	self.timer:close()
-end
-
---- A simple setTimeout wrapper
-function Core.setTimeout(timeout, callback)
-	local timer = uv.new_timer()
-	timer:start(timeout, 0, function()
-		timer:stop()
-		timer:close()
-		callback()
-	end)
-	return timer
-end
-
---- @deprecated
---- function that sleep for the given cents of seconds
---- @param n number duration in cents of seconds
-function Core.sleep(n)
-	local t0 = clock()
-	while clock() - t0 <= n / 100 do
-	end
-end
-
---- @deprecated
---- function that write the text on the given time in cents of seconds
---- @param write_fn function to put the text in the screen
---- @param text string to put in the screen
---- @param speed number in cents of seconds to write the text
-function Core.write_as_human_old(write_fn, text, speed)
-	for char = 1, #text - 1 do
-		write_fn(text:sub(char, char))
-		--- @diagnostic disable-next-line: deprecated
-		Core.sleep(speed / #text)
-	end
-	write_fn(text:sub(#text, #text) .. "\n")
 end
 
 --- function that chacks if there are space to create the game window
@@ -110,7 +75,7 @@ end
 
 --- starts the main buble to handle incoming events and brief queue
 --- @param frame_rate integer frames per second
---- @param queue Brief[]
+--- @param queue Queue
 --- @param sf SecondsFrames
 function Core:start_main_loop(frame_rate, queue, sf)
 	self:create_main_loop(math.floor(1000 / frame_rate), function()
@@ -118,7 +83,7 @@ function Core:start_main_loop(frame_rate, queue, sf)
 
 		print(sf)
 
-		sf:increment(frame_rate)
+		sf:increment()
 	end)
 end
 

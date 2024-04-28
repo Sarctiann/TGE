@@ -21,7 +21,7 @@ function Queue:enqueue(brief)
 		table.insert(self.brief_queue, brief)
 	else
 		for i, q_brief in ipairs(self.brief_queue) do
-			if brief.when < q_brief then
+			if brief.when < q_brief.when then
 				table.insert(self.brief_queue, i, brief)
 				break
 			end
@@ -33,7 +33,8 @@ function Queue:enqueue(brief)
 end
 
 --- dequeues (and returns) the briefs that should be executed
-function Queue:dequeue()
+-- TODO: document this func and pass the SeconsFrames to it
+function Queue:dequeue(sf)
 	local now = os.time()
 	local exec_brief_list = {}
 

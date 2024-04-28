@@ -6,5 +6,5 @@ return {
 	Dimensions = require("tge.entities.dimensions"),
 	Point = require("tge.entities.point"),
 	SecondsFrames = require("tge.entities.seconds_frames"),
-	UIEntity = ui_enttities.UIEntity,
+	ui = ui_enttities,
 }

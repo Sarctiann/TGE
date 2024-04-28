@@ -1,18 +1,12 @@
 local uv = require("luv")
-local luabox = require("luabox")
+local Utils = require("tge.utils")
 
---- @class Core
+--- @class Core : Utils
 --- @field private create_main_loop fun(self: self, interval: integer, callback: function)
 --- @field private clear_main_loop fun(self: self)
 Core = {}
-
-Core.clear = luabox.clear
-Core.colors = luabox.colors
-Core.console = luabox.Console.new(luabox.util.getHandles())
-Core.cursor = luabox.cursor
-Core.event = luabox.event
-Core.scroll = luabox.scroll
-Core.luabox_util = luabox.util
+Core.__index = Core
+setmetatable(Core, Utils)
 
 --- Creates the Main loop
 function Core:create_main_loop(interval, callback)
@@ -75,7 +69,9 @@ function Core:start_main_loop(queue, game_sf)
 		local briefs = queue:dequeue(game_sf)
 		if briefs then
 			for _, brief in ipairs(briefs) do
-				brief.ui_element[brief.action](brief.where)
+				-- TODO: improve this part
+				-- FIXME: Still not implemented go to ui_entities.lua
+				brief.ui_element[brief.action](brief.data)
 			end
 		end
 

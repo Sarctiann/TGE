@@ -1,11 +1,20 @@
 local clock = os.clock
 local uv = require("luv")
-local colors = require("luabox.colors")
+local luabox = require("luabox")
 
 --- @alias Timer {start: function, stop: function, close: function}
 
 --- @class Utils
 local Utils = {}
+Utils.__index = Utils
+
+Utils.clear = luabox.clear
+Utils.colors = luabox.colors
+Utils.console = luabox.Console.new(luabox.util.getHandles())
+Utils.cursor = luabox.cursor
+Utils.event = luabox.event
+Utils.scroll = luabox.scroll
+Utils.luabox_util = luabox.util
 
 --- @deprecated
 --- function that sleep for the given cents of seconds
@@ -69,7 +78,7 @@ end
 --- @param err string error message
 function Utils:exit_with_error(err, ...)
 	local f_err = string.format(err, ...)
-	io.stderr:write(string.format("%sError: %s%s\n", colors.fg(colors.red), f_err, colors.resetFg))
+	io.stderr:write(string.format("%sError: %s%s\n", self.colors.fg(self.colors.red), f_err, self.colors.resetFg))
 	os.exit(1)
 end
 

@@ -17,7 +17,7 @@ end
 --- queue a new report in its corresponding order based on its "when" attribute.
 --- @param brief Brief
 function Queue:enqueue(brief)
-	if #self.brief_queue == 0 then
+	if #self.brief_queue == 0 or not brief.when then
 		table.insert(self.brief_queue, brief)
 	else
 		for i, q_brief in ipairs(self.brief_queue) do
@@ -32,17 +32,17 @@ function Queue:enqueue(brief)
 	end
 end
 
---- dequeues (and returns) the briefs that should be executed
--- TODO: document this func and pass the SeconsFrames to it
-function Queue:dequeue(sf)
-	local now = os.time()
+--- dequeues (and returns) the briefs that should be executed or nil if there is no brief to be executed yet.
+--- @param game_sf SecondsFrames
+--- @return Brief[] | nil
+function Queue:dequeue(game_sf)
 	local exec_brief_list = {}
 
 	if #self.brief_queue == 0 then
 		return nil
 	end
 	for i, q_brief in ipairs(self.brief_queue) do
-		if q_brief.when < now then
+		if not q_brief.when or q_brief.when <= game_sf then
 			table.insert(exec_brief_list, table.remove(self.brief_queue, i))
 		end
 	end

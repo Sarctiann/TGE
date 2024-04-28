@@ -1,4 +1,4 @@
-local core = require("tge.core")
+local utils = require("tge.utils")
 
 --- @class Dimensions
 --- @field public width integer
@@ -22,7 +22,7 @@ function Dimensions.New(width, height)
 			height = height,
 		},
 		__newindex = function(_, key, value)
-			core:exit_with_error("Attempt to modify game dimensions (%s = %s)", key, value)
+			utils:exit_with_error("Attempt to modify game dimensions (%s = %s)", key, value)
 		end,
 		__tostring = function(self)
 			return string.format("Dimensions: %dx%d", self.width, self.height)

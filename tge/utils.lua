@@ -1,5 +1,6 @@
 local clock = os.clock
 local uv = require("luv")
+local colors = require("luabox.colors")
 
 --- @alias Timer {start: function, stop: function, close: function}
 
@@ -62,6 +63,14 @@ function Utils.set_timeout(timeout, callback)
 		callback()
 	end)
 	return timer
+end
+
+--- function that print the error and exit the program
+--- @param err string error message
+function Utils:exit_with_error(err, ...)
+	local f_err = string.format(err, ...)
+	io.stderr:write(string.format("%sError: %s%s\n", colors.fg(colors.red), f_err, colors.resetFg))
+	os.exit(1)
 end
 
 return Utils

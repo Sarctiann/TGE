@@ -39,14 +39,6 @@ function Core.checkDimensions(width, height)
 	return true
 end
 
---- function that print the error and exit the program
---- @param err string error message
-function Core:exit_with_error(err, ...)
-	local f_err = string.format(err, ...)
-	io.stderr:write(string.format("%sError: %s%s\n", self.colors.fg(self.colors.red), f_err, self.colors.resetFg))
-	os.exit(1)
-end
-
 --- Initialize the envent handler
 --- @param handler fun(event: (keyboardEvent | mouseEvent)): nil
 function Core:make_event_handler(handler)
@@ -74,16 +66,20 @@ function Core:make_event_handler(handler)
 end
 
 --- starts the main buble to handle incoming events and brief queue
---- @param frame_rate integer frames per second
 --- @param queue Queue
---- @param sf SecondsFrames
-function Core:start_main_loop(frame_rate, queue, sf)
-	self:create_main_loop(math.floor(1000 / frame_rate), function()
-		-- TODO: implement the real callback that draws on the screen
+--- @param game_sf SecondsFrames
+function Core:start_main_loop(queue, game_sf)
+	self:create_main_loop(math.floor(1000 / game_sf.frame_rate), function()
+		print(game_sf)
 
-		print(sf)
+		local briefs = queue:dequeue(game_sf)
+		if briefs then
+			for _, brief in ipairs(briefs) do
+				brief.ui_element[brief.action](brief.where)
+			end
+		end
 
-		sf:increment()
+		game_sf:increment()
 	end)
 end
 

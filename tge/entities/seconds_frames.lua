@@ -15,16 +15,11 @@ end
 
 local function validate_op(sf1, sf2, value)
 	assert(sf1.frame_rate == sf2.frame_rate, "Cannot perform operations between SeconsFrames with different frame_rate")
+	if type(value) == "boolean" then
+		return value
+	end
 	assert(value >= 0, "Cannot create SecondsFrames with negative values")
 	return value
-end
-
---- Creates a new SecondsFrames from frames (integer)
---- @param frames integer
---- @param frame_rate integer
---- @return SecondsFrames sf
-function SecondsFrames.from_frames(frames, frame_rate)
-	return SecondsFrames.new(frame_rate, math.floor(frames / frame_rate), frames % frame_rate)
 end
 
 --- Increments by one Frames
@@ -106,6 +101,14 @@ function SecondsFrames.new(frame_rate, seconds, frames)
 			)
 		end,
 	})
+end
+
+--- Creates a new SecondsFrames from frames (integer)
+--- @param frames integer
+--- @param frame_rate integer
+--- @return SecondsFrames sf
+function SecondsFrames.from_frames(frames, frame_rate)
+	return SecondsFrames.new(frame_rate, math.floor(frames / frame_rate), frames % frame_rate)
 end
 
 return SecondsFrames

@@ -44,7 +44,6 @@ local COLOR = {
 --- @class Color
 --- @field fg COLOR | TrueColor | nil
 --- @field bg COLOR | TrueColor | nil
-local Color = {}
 
 local call_action = {
 	[1] = function(ui_element, data)
@@ -73,7 +72,7 @@ end
 
 --- @class UIEntity
 --- @field public lock_frames integer The ammount of frames must wait to unlock
---- @field public locked_until SecondsFrames The time in seconds and frames until the entity is unlocked
+--- @field public locked_until SecondsFrames | nil The time in seconds and frames until the entity is unlocked
 --- @field public draw fun(self, data: any): self Draws the UI entity on the screen and returns the instance
 --- @field public clear fun(self): nil Clears the UI entity from the screen
 --- @field public move fun(self, data: any): nil Moves the UI entity in the specified direction
@@ -81,8 +80,8 @@ end
 --- @field public move_or_draw fun(self, data: any): self Tries to move the instance or draws and returns it
 --- @field public copy_or_draw fun(self, data: any): self Tries to copy the instance or draws and returns it
 local UIEntity = {
-	is_locked = false,
-	locked_frames = 1,
+	locked_until = nil,
+	lock_frames = 1,
 	draw = function()
 		---@diagnostic disable-next-line: missing-return
 		not_implemented("DRAW")
@@ -113,7 +112,7 @@ UIEntity.__index = UIEntity
 --- @field public pos Point | nil
 --- @field public text string
 --- @field public color Color | nil
---- @field public locked_frames integer
+--- @field public lock_frames integer
 local Text = {}
 Text.__index = Text
 setmetatable(Text, UIEntity)
@@ -121,12 +120,12 @@ setmetatable(Text, UIEntity)
 --- Creates a Text ui_element
 
 --- Creates and draws a Text ui_element and return the instance
---- @param data {text: string, color: Color | nil}
+--- @param data {text: string, color: Color | nil, lf: integer | nil}
 function Text.New(data)
 	return setmetatable({
-		lock_frames = 5,
 		text = data.text,
 		color = data.color,
+		lock_frames = data.lf,
 	}, Text)
 end
 
@@ -137,7 +136,7 @@ function Text:draw(data)
 		pos = data.pos,
 		text = data.text,
 		color = data.color,
-		locked_frames = data.lf,
+		lock_frames = data.lf,
 	}
 	---@diagnostic disable-next-line: param-type-mismatch
 	local fg = data.color.fg and col.fg(data.color.fg) or ""
@@ -156,7 +155,7 @@ function Text:move(data)
 		con:write(f("%s%s", cur.goTo(self.pos.x, self.pos.y), string.rep(" ", #self.text)))
 	end
 	self.pos = data.pos
-	self:draw({ pos = data.pos, text = self.text, color = self.color, lf = self.locked_frames })
+	self:draw({ pos = data.pos, text = self.text, color = self.color, lf = self.lock_frames })
 end
 
 ---------------------------------------------------------------------------------------------------------
@@ -202,7 +201,6 @@ return {
 	COLOR = COLOR,
 	truecolor = col.truecolor,
 	call_action = call_action,
-	Color = Color,
 	-- UI Entities
 	Text = Text,
 	Unit = Unit,

@@ -4,7 +4,7 @@ local utils = require("tge.utils")
 --- @field public ui_element UIEntity
 --- @field public action ACTION
 --- @field public data table
---- @field public when number | nil
+--- @field public when SecondsFrames | nil
 local Brief = {}
 
 --- @param ui_element UIEntity The element to put in the screen

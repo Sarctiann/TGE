@@ -1,3 +1,5 @@
+local SecondsFrames = require("tge.entities.seconds_frames")
+
 --- @class Queue
 --- @field private brief_queue Brief[]
 Queue = {}
@@ -14,16 +16,30 @@ function Queue.New()
 	})
 end
 
--- TODO: implement the locking system base on the ui_element's Lock_frames and locked_until fileds
-
---- queue a new report in its corresponding order based on its "when" attribute.
+--- queue a new brief in its corresponding order based on its "when" attribute.
 --- @param brief Brief
 function Queue:enqueue(brief)
-	if #self.brief_queue == 0 or not brief.when then
+	local uelu = brief.ui_element.locked_until
+	local when = brief.when
+
+	-- Check if the ui_element is locked
+	if uelu and when and uelu > when then
+		return
+	end
+
+	-- Apply the lock_frames to the ui_element
+	brief.ui_element.locked_until = when
+			and when + SecondsFrames.from_frames(brief.ui_element.lock_frames, when.frame_rate)
+		or nil
+
+	-- Check if the brief_queue is empty or if the brief should be executed immediately
+	if #self.brief_queue == 0 or not when then
 		table.insert(self.brief_queue, brief)
+
+	-- Enqueue the brief in the correct order
 	else
 		for i, q_brief in ipairs(self.brief_queue) do
-			if brief.when < q_brief.when then
+			if when < q_brief.when then
 				table.insert(self.brief_queue, i, brief)
 				break
 			end

@@ -4,7 +4,8 @@ local game = tge.game.New({
 	width = 120,
 	height = 40,
 	frame_rate = 30,
-	debug = { Author = "Sarctiann" },
+	show_status = { Author = "Sarctiann" },
+	debug = true,
 })
 
 local ui = tge.entities.ui
@@ -19,6 +20,7 @@ local Text, ACTION, COLOR = ui.Text, ui.ACTION, ui.COLOR
 local t = Text.New({
 	text = "TGE\n",
 	color = { fg = ui.truecolor(52, 52, 52), bg = COLOR.Yellow },
+	lf = 10,
 })
 
 game.on_event = function(e)
@@ -29,6 +31,7 @@ game.on_event = function(e)
 		if x <= game.dimensions.width and y <= game.dimensions.height then
 			q:enqueue({
 				action = ACTION.move,
+				when = game.sf,
 				ui_element = t,
 				data = {
 					pos = { x = x - 1, y = y - 1 },

@@ -71,10 +71,12 @@ function Core:start_main_loop(game)
 			end
 		end
 
-		if game.debug then
-			local data = type(game.debug) == "table" and game.debug or {}
-			data.Ticks = game.sf
-			data.Briefs = briefs and #briefs or 0
+		if game.show_status then
+			local data = type(game.show_status) == "table" and game.show_status or {}
+			if game.debug then
+				data.Ticks = game.sf
+				data.Briefs = briefs and #briefs or 0
+			end
 			self:show_status(game, data)
 		end
 

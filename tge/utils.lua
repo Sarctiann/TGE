@@ -79,7 +79,26 @@ end
 function Utils:exit_with_error(err, ...)
 	local f_err = string.format(err, ...)
 	io.stderr:write(string.format("%sError: %s%s\n", self.colors.fg(self.colors.red), f_err, self.colors.resetFg))
+
+	local cons = self.console
+	local curs = self.cursor
+
+	cons:setMode(0)
+	cons:exitMouseMode()
+	cons:write("\n")
+	cons:write(curs.show)
+	cons:close()
+
 	os.exit(1)
+end
+
+function Utils:show_status(status)
+	local x, y = self.console:getDimensions()
+	local position = self.cursor.goTo(1, y)
+	local color = self.colors.fg(self.colors.black) .. self.colors.bg(self.colors.white)
+	local line = string.rep(" ", x - 11)
+	local reset = self.colors.resetFg .. self.colors.resetBg
+	self.console:write(string.format("%s%s%s%s%s", position, color, line, status, reset))
 end
 
 return Utils

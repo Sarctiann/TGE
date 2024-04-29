@@ -1,4 +1,6 @@
 --- @class Point
+--- @field x integer
+--- @field y integer
 local Point = {}
 
 --- @param x integer

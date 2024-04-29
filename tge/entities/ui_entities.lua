@@ -1,4 +1,5 @@
 local utils = require("tge.utils")
+
 local con = utils.console
 local cur = utils.cursor
 local col = utils.colors
@@ -10,69 +11,144 @@ local ACTION = {
 	clear = 2,
 	move = 3,
 	copy = 4,
+	move_or_draw = 5,
+	copy_or_draw = 6,
 }
 
+--- @enum COLOR
+local COLOR = {
+	Black = col.black,
+	Red = col.red,
+	Green = col.green,
+	Yellow = col.yellow,
+	Blue = col.blue,
+	Magenta = col.magenta,
+	Cyan = col.cyan,
+	White = col.white,
+	LightBlack = col.lightBlack,
+	LightRed = col.lightRed,
+	LightGreen = col.lightGreen,
+	LightYellow = col.lightYellow,
+	LightBlue = col.lightBlue,
+	LightMagenta = col.LightMagenta,
+	LightCyan = col.lightCyan,
+	LightWhite = col.lightWhite,
+}
+
+--- @class Color
+--- @field fg COLOR | nil
+--- @field bg COLOR | nil
+local Color = {}
+
 local call_action = {
-	--- Draws the UI entity on the screen
 	[1] = function(ui_element, data)
-		ui_element["draw"](ui_element, data)
+		return ui_element["draw"](ui_element, data)
 	end,
-	--- Clears the UI entity from the screen
 	[2] = function(ui_element)
 		ui_element["clear"](ui_element)
 	end,
-	--- Moves the UI entity in the specified direction
 	[3] = function(ui_element, data)
 		ui_element["move"](ui_element, data)
 	end,
-	--- Creates a copy of the UI entity
-	[4] = function(ui_element)
-		ui_element["copy"](ui_element)
+	[4] = function(ui_element, data)
+		ui_element["copy"](ui_element, data)
+	end,
+	[5] = function(ui_element, data)
+		return ui_element["more_or_draw"](ui_element, data)
+	end,
+	[6] = function(ui_element, data)
+		return ui_element["copy_or_draw"](ui_element, data)
 	end,
 }
 
-local function not_implemented(...)
-	local _ = { ... }
-	utils:exit_with_error("This action is not implemented by this UI Entity")
+local function not_implemented(action)
+	utils:exit_with_error("%s action is not implemented by this UI Entity", action)
 end
 
 --- @class UIEntity
---- @field public draw fun(self, data: any): nil Draws the UI entity on the screen
+--- @field public is_locked boolean Especify if the entity is locked to add more briefs
+--- @field public locked_frames integer The ammount of frames must wait to unlock
+--- @field public draw fun(self, data: any): self Draws the UI entity on the screen and returns the instance
 --- @field public clear fun(self): nil Clears the UI entity from the screen
 --- @field public move fun(self, data: any): nil Moves the UI entity in the specified direction
---- @field public copy fun(self): nil Creates a copy of the UI entity
+--- @field public copy fun(self, data: any): nil Creates a copy of the UI entity
+--- @field public move_or_draw fun(self, data: any): self Tries to move the instance or draws and returns it
+--- @field public copy_or_draw fun(self, data: any): self Tries to copy the instance or draws and returns it
 local UIEntity = {
-	draw = not_implemented,
-	clear = not_implemented,
-	move = not_implemented,
-	copy = not_implemented,
+	is_locked = false,
+	locked_frames = 1,
+	draw = function()
+		---@diagnostic disable-next-line: missing-return
+		not_implemented("DRAW")
+	end,
+	clear = function()
+		not_implemented("CLEAR")
+	end,
+	move = function()
+		not_implemented("MOVE")
+	end,
+	copy = function()
+		not_implemented("COPY")
+	end,
+	move_or_draw = function()
+		---@diagnostic disable-next-line: missing-return
+		not_implemented("MOVE_OR_DRAW")
+	end,
+	copy_or_draw = function()
+		---@diagnostic disable-next-line: missing-return
+		not_implemented("COPY_OR_DRAW")
+	end,
 }
 UIEntity.__index = UIEntity
 
 ---------------------------------------------------------------------------------------------------------
 
 --- @class Text : UIEntity to put/move/remove text on screen ( size: 1,1 )
---- @field public start_point Point
---- @field public end_point Point
-local Text = {
-	draw = function(self, data)
-		self.start_point = data.start_point
-		self.end_point = data.start_point.x + #data.text
-		con:write(
-			f("%s%s%s%s", cur.goTo(self.start_point.x, self.start_point.y), col.fg(data.color), data.text, col.resetFg)
-		)
-	end,
-}
+--- @field public pos Point | nil
+--- @field public text string
+--- @field public color Color | nil
+--- @field public locked_frames integer
+local Text = {}
 Text.__index = Text
 setmetatable(Text, UIEntity)
 
---- Creates a new Text UI entity.
-function Text.new()
-	local self = setmetatable({
-		start_point = nil,
-		end_point = nil,
+--- Creates a Text ui_element
+
+--- Creates and draws a Text ui_element and return the instance
+--- @param data {text: string, color: Color | nil}
+function Text.New(data)
+	return setmetatable({
+		locked_frames = 5,
+		text = data.text,
+		color = data.color,
 	}, Text)
-	return self
+end
+
+--- Creates and draws a Text ui_element and return the instance
+--- @param data {pos: Point, text: string, color: Color | nil, lf: integer | nil}
+function Text:draw(data)
+	self = {
+		pos = data.pos,
+		text = data.text,
+		color = data.color,
+		locked_frames = data.lf,
+	}
+	local fg = data.color.fg and col.fg(data.color.fg) or ""
+	local bg = data.color.bg and col.bg(data.color.bg) or ""
+	local rfg = data.color.fg and col.resetFg or ""
+	local rbg = data.color.bg and col.resetBg or ""
+	con:write(f("%s%s%s%s%s%s", cur.goTo(self.pos.x, self.pos.y), fg, bg, data.text, rfg, rbg))
+	return setmetatable(self, Text)
+end
+
+--- Moves the text instance to a new location
+--- @param data {pos: Point}
+function Text:move(data)
+	if self.pos then
+		con:write(f("%s%s", cur.goTo(self.pos.x, self.pos.y), string.rep(" ", #self.text)))
+	end
+	self.pos = data.pos
+	self:draw({ pos = data.pos, text = self.text, color = self.color, lf = self.locked_frames })
 end
 
 ---------------------------------------------------------------------------------------------------------
@@ -115,7 +191,9 @@ setmetatable(NF_Icon, UIEntity)
 return {
 	-- Other
 	ACTION = ACTION,
+	COLOR = COLOR,
 	call_action = call_action,
+	Color = Color,
 	-- UI Entities
 	Text = Text,
 	Unit = Unit,

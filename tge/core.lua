@@ -65,8 +65,6 @@ end
 --- @param game_sf SecondsFrames
 function Core:start_main_loop(queue, game_sf)
 	self:create_main_loop(math.floor(1000 / game_sf.frame_rate), function()
-		print(game_sf)
-
 		local briefs = queue:dequeue(game_sf)
 		if briefs then
 			for _, brief in ipairs(briefs) do
@@ -74,6 +72,10 @@ function Core:start_main_loop(queue, game_sf)
 			end
 		end
 
+		-- Just for debug
+		self:show_status(game_sf)
+
+		-- This is basically the clock of the game
 		game_sf:increment()
 	end)
 end
@@ -104,7 +106,7 @@ function Core:exit()
 	self:clear_main_loop()
 	cons:close()
 
-	os.exit()
+	os.exit(0)
 end
 
 return Core

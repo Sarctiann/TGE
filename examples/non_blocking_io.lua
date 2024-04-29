@@ -4,6 +4,7 @@ local game = tge.game.New({
 	width = 120,
 	height = 40,
 	frame_rate = 30,
+	debug = { Author = "Sarctiann" },
 })
 
 local ui = tge.entities.ui
@@ -17,7 +18,7 @@ local Text, ACTION, COLOR = ui.Text, ui.ACTION, ui.COLOR
 
 local t = Text.New({
 	text = "TGE\n",
-	color = { fg = COLOR.Black, bg = COLOR.Yellow },
+	color = { fg = ui.truecolor(52, 52, 52), bg = COLOR.Yellow },
 })
 
 game.on_event = function(e)
@@ -25,13 +26,15 @@ game.on_event = function(e)
 		game:exit()
 	elseif e.event and e.event ~= "press" then
 		local x, y = e.x, e.y
-		q:enqueue({
-			action = ACTION.move,
-			ui_element = t,
-			data = {
-				pos = { x = x - 1, y = y },
-			},
-		})
+		if x <= game.dimensions.width and y <= game.dimensions.height then
+			q:enqueue({
+				action = ACTION.move,
+				ui_element = t,
+				data = {
+					pos = { x = x - 1, y = y - 1 },
+				},
+			})
+		end
 	end
 end
 

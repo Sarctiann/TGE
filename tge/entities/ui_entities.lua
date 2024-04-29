@@ -15,29 +15,35 @@ local ACTION = {
 	copy_or_draw = 6,
 }
 
+-- I had to rewrite this enum because the LS was not working properly identifying the values
+
 --- @enum COLOR
 local COLOR = {
-	Black = col.black,
-	Red = col.red,
-	Green = col.green,
-	Yellow = col.yellow,
-	Blue = col.blue,
-	Magenta = col.magenta,
-	Cyan = col.cyan,
-	White = col.white,
-	LightBlack = col.lightBlack,
-	LightRed = col.lightRed,
-	LightGreen = col.lightGreen,
-	LightYellow = col.lightYellow,
-	LightBlue = col.lightBlue,
-	LightMagenta = col.LightMagenta,
-	LightCyan = col.lightCyan,
-	LightWhite = col.lightWhite,
+	Black = 0,
+	Red = 1,
+	Green = 2,
+	Yellow = 3,
+	Blue = 4,
+	Magenta = 5,
+	Cyan = 6,
+	White = 7,
+	LightBlack = 8,
+	LightRed = 9,
+	LightGreen = 10,
+	LightYellow = 11,
+	LightBlue = 12,
+	LightMagenta = 13,
+	LightCyan = 14,
+	LightWhite = 15,
 }
 
+--- @class TrueColor
+--- @field sec integer
+--- @field color {r: integer, g: integer, b: integer}
+
 --- @class Color
---- @field fg COLOR | nil
---- @field bg COLOR | nil
+--- @field fg COLOR | TrueColor | nil
+--- @field bg COLOR | TrueColor | nil
 local Color = {}
 
 local call_action = {
@@ -66,8 +72,8 @@ local function not_implemented(action)
 end
 
 --- @class UIEntity
---- @field public is_locked boolean Especify if the entity is locked to add more briefs
---- @field public locked_frames integer The ammount of frames must wait to unlock
+--- @field public lock_frames integer The ammount of frames must wait to unlock
+--- @field public locked_until SecondsFrames The time in seconds and frames until the entity is unlocked
 --- @field public draw fun(self, data: any): self Draws the UI entity on the screen and returns the instance
 --- @field public clear fun(self): nil Clears the UI entity from the screen
 --- @field public move fun(self, data: any): nil Moves the UI entity in the specified direction
@@ -118,7 +124,7 @@ setmetatable(Text, UIEntity)
 --- @param data {text: string, color: Color | nil}
 function Text.New(data)
 	return setmetatable({
-		locked_frames = 5,
+		lock_frames = 5,
 		text = data.text,
 		color = data.color,
 	}, Text)
@@ -133,7 +139,9 @@ function Text:draw(data)
 		color = data.color,
 		locked_frames = data.lf,
 	}
+	---@diagnostic disable-next-line: param-type-mismatch
 	local fg = data.color.fg and col.fg(data.color.fg) or ""
+	---@diagnostic disable-next-line: param-type-mismatch
 	local bg = data.color.bg and col.bg(data.color.bg) or ""
 	local rfg = data.color.fg and col.resetFg or ""
 	local rbg = data.color.bg and col.resetBg or ""
@@ -192,6 +200,7 @@ return {
 	-- Other
 	ACTION = ACTION,
 	COLOR = COLOR,
+	truecolor = col.truecolor,
 	call_action = call_action,
 	Color = Color,
 	-- UI Entities

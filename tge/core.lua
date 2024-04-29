@@ -61,22 +61,25 @@ function Core:make_event_handler(handler)
 end
 
 --- starts the main buble to handle incoming events and brief queue
---- @param queue Queue
---- @param game_sf SecondsFrames
-function Core:start_main_loop(queue, game_sf)
-	self:create_main_loop(math.floor(1000 / game_sf.frame_rate), function()
-		local briefs = queue:dequeue(game_sf)
+--- @param game Game
+function Core:start_main_loop(game)
+	self:create_main_loop(math.floor(1000 / game.sf.frame_rate), function()
+		local briefs = game.queue:dequeue(game.sf)
 		if briefs then
 			for _, brief in ipairs(briefs) do
 				call_action[brief.action](brief.ui_element, brief.data)
 			end
 		end
 
-		-- Just for debug
-		self:show_status(game_sf)
+		if game.debug then
+			local data = type(game.debug) == "table" and game.debug or {}
+			data.Ticks = game.sf
+			data.Briefs = briefs and #briefs or 0
+			self:show_status(game, data)
+		end
 
 		-- This is basically the clock of the game
-		game_sf:increment()
+		game.sf:increment()
 	end)
 end
 

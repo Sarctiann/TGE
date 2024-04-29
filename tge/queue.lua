@@ -14,6 +14,8 @@ function Queue.New()
 	})
 end
 
+-- TODO: implement the locking system base on the ui_element's Lock_frames and locked_until fileds
+
 --- queue a new report in its corresponding order based on its "when" attribute.
 --- @param brief Brief
 function Queue:enqueue(brief)

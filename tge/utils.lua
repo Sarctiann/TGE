@@ -92,13 +92,36 @@ function Utils:exit_with_error(err, ...)
 	os.exit(1)
 end
 
-function Utils:show_status(status)
-	local x, y = self.console:getDimensions()
+--- @param game Game
+--- @vararg any
+function Utils:show_status(game, data)
+	local x, y = game.dimensions.width, game.dimensions.height
 	local position = self.cursor.goTo(1, y)
 	local color = self.colors.fg(self.colors.black) .. self.colors.bg(self.colors.white)
-	local line = string.rep(" ", x - 11)
+
+	local status = {}
+	local status_len = 0
+	for k, v in pairs(data) do
+		table.insert(
+			status,
+			string.format(
+				"%s %s: %s %s",
+				self.colors.bg(self.colors.lightWhite),
+				k,
+				self.colors.bg(self.colors.white),
+				v
+			)
+		)
+		status_len = status_len + #k + #tostring(v) + 6
+	end
+
+	local status_str = table.concat(status, " | ")
+	local line = string.rep(" ", x - 6 - status_len)
 	local reset = self.colors.resetFg .. self.colors.resetBg
-	self.console:write(string.format("%s%s%s%s%s", position, color, line, status, reset))
+
+	self.console:write(string.format("%s%s%s| %s |  %s", position, color, line, status_str, reset))
 end
+
+-- TODO: create secure writer (that checks the game dimensions before write)
 
 return Utils

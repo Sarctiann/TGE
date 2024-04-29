@@ -8,10 +8,11 @@ local entities = require("tge.entities")
 --- @field public frame_rate integer The frames per second of the game
 --- @field public on_event (fun(event: (keyboardEvent | mouseEvent)): nil) | nil The hook that is called when data from stdin is received. (Alias for luabux.Console -> console.onData).
 --- @field public sf SecondsFrames The seconds and frames of each second of the entire game life cycle
+--- @field public debug boolean | table
 Game = {}
 
 --- Creates a new game window.
---- @param init {width: integer, height: integer, frame_rate: integer}
+--- @param init {width: integer, height: integer, frame_rate: integer, debug: boolean | table | nil}
 --- @return Game game
 function Game.New(init)
 	if core.checkDimensions(init.width, init.height) == false then
@@ -25,6 +26,7 @@ function Game.New(init)
 		frame_rate = init.frame_rate,
 		on_event = nil,
 		sf = entities.SecondsFrames.new(init.frame_rate),
+		debug = init.debug and init.debug or false,
 	}, {
 		__index = Game,
 	})
@@ -37,7 +39,7 @@ function Game:run()
 	end
 
 	core:make_event_handler(self.on_event)
-	core:start_main_loop(self.queue, self.sf)
+	core:start_main_loop(self)
 
 	core:run()
 end

@@ -62,6 +62,10 @@ function SecondsFrames.new(frame_rate, seconds, frames)
 			return string.format("%.5d : %.3d", self.s, self.f)
 		end,
 
+		__len = function(self)
+			return #string.format("%.5d : %.3d", self.s, self.f)
+		end,
+
 		__eq = function(self, sf_other)
 			return validate_op(self, sf_other, self:to_frames() == sf_other:to_frames())
 		end,

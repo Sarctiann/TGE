@@ -127,11 +127,12 @@ end
 --- Write in the screen checking the given boundaries
 --- @param data string | string[]
 --- @param pos Point
---- @param color Color | nil
 --- @param bound Boundaries
---- @param align boolean | nil
-function Utils:puts(data, pos, color, bound, align)
-	align = align or false
+--- @param options {color: Color | nil, align: boolean | nil, clear: boolean | nil} | nil
+function Utils:puts(data, pos, bound, options)
+	local color = options and options.color or nil
+	local align = options and options.align or false
+	local clear = options and options.clear or false
 	local fpos = pos
 	local fdata = {}
 	if type(data) == "string" then
@@ -166,8 +167,10 @@ function Utils:puts(data, pos, color, bound, align)
 		local rfg = color and color.fg and self.colors.resetFg or ""
 		local rbg = color and color.bg and self.colors.resetBg or ""
 		for i, line in ipairs(fdata) do
+			-- TODO: take the background elements from the "state.static_collection.background"
+			local fline = clear and string.rep(" ", #line) or line
 			self.console:write(
-				string.format("%s%s%s%s%s%s", self.cursor.goTo(fpos.x, fpos.y + i - 1), fg, bg, line, rfg, rbg)
+				string.format("%s%s%s%s%s%s", self.cursor.goTo(fpos.x, fpos.y + i - 1), fg, bg, fline, rfg, rbg)
 			)
 		end
 	else

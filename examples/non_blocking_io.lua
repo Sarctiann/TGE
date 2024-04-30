@@ -21,7 +21,7 @@ local t = Text.new({
 	text = "TGE",
 	color = { fg = ui.truecolor(52, 52, 52), bg = COLOR.Yellow },
 	lf = 10,
-})
+}, Boundaries.new(1, 1, 150, 40))
 
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then

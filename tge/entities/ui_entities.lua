@@ -1,10 +1,5 @@
 local utils = require("tge.utils")
 
-local con = utils.console
-local cur = utils.cursor
-local col = utils.colors
-local f = string.format
-
 --- @enum ACTION
 local ACTION = {
 	draw = 1,
@@ -13,6 +8,27 @@ local ACTION = {
 	copy = 4,
 	move_or_draw = 5,
 	copy_or_draw = 6,
+}
+
+local call_action = {
+	[1] = function(ui_element, data, boundaries)
+		return ui_element["draw"](ui_element, data, boundaries)
+	end,
+	[2] = function(ui_element)
+		ui_element["clear"](ui_element)
+	end,
+	[3] = function(ui_element, data)
+		ui_element["move"](ui_element, data)
+	end,
+	[4] = function(ui_element, data)
+		ui_element["copy"](ui_element, data)
+	end,
+	[5] = function(ui_element, data, boundaries)
+		return ui_element["more_or_draw"](ui_element, data, boundaries)
+	end,
+	[6] = function(ui_element, data, boundaries)
+		return ui_element["copy_or_draw"](ui_element, data, boundaries)
+	end,
 }
 
 -- I had to rewrite this enum because the LS was not working properly identifying the values
@@ -45,40 +61,20 @@ local COLOR = {
 --- @field fg COLOR | TrueColor | nil
 --- @field bg COLOR | TrueColor | nil
 
-local call_action = {
-	[1] = function(ui_element, data)
-		return ui_element["draw"](ui_element, data)
-	end,
-	[2] = function(ui_element)
-		ui_element["clear"](ui_element)
-	end,
-	[3] = function(ui_element, data)
-		ui_element["move"](ui_element, data)
-	end,
-	[4] = function(ui_element, data)
-		ui_element["copy"](ui_element, data)
-	end,
-	[5] = function(ui_element, data)
-		return ui_element["more_or_draw"](ui_element, data)
-	end,
-	[6] = function(ui_element, data)
-		return ui_element["copy_or_draw"](ui_element, data)
-	end,
-}
-
 local function not_implemented(action)
 	utils:exit_with_error("%s action is not implemented by this UI Entity", action)
 end
 
 --- @class UIEntity
+--- @field public boundaries Boundaries The boundaries of the UI entity
 --- @field public lock_frames integer The ammount of frames must wait to unlock
 --- @field public locked_until SecondsFrames | nil The time in seconds and frames until the entity is unlocked
---- @field public draw fun(self, data: any): self Draws the UI entity on the screen and returns the instance
---- @field public clear fun(self): nil Clears the UI entity from the screen
---- @field public move fun(self, data: any): nil Moves the UI entity in the specified direction
+--- @field public draw fun(self, data: any, boundaries: Boundaries): self Draws the UI entity on the screen and returns the instance
+--- @field public clear fun(self, patch: any): nil Clears the UI entity from the screen
+--- @field public move fun(self, data: any, patch: any): nil Moves the UI entity in the specified direction
 --- @field public copy fun(self, data: any): nil Creates a copy of the UI entity
---- @field public move_or_draw fun(self, data: any): self Tries to move the instance or draws and returns it
---- @field public copy_or_draw fun(self, data: any): self Tries to copy the instance or draws and returns it
+--- @field public move_or_draw fun(self, data: any, boundaries: Boundaries, patch: any): self Tries to move the instance or draws and returns it
+--- @field public copy_or_draw fun(self, data: any, boundaries: Boundaries): self Tries to copy the instance or draws and returns it
 local UIEntity = {
 	locked_until = nil,
 	lock_frames = 1,
@@ -110,7 +106,7 @@ UIEntity.__index = UIEntity
 
 --- @class Text : UIEntity to put/move/remove text on screen ( size: 1,1 )
 --- @field public pos Point | nil
---- @field public text string
+--- @field public text string | string[]
 --- @field public color Color | nil
 --- @field public lock_frames integer
 local Text = {}
@@ -120,31 +116,31 @@ setmetatable(Text, UIEntity)
 --- Creates a Text ui_element
 
 --- Creates and draws a Text ui_element and return the instance
---- @param data {text: string, color: Color | nil, lf: integer | nil}
-function Text.new(data)
+--- @param data {text: string | string[], color: Color | nil, lf: integer | nil}
+--- @param boundaries Boundaries
+function Text.new(data, boundaries)
 	return setmetatable({
 		text = data.text,
 		color = data.color,
 		lock_frames = data.lf,
+		boundaries = boundaries,
 	}, Text)
 end
 
 --- Creates and draws a Text ui_element and return the instance
---- @param data {pos: Point, text: string, color: Color | nil, lf: integer | nil}
-function Text:draw(data)
+--- @param data {pos: Point, text: string | string[], color: Color | nil, lf: integer | nil}
+--- @param boundaries Boundaries
+function Text:draw(data, boundaries)
 	self = {
 		pos = data.pos,
 		text = data.text,
 		color = data.color,
 		lock_frames = data.lf,
+		boundaries = boundaries,
 	}
-	---@diagnostic disable-next-line: param-type-mismatch
-	local fg = data.color.fg and col.fg(data.color.fg) or ""
-	---@diagnostic disable-next-line: param-type-mismatch
-	local bg = data.color.bg and col.bg(data.color.bg) or ""
-	local rfg = data.color.fg and col.resetFg or ""
-	local rbg = data.color.bg and col.resetBg or ""
-	con:write(f("%s%s%s%s%s%s", cur.goTo(self.pos.x, self.pos.y), fg, bg, data.text, rfg, rbg))
+
+	utils:puts(data.text, data.pos, boundaries, { color = data.color })
+
 	return setmetatable(self, Text)
 end
 
@@ -152,10 +148,11 @@ end
 --- @param data {pos: Point}
 function Text:move(data)
 	if self.pos then
-		con:write(f("%s%s", cur.goTo(self.pos.x, self.pos.y), string.rep(" ", #self.text)))
+		-- TODO: take the background elements from the "state.static_collection.background"
+		utils:puts(self.text, self.pos, self.boundaries, { clear = true })
 	end
 	self.pos = data.pos
-	self:draw({ pos = data.pos, text = self.text, color = self.color, lf = self.lock_frames })
+	self:draw({ pos = data.pos, text = self.text, color = self.color, lf = self.lock_frames }, self.boundaries)
 end
 
 ---------------------------------------------------------------------------------------------------------
@@ -199,7 +196,7 @@ return {
 	-- Other
 	ACTION = ACTION,
 	COLOR = COLOR,
-	truecolor = col.truecolor,
+	truecolor = utils.colors.truecolor,
 	call_action = call_action,
 	-- UI Entities
 	Text = Text,

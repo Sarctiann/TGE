@@ -125,7 +125,7 @@ end
 -- TODO: create secure writer (that checks the game dimensions before write)
 
 --- Write in the screen checking the given boundaries
---- @param data string
+--- @param data string -- TODO: should be string[]
 --- @param pos Point
 --- @param bound Boundaries
 --- @param align boolean | nil

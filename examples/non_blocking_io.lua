@@ -1,7 +1,7 @@
 local tge = require("tge")
 
 local game = tge.game.new({
-	width = 120,
+	width = 150,
 	height = 40,
 	frame_rate = 30,
 	show_status = { Author = "Sarctiann" },

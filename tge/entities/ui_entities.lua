@@ -5,9 +5,11 @@ local ACTION = {
 	draw = 1,
 	clear = 2,
 	move = 3,
-	copy = 4,
-	move_or_draw = 5,
+	move_or_draw = 4,
+	copy = 5,
 	copy_or_draw = 6,
+	update = 7,
+	update_or_draw = 8,
 }
 
 local call_action = {
@@ -20,14 +22,20 @@ local call_action = {
 	[3] = function(ui_element, data)
 		ui_element["move"](ui_element, data)
 	end,
-	[4] = function(ui_element, data)
-		ui_element["copy"](ui_element, data)
-	end,
-	[5] = function(ui_element, data, boundaries)
+	[4] = function(ui_element, data, boundaries)
 		return ui_element["more_or_draw"](ui_element, data, boundaries)
+	end,
+	[5] = function(ui_element, data)
+		ui_element["copy"](ui_element, data)
 	end,
 	[6] = function(ui_element, data, boundaries)
 		return ui_element["copy_or_draw"](ui_element, data, boundaries)
+	end,
+	[7] = function(ui_element, data)
+		return ui_element["update"](ui_element, data)
+	end,
+	[8] = function(ui_element, data, boundaries)
+		return ui_element["update_or_draw"](ui_element, data, boundaries)
 	end,
 }
 
@@ -72,9 +80,11 @@ end
 --- @field public draw fun(self, data: any, boundaries: Boundaries): self Draws the UI entity on the screen and returns the instance
 --- @field public clear fun(self, patch: any): nil Clears the UI entity from the screen
 --- @field public move fun(self, data: any, patch: any): nil Moves the UI entity in the specified direction
---- @field public copy fun(self, data: any): nil Creates a copy of the UI entity
 --- @field public move_or_draw fun(self, data: any, boundaries: Boundaries, patch: any): self Tries to move the instance or draws and returns it
+--- @field public copy fun(self, data: any): nil Creates a copy of the UI entity
 --- @field public copy_or_draw fun(self, data: any, boundaries: Boundaries): self Tries to copy the instance or draws and returns it
+--- @field public update fun(self, data: any): nil Updates the UI entity with the new data
+--- @field public update_or_draw fun(self, data: any, boundaries: Boundaries): self Tries to update the instance or draws and returns it
 local UIEntity = {
 	locked_until = nil,
 	lock_frames = 1,
@@ -88,16 +98,23 @@ local UIEntity = {
 	move = function()
 		not_implemented("MOVE")
 	end,
-	copy = function()
-		not_implemented("COPY")
-	end,
 	move_or_draw = function()
 		---@diagnostic disable-next-line: missing-return
 		not_implemented("MOVE_OR_DRAW")
 	end,
+	copy = function()
+		not_implemented("COPY")
+	end,
 	copy_or_draw = function()
 		---@diagnostic disable-next-line: missing-return
 		not_implemented("COPY_OR_DRAW")
+	end,
+	update = function()
+		not_implemented("UPDATE")
+	end,
+	update_or_draw = function()
+		---@diagnostic disable-next-line: missing-return
+		not_implemented("UPDATE_OR_DRAW")
 	end,
 }
 UIEntity.__index = UIEntity
@@ -109,6 +126,7 @@ UIEntity.__index = UIEntity
 --- @field public text string | string[]
 --- @field public color Color | nil
 --- @field public lock_frames integer
+--- @field public align boolean | nil
 local Text = {}
 Text.__index = Text
 setmetatable(Text, UIEntity)
@@ -116,19 +134,20 @@ setmetatable(Text, UIEntity)
 --- Creates a Text ui_element
 
 --- Creates and draws a Text ui_element and return the instance
---- @param data {text: string | string[], color: Color | nil, lf: integer | nil}
+--- @param data {text: string | string[], color: Color | nil, lf: integer | nil, align: boolean | nil}
 --- @param boundaries Boundaries
 function Text.new(data, boundaries)
 	return setmetatable({
 		text = data.text,
 		color = data.color,
 		lock_frames = data.lf,
+		align = data.align,
 		boundaries = boundaries,
 	}, Text)
 end
 
 --- Creates and draws a Text ui_element and return the instance
---- @param data {pos: Point, text: string | string[], color: Color | nil, lf: integer | nil}
+--- @param data {pos: Point, text: string | string[], color: Color | nil, lf: integer | nil, align: boolean | nil}
 --- @param boundaries Boundaries
 function Text:draw(data, boundaries)
 	self = {
@@ -136,10 +155,11 @@ function Text:draw(data, boundaries)
 		text = data.text,
 		color = data.color,
 		lock_frames = data.lf,
+		align = data.align,
 		boundaries = boundaries,
 	}
 
-	utils:puts(data.text, data.pos, boundaries, { color = data.color })
+	utils:puts(data.text, data.pos, boundaries, { color = data.color, align = data.align })
 
 	return setmetatable(self, Text)
 end
@@ -148,11 +168,13 @@ end
 --- @param data {pos: Point}
 function Text:move(data)
 	if self.pos then
-		-- TODO: take the background elements from the "state.static_collection.background"
-		utils:puts(self.text, self.pos, self.boundaries, { clear = true })
+		utils:puts(self.text, self.pos, self.boundaries, { clear = true, align = self.align })
 	end
 	self.pos = data.pos
-	self:draw({ pos = data.pos, text = self.text, color = self.color, lf = self.lock_frames }, self.boundaries)
+	self:draw(
+		{ pos = data.pos, text = self.text, color = self.color, lf = self.lock_frames, align = self.align },
+		self.boundaries
+	)
 end
 
 ---------------------------------------------------------------------------------------------------------

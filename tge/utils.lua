@@ -173,8 +173,6 @@ function Utils:puts(data, pos, bound, options)
 				string.format("%s%s%s%s%s%s", self.cursor.goTo(fpos.x, fpos.y + i - 1), fg, bg, fline, rfg, rbg)
 			)
 		end
-	else
-		self:exit_with_error("trying to write out of bound")
 	end
 end
 

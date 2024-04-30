@@ -19,8 +19,8 @@ local Text, ACTION, COLOR = ui.Text, ui.ACTION, ui.COLOR
 
 local t = Text.new({
 	text = "TGE",
-	color = { fg = ui.truecolor(52, 52, 52), bg = COLOR.Yellow },
-	lf = 10,
+	color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
+	lf = 7,
 }, Boundaries.new(1, 1, 150, 40))
 
 game.on_event = function(e)
@@ -28,15 +28,17 @@ game.on_event = function(e)
 		game:exit()
 	elseif e.event and e.event ~= "press" then
 		local x, y = e.x, e.y
-		if x <= game.dimensions.width and y <= game.dimensions.height then
+		if x > 0 and x <= game.dimensions.width and y <= game.dimensions.height then
 			q:enqueue({
 				action = ACTION.move,
 				when = game.sf,
 				ui_element = t,
 				data = {
-					pos = { x = x - 1, y = y - 1 },
+					pos = { x = x - 1, y = y },
 				},
 			})
+			-- else
+			-- 	tge.utils:exit_with_error("Trying to write out of bound")
 		end
 	end
 end

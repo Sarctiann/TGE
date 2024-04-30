@@ -125,23 +125,51 @@ end
 -- TODO: create secure writer (that checks the game dimensions before write)
 
 --- Write in the screen checking the given boundaries
---- @param data string -- TODO: should be string[]
+--- @param data string | string[]
 --- @param pos Point
+--- @param color Color | nil
 --- @param bound Boundaries
 --- @param align boolean | nil
-function Utils:puts(data, pos, bound, align)
+function Utils:puts(data, pos, color, bound, align)
 	align = align or false
 	local fpos = pos
-	local fdata = data
+	local fdata = {}
+	if type(data) == "string" then
+		table.insert(fdata, data)
+	else
+		fdata = data
+	end
 	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
 		if align then
-			fpos.x = bound.right - pos.x <= #data and pos.x or bound.right - #data
-			-- TODO: align pos.y
-			fdata = string.sub(data, 1, bound.right)
+			for i, line in ipairs(fdata) do
+				if pos.x + #line > bound.right then
+					fdata[i] = string.sub(line, 1, bound.right - pos.x + 1)
+				end
+			end
+			if pos.y + #fdata > bound.bottom then
+				fpos.y = bound.bottom - #fdata + 1
+			end
 		else
-			fdata = string.sub(data, 1, bound.right - pos.x + 1)
+			for i, line in ipairs(fdata) do
+				if pos.x + #line > bound.right then
+					fdata[i] = string.sub(line, 1, bound.right - pos.x + 1)
+				end
+				if pos.y + i > bound.bottom then
+					table.remove(fdata, i)
+				end
+			end
 		end
-		self.console:write(string.format("%s%s", self.cursor.goTo(fpos.x, fpos.y), fdata))
+		---@diagnostic disable-next-line: param-type-mismatch
+		local fg = color and color.fg and self.colors.fg(color.fg) or ""
+		---@diagnostic disable-next-line: param-type-mismatch
+		local bg = color and color.bg and self.colors.bg(color.bg) or ""
+		local rfg = color and color.fg and self.colors.resetFg or ""
+		local rbg = color and color.bg and self.colors.resetBg or ""
+		for i, line in ipairs(fdata) do
+			self.console:write(
+				string.format("%s%s%s%s%s%s", self.cursor.goTo(fpos.x, fpos.y + i - 1), fg, bg, line, rfg, rbg)
+			)
+		end
 	else
 		self:exit_with_error("trying to write out of bound")
 	end

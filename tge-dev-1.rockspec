@@ -1,13 +1,13 @@
 package = "TGE"
 version = "dev-1"
 source = {
-	url = "git+ssh://git@github.com/Sarctiann/TGE.git",
+	url = "https://github.com/Sarctiann/TGE.git",
 }
 description = {
 	summary = "[Text | Terminal] Game Engine",
 	detailed = "An attempt to create a simple text-based game engine",
-	homepage = "*** please enter a project homepage ***",
-	license = "*** please specify a license ***",
+	homepage = "*** not yet ***",
+	license = "*** not yet ***",
 }
 dependencies = {
 	"lua >= 5.3",
@@ -17,7 +17,19 @@ build = {
 	type = "builtin",
 	modules = {
 		tge = "tge.lua",
-		["tge.init"] = "tge/init.lua",
+		["tge.connection"] = "tge/connection.lua",
+		["tge.core"] = "tge/core.lua",
+		["tge.entities"] = "tge/entities.lua",
+		["tge.entities.boundaries"] = "tge/entities/boundaries.lua",
+		["tge.entities.brief"] = "tge/entities/brief.lua",
+		["tge.entities.dimensions"] = "tge/entities/dimensions.lua",
+		["tge.entities.point"] = "tge/entities/point.lua",
+		["tge.entities.seconds_frames"] = "tge/entities/seconds_frames.lua",
+		["tge.entities.ui_entities"] = "tge/entities/ui_entities.lua",
+		["tge.game"] = "tge/game.lua",
+		["tge.loader"] = "tge/loader.lua",
+		["tge.queue"] = "tge/queue.lua",
+		["tge.state"] = "tge/state.lua",
 		["tge.utils"] = "tge/utils.lua",
 	},
 }

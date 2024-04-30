@@ -1,5 +1,5 @@
 local box = require("luabox")
-local write_as_human = require("tge.utils").write_as_human
+local write_as_human = require("tge.utils").write_as_human_old
 
 local text = "  Hello Terminal Game Engine \u{f256}  "
 
@@ -50,6 +50,9 @@ console.onData = function(data)
 
 	if keyData ~= nil then
 		if keyData.key == "ctrl" and keyData.char == "c" then
+			console:write("\x1b[2j\x1b[H") -- Clear the screen and returns the prompt to the top
+			cursor.goTo(1, 1)
+			console:write("\n")
 			console:write(cursor.show)
 			console:setMode(0)
 			console:exitMouseMode()

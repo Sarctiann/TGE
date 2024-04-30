@@ -20,6 +20,7 @@ build = {
 		["tge.connection"] = "tge/connection.lua",
 		["tge.core"] = "tge/core.lua",
 		["tge.entities"] = "tge/entities.lua",
+		["tge.entities.boundaries"] = "tge/entities/boundaries.lua",
 		["tge.entities.brief"] = "tge/entities/brief.lua",
 		["tge.entities.dimensions"] = "tge/entities/dimensions.lua",
 		["tge.entities.point"] = "tge/entities/point.lua",

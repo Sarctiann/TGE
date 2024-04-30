@@ -12,18 +12,19 @@ local entities = require("tge.entities")
 --- @field public debug boolean | table
 Game = {}
 
---- Creates a new game window.
+--- Creates a.new game window.
 --- @param init {width: integer, height: integer, frame_rate: integer, show_status: boolean | table | nil, debug: boolean | nil}
 --- @return Game game
-function Game.New(init)
+function Game.new(init)
+	-- TODO: is there is space, draw a line to surround the game
 	if core.checkDimensions(init.width, init.height) == false then
 		utils:exit_with_error("The terminal is too small to create the game window.")
 	end
 	local queue = require("tge.queue")
 
 	return setmetatable({
-		queue = queue.New(),
-		dimensions = entities.Dimensions.New(init.width, init.height),
+		queue = queue.new(),
+		dimensions = entities.Dimensions.new(init.width, init.height),
 		frame_rate = init.frame_rate,
 		on_event = nil,
 		sf = entities.SecondsFrames.new(init.frame_rate),

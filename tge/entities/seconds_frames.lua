@@ -38,7 +38,7 @@ function SecondsFrames:to_frames()
 	return self.frame_rate * self.s + self.f
 end
 
---- Returns a New SecondsFrames
+--- Returns a.new SecondsFrames
 --- @param frame_rate integer frames per second
 --- @param seconds integer | nil
 --- @param frames integer | nil
@@ -103,7 +103,7 @@ function SecondsFrames.new(frame_rate, seconds, frames)
 	})
 end
 
---- Creates a new SecondsFrames from frames (integer)
+--- Creates a.new SecondsFrames from frames (integer)
 --- @param frames integer
 --- @param frame_rate integer
 --- @return SecondsFrames sf

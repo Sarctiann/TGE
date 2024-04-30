@@ -1,6 +1,6 @@
 local tge = require("tge")
 
-local game = tge.game.New({
+local game = tge.game.new({
 	width = 120,
 	height = 40,
 	frame_rate = 30,
@@ -17,8 +17,8 @@ local Text, ACTION, COLOR = ui.Text, ui.ACTION, ui.COLOR
 -- game.add_panel({91, 1 120, 38}, {id = "chat", with_border = "solid", title = "Chat", title_align = "left"})
 -- game.add_panel({1, 39, 120, 40}, {id = "status", with_border = "line"})
 
-local t = Text.New({
-	text = "TGE\n",
+local t = Text.new({
+	text = "TGE",
 	color = { fg = ui.truecolor(52, 52, 52), bg = COLOR.Yellow },
 	lf = 10,
 })

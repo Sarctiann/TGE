@@ -5,7 +5,7 @@ local SecondsFrames = require("tge.entities.seconds_frames")
 Queue = {}
 
 --- @return Queue queue
-function Queue.New()
+function Queue.new()
 	return setmetatable({
 		brief_queue = {},
 	}, {
@@ -16,7 +16,7 @@ function Queue.New()
 	})
 end
 
---- queue a new brief in its corresponding order based on its "when" attribute.
+--- queue a.new brief in its corresponding order based on its "when" attribute.
 --- @param brief Brief
 function Queue:enqueue(brief)
 	local uelu = brief.ui_element.locked_until

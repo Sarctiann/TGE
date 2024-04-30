@@ -121,7 +121,7 @@ setmetatable(Text, UIEntity)
 
 --- Creates and draws a Text ui_element and return the instance
 --- @param data {text: string, color: Color | nil, lf: integer | nil}
-function Text.New(data)
+function Text.new(data)
 	return setmetatable({
 		text = data.text,
 		color = data.color,
@@ -148,7 +148,7 @@ function Text:draw(data)
 	return setmetatable(self, Text)
 end
 
---- Moves the text instance to a new location
+--- Moves the text instance to a.new location
 --- @param data {pos: Point}
 function Text:move(data)
 	if self.pos then

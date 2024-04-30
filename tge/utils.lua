@@ -124,4 +124,27 @@ end
 
 -- TODO: create secure writer (that checks the game dimensions before write)
 
+--- Write in the screen checking the given boundaries
+--- @param data string
+--- @param pos Point
+--- @param bound Boundaries
+--- @param align boolean | nil
+function Utils:puts(data, pos, bound, align)
+	align = align or false
+	local fpos = pos
+	local fdata = data
+	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
+		if align then
+			fpos.x = bound.right - pos.x <= #data and pos.x or bound.right - #data
+			-- TODO: align pos.y
+			fdata = string.sub(data, 1, bound.right)
+		else
+			fdata = string.sub(data, 1, bound.right - pos.x + 1)
+		end
+		self.console:write(string.format("%s%s", self.cursor.goTo(fpos.x, fpos.y), fdata))
+	else
+		self:exit_with_error("trying to write out of bound")
+	end
+end
+
 return Utils

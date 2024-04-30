@@ -11,7 +11,7 @@ local Brief = {}
 --- @param action ACTION What the element should do
 --- @param data table The required data for the element's action.
 --- @param when SecondsFrames | nil The delay time before puting the element
---- @return Brief brief # A new brief
+--- @return Brief brief # A.new brief
 function Brief.new(ui_element, action, data, when)
 	return setmetatable({}, {
 		__index = { ui_element = ui_element, action = action, data = data, when = when },

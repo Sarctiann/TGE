@@ -40,7 +40,6 @@ local call_action = {
 }
 
 -- I had to rewrite this enum because the LS was not working properly identifying the values
-
 --- @enum COLOR
 local COLOR = {
 	Black = 0,
@@ -69,151 +68,6 @@ local COLOR = {
 --- @field fg COLOR | TrueColor | nil
 --- @field bg COLOR | TrueColor | nil
 
-local function not_implemented(action)
-	utils:exit_with_error("%s action is not implemented by this UI Entity", action)
-end
-
---- @class UIEntity
---- @field public boundaries Boundaries The boundaries of the UI entity
---- @field public lock_frames integer The ammount of frames must wait to unlock
---- @field public locked_until SecondsFrames | nil The time in seconds and frames until the entity is unlocked
---- @field public draw fun(self, data: any, boundaries: Boundaries): self Draws the UI entity on the screen and returns the instance
---- @field public clear fun(self, patch: any): nil Clears the UI entity from the screen
---- @field public move fun(self, data: any, patch: any): nil Moves the UI entity in the specified direction
---- @field public move_or_draw fun(self, data: any, boundaries: Boundaries, patch: any): self Tries to move the instance or draws and returns it
---- @field public copy fun(self, data: any): nil Creates a copy of the UI entity
---- @field public copy_or_draw fun(self, data: any, boundaries: Boundaries): self Tries to copy the instance or draws and returns it
---- @field public update fun(self, data: any): nil Updates the UI entity with the new data
---- @field public update_or_draw fun(self, data: any, boundaries: Boundaries): self Tries to update the instance or draws and returns it
-local UIEntity = {
-	locked_until = nil,
-	lock_frames = 1,
-	draw = function()
-		---@diagnostic disable-next-line: missing-return
-		not_implemented("DRAW")
-	end,
-	clear = function()
-		not_implemented("CLEAR")
-	end,
-	move = function()
-		not_implemented("MOVE")
-	end,
-	move_or_draw = function()
-		---@diagnostic disable-next-line: missing-return
-		not_implemented("MOVE_OR_DRAW")
-	end,
-	copy = function()
-		not_implemented("COPY")
-	end,
-	copy_or_draw = function()
-		---@diagnostic disable-next-line: missing-return
-		not_implemented("COPY_OR_DRAW")
-	end,
-	update = function()
-		not_implemented("UPDATE")
-	end,
-	update_or_draw = function()
-		---@diagnostic disable-next-line: missing-return
-		not_implemented("UPDATE_OR_DRAW")
-	end,
-}
-UIEntity.__index = UIEntity
-
----------------------------------------------------------------------------------------------------------
-
---- @class Text : UIEntity to put/move/remove text on screen ( size: 1,1 )
---- @field public pos Point | nil
---- @field public text string | string[]
---- @field public color Color | nil
---- @field public lock_frames integer
---- @field public align boolean | nil
-local Text = {}
-Text.__index = Text
-setmetatable(Text, UIEntity)
-
---- Creates a Text ui_element
-
---- Creates and draws a Text ui_element and return the instance
---- @param data {text: string | string[], color: Color | nil, lf: integer | nil, align: boolean | nil}
---- @param boundaries Boundaries
-function Text.new(data, boundaries)
-	return setmetatable({
-		text = data.text,
-		color = data.color,
-		lock_frames = data.lf,
-		align = data.align,
-		boundaries = boundaries,
-	}, Text)
-end
-
---- Creates and draws a Text ui_element and return the instance
---- @param data {pos: Point, text: string | string[], color: Color | nil, lf: integer | nil, align: boolean | nil}
---- @param boundaries Boundaries
-function Text:draw(data, boundaries)
-	self = {
-		pos = data.pos,
-		text = data.text,
-		color = data.color,
-		lock_frames = data.lf,
-		align = data.align,
-		boundaries = boundaries,
-	}
-
-	utils:puts(data.text, data.pos, boundaries, { color = data.color, align = data.align })
-
-	return setmetatable(self, Text)
-end
-
---- Moves the text instance to a.new location
---- @param data {pos: Point}
-function Text:move(data)
-	if self.pos then
-		utils:puts(self.text, self.pos, self.boundaries, { clear = true, align = self.align })
-	end
-	self.pos = data.pos
-	self:draw(
-		{ pos = data.pos, text = self.text, color = self.color, lf = self.lock_frames, align = self.align },
-		self.boundaries
-	)
-end
-
----------------------------------------------------------------------------------------------------------
-
---- @class Unit : UIEntity to put/move/remove the minimal symmetrical ui element on screen ( size: 2,1 )
-local Unit = {}
-Unit.__index = Unit
-setmetatable(Unit, UIEntity)
-
----------------------------------------------------------------------------------------------------------
-
---- @class Line : Unit to put/move/remove/delimite unit-based lines on screen ( size: 2n,m )
-local Line = {}
-Line.__index = Line
-setmetatable(Line, Unit)
-
----------------------------------------------------------------------------------------------------------
-
---- @class Box : Unit to put/move/remove/delimite unit-based spaces on screen ( size: (2n*m)*(2o,p) )
-local Box = {}
-Box.__index = Box
-setmetatable(Box, Unit)
-
----------------------------------------------------------------------------------------------------------
-
---- @class Sprite : Unit to put/move/remove symmetrical unit-based ui element on screen ( size: (2n*m)^o )
-local Sprite = {}
-Sprite.__index = Sprite
-setmetatable(Sprite, Unit)
-
----------------------------------------------------------------------------------------------------------
-
---- @class NF_Icon : UIEntity to put/move/remove icons on screen ( size: [ 1,1 | 2,1 ] )
-local NF_Icon = {}
-NF_Icon.__index = NF_Icon
-setmetatable(NF_Icon, UIEntity)
-
----------------------------------------------------------------------------------------------------------
-
 return {
 	-- Other
 	ACTION = ACTION,
@@ -221,10 +75,10 @@ return {
 	truecolor = utils.colors.truecolor,
 	call_action = call_action,
 	-- UI Entities
-	Text = Text,
-	Unit = Unit,
-	Line = Line,
-	Box = Box,
-	Sprite = Sprite,
-	NF_Icon = NF_Icon,
+	Text = require("tge.entities.ui_entities.text"),
+	Unit = require("tge.entities.ui_entities.unit"),
+	Line = require("tge.entities.ui_entities.line"),
+	Box = require("tge.entities.ui_entities.box"),
+	Sprite = require("tge.entities.ui_entities.sprite"),
+	NFIcon = require("tge.entities.ui_entities.nf_icon"),
 }

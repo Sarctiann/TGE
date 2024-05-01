@@ -19,8 +19,10 @@ local Text, ACTION, COLOR = ui.Text, ui.ACTION, ui.COLOR
 
 local t = Text.new({
 	text = "TGE",
-	color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
-	lf = 7,
+	options = {
+		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
+		lf = 7,
+	},
 }, Boundaries.new(1, 1, 150, 40))
 
 game.on_event = function(e)

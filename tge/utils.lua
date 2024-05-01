@@ -122,8 +122,6 @@ function Utils:show_status(game, data)
 	self.console:write(string.format("%s%s%s| %s |  %s", position, color, line, status_str, reset))
 end
 
--- TODO: create secure writer (that checks the game dimensions before write)
-
 --- Write in the screen checking the given boundaries
 --- @param data string | string[]
 --- @param pos Point

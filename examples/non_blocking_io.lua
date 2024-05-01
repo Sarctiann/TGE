@@ -21,13 +21,45 @@ local t = Text.new({
 	text = "TGE",
 	options = {
 		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
-		lf = 7,
+		lf = 1,
 	},
 }, Boundaries.new(1, 1, 150, 40))
+
+local details = true
+local message = {
+	"Terminal Game Engine",
+	"Is a text based engine that provides a high level api",
+	"to asynchronously read and write in to the terminal screen",
+}
+
+local function toggle_text()
+	if details then
+		t:update({ text = message, options = { align = true } })
+	end
+	t:update({ text = "TGE", options = { align = false } })
+end
 
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
 		game:exit()
+	elseif e.char == "h" then
+		details = not details
+		q:enqueue({
+			action = ACTION.update,
+			when = game.sf,
+			ui_element = t,
+			data = {
+				text = message,
+				options = { align = false },
+			},
+		})
+	elseif e.char == "c" then
+		q:enqueue({
+			action = ACTION.clear,
+			when = game.sf,
+			ui_element = t,
+			data = {},
+		})
 	elseif e.event and e.event ~= "press" then
 		local x, y = e.x, e.y
 		if x > 0 and x <= game.dimensions.width and y <= game.dimensions.height then

@@ -78,7 +78,7 @@ end
 --- @param err string error message
 function Utils:exit_with_error(err, ...)
 	local f_err = string.format(err, ...)
-	io.stderr:write(string.format("%sError: %s%s\n", self.colors.fg(self.colors.red), f_err, self.colors.resetFg))
+	io.stderr:write(string.format("\n%sError: %s%s\n", self.colors.fg(self.colors.red), f_err, self.colors.resetFg))
 
 	local cons = self.console
 	local curs = self.cursor
@@ -136,7 +136,7 @@ function Utils:puts(data, pos, bound, options)
 	if type(data) == "string" then
 		table.insert(fdata, data)
 	else
-		fdata = data
+		fdata = { table.unpack(data) }
 	end
 	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
 		if align then

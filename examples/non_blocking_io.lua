@@ -4,7 +4,7 @@ local game = tge.game.new({
 	width = 150,
 	height = 40,
 	frame_rate = 30,
-	show_status = { Author = "Sarctiann" },
+	show_status = { Author = "Sarctiann", keys = "Ctrl+c, c, h, H" },
 	debug = true,
 })
 
@@ -34,6 +34,16 @@ local message = {
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
 		game:exit()
+	elseif e.char == "H" then
+		q:enqueue({
+			action = ACTION.update,
+			when = game.sf,
+			ui_element = t,
+			data = {
+				text = "TGE",
+				options = { align = false },
+			},
+		})
 	elseif e.char == "h" then
 		q:enqueue({
 			action = ACTION.update,
@@ -41,7 +51,7 @@ game.on_event = function(e)
 			ui_element = t,
 			data = {
 				text = message,
-				options = { align = false },
+				options = { align = true },
 			},
 		})
 	elseif e.char == "c" then

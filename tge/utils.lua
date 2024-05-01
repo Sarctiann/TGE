@@ -146,7 +146,7 @@ function Utils:puts(data, pos, bound, options)
 		else
 			for i, line in ipairs(fdata) do
 				if pos.x + #line > bound.right then
-					fdata[i] = string.sub(line, 1, bound.right - pos.x + 1)
+					fdata[i] = string.sub(line, 1, bound.right - pos.x)
 				end
 				if pos.y + i > bound.bottom then
 					table.remove(fdata, i)

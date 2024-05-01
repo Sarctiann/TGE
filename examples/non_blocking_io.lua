@@ -25,19 +25,11 @@ local t = Text.new({
 	},
 }, Boundaries.new(1, 1, 150, 40))
 
-local details = true
 local message = {
 	"Terminal Game Engine",
 	"Is a text based engine that provides a high level api",
 	"to asynchronously read and write in to the terminal screen",
 }
-
-local function toggle_text()
-	if details then
-		t:update({ text = message, options = { align = true } })
-	end
-	t:update({ text = "TGE", options = { align = false } })
-end
 
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
@@ -50,7 +42,7 @@ game.on_event = function(e)
 			ui_element = t,
 			data = {
 				text = message,
-				options = { align = false },
+				options = { align = true },
 			},
 		})
 	elseif e.char == "c" then

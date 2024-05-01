@@ -140,13 +140,8 @@ function Utils:puts(data, pos, bound, options)
 	end
 	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
 		if align then
-			for i, line in ipairs(fdata) do
-				if pos.x + #line > bound.right then
-					fdata[i] = string.sub(line, 1, bound.right - pos.x + 1)
-				end
-			end
-			if pos.y + #fdata > bound.bottom then
-				fpos.y = bound.bottom - #fdata + 1
+			if pos.y + #fdata + 1 > bound.bottom then
+				fpos.y = bound.bottom - #fdata - 1
 			end
 		else
 			for i, line in ipairs(fdata) do
@@ -167,8 +162,12 @@ function Utils:puts(data, pos, bound, options)
 		for i, line in ipairs(fdata) do
 			-- TODO: take the background elements from the "state.static_collection.background"
 			local fline = clear and string.rep(" ", #line) or line
+			local x = fpos.x
+			if pos.x + #line > bound.right then
+				x = bound.right - #line
+			end
 			self.console:write(
-				string.format("%s%s%s%s%s%s", self.cursor.goTo(fpos.x, fpos.y + i - 1), fg, bg, fline, rfg, rbg)
+				string.format("%s%s%s%s%s%s", self.cursor.goTo(x, fpos.y + i - 1), fg, bg, fline, rfg, rbg)
 			)
 		end
 	end

@@ -35,14 +35,13 @@ game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
 		game:exit()
 	elseif e.char == "h" then
-		details = not details
 		q:enqueue({
 			action = ACTION.update,
 			when = game.sf,
 			ui_element = t,
 			data = {
 				text = message,
-				options = { align = true },
+				options = { align = false },
 			},
 		})
 	elseif e.char == "c" then

@@ -96,7 +96,7 @@ end
 --- @vararg any
 function Utils:show_status(game, data)
 	local x, y = game.dimensions.width, game.dimensions.height
-	local position = self.cursor.goTo(1, y)
+	local position = self.cursor.goTo(1, y + 1)
 	local color = self.colors.fg(self.colors.black) .. self.colors.bg(self.colors.white)
 
 	local status = {}
@@ -106,20 +106,20 @@ function Utils:show_status(game, data)
 			status,
 			string.format(
 				"%s %s: %s %s",
-				self.colors.bg(self.colors.lightWhite),
+				self.colors.bg(self.colors.lightBlack),
 				k,
 				self.colors.bg(self.colors.white),
 				v
 			)
 		)
-		status_len = status_len + #k + #tostring(v) + 6
+		status_len = status_len + #k + #tostring(v) + 5
 	end
 
 	local status_str = table.concat(status, " | ")
-	local line = string.rep(" ", x - 6 - status_len)
+	local line = string.rep(" ", x - 9 - status_len)
 	local reset = self.colors.resetFg .. self.colors.resetBg
 
-	self.console:write(string.format("%s%s%s| %s |  %s", position, color, line, status_str, reset))
+	self.console:write(string.format("%s%s%s" .. "| %s |  %s", position, color, line, status_str, reset))
 end
 
 --- Write in the screen checking the given boundaries
@@ -131,6 +131,12 @@ function Utils:puts(data, pos, bound, options)
 	local color = options and options.color or nil
 	local align = options and options.align or false
 	local clear = options and options.clear or false
+	---@diagnostic disable-next-line: param-type-mismatch
+	local fg = color and color.fg and self.colors.fg(color.fg) or ""
+	---@diagnostic disable-next-line: param-type-mismatch
+	local bg = color and color.bg and self.colors.bg(color.bg) or ""
+	local rfg = color and color.fg and self.colors.resetFg or ""
+	local rbg = color and color.bg and self.colors.resetBg or ""
 	local fpos = pos
 	local fdata = {}
 	if type(data) == "string" then
@@ -141,30 +147,24 @@ function Utils:puts(data, pos, bound, options)
 	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
 		if align then
 			if pos.y + #fdata + 1 > bound.bottom then
-				fpos.y = bound.bottom - #fdata - 1
+				fpos.y = bound.bottom + 1 - #fdata
 			end
 		else
 			for i, line in ipairs(fdata) do
-				if pos.x + #line > bound.right then
-					fdata[i] = string.sub(line, 1, bound.right - pos.x)
-				end
-				if pos.y + i > bound.bottom then
-					table.remove(fdata, i)
+				if pos.x + #line + 1 > bound.right then
+					fdata[i] = string.sub(line, 1, bound.right + 1 - pos.x)
 				end
 			end
 		end
-		---@diagnostic disable-next-line: param-type-mismatch
-		local fg = color and color.fg and self.colors.fg(color.fg) or ""
-		---@diagnostic disable-next-line: param-type-mismatch
-		local bg = color and color.bg and self.colors.bg(color.bg) or ""
-		local rfg = color and color.fg and self.colors.resetFg or ""
-		local rbg = color and color.bg and self.colors.resetBg or ""
 		for i, line in ipairs(fdata) do
 			-- TODO: take the background elements from the "state.static_collection.background"
 			local fline = clear and string.rep(" ", #line) or line
 			local x = fpos.x
-			if pos.x + #line > bound.right then
-				x = bound.right - #line
+			if align and pos.x + #line + 1 > bound.right then
+				x = bound.right + 1 - #line
+			end
+			if not align and fpos.y + i > bound.bottom + 1 then
+				break
 			end
 			self.console:write(
 				string.format("%s%s%s%s%s%s", self.cursor.goTo(x, fpos.y + i - 1), fg, bg, fline, rfg, rbg)

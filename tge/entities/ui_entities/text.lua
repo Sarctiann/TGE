@@ -53,6 +53,13 @@ function Text:draw(data, boundaries)
 	return setmetatable(self, Text)
 end
 
+--- Clear the ui element from the screen
+function Text:clear()
+	if self.pos then
+		utils:puts(self.text, self.pos, self.boundaries, { clear = true, align = self.align })
+	end
+end
+
 --- Moves the text instance to a.new location
 --- @param data {pos: Point}
 function Text:move(data)
@@ -65,15 +72,8 @@ function Text:move(data)
 	}, self.boundaries)
 end
 
---- Clear the ui element from the screen
-function Text:clear()
-	if self.pos then
-		utils:puts(self.text, self.pos, self.boundaries, { clear = true, align = self.align })
-	end
-end
-
 --- Update the Text instance with the given data
---- @param data {pos: Point, text: string | string[], options: TextOptions}
+--- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
 function Text:update(data)
 	self:clear()
 	self.pos = data.pos or self.pos
@@ -81,9 +81,13 @@ function Text:update(data)
 	if data.options then
 		self.color = data.options.color or self.color
 		self.lock_frames = data.options.lf or self.lock_frames
-		self.align = data.options.align or self.align
+		if data.options.align ~= nil then
+			self.align = data.options.align
+		end
 	end
-	utils:puts(self.text, self.pos, self.boundaries, { color = self.color, align = self.align })
+	if self.pos then
+		utils:puts(self.text, self.pos, self.boundaries, { color = self.color, align = self.align })
+	end
 end
 
 return Text

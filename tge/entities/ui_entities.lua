@@ -6,10 +6,9 @@ local ACTION = {
 	clear = 2,
 	move = 3,
 	move_or_draw = 4,
-	copy = 5,
-	copy_or_draw = 6,
-	update = 7,
-	update_or_draw = 8,
+	update = 5,
+	update_or_draw = 6,
+	copy = 7,
 }
 
 local call_action = {
@@ -23,19 +22,16 @@ local call_action = {
 		ui_element["move"](ui_element, data)
 	end,
 	[4] = function(ui_element, data, boundaries)
-		return ui_element["more_or_draw"](ui_element, data, boundaries)
+		return ui_element["move_or_draw"](ui_element, data, boundaries)
 	end,
 	[5] = function(ui_element, data)
-		ui_element["copy"](ui_element, data)
+		ui_element["update"](ui_element, data)
 	end,
 	[6] = function(ui_element, data, boundaries)
-		return ui_element["copy_or_draw"](ui_element, data, boundaries)
-	end,
-	[7] = function(ui_element, data)
-		return ui_element["update"](ui_element, data)
-	end,
-	[8] = function(ui_element, data, boundaries)
 		return ui_element["update_or_draw"](ui_element, data, boundaries)
+	end,
+	[7] = function(ui_element, data, boundaries)
+		return ui_element["copy"](ui_element, data, boundaries)
 	end,
 }
 

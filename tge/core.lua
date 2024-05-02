@@ -75,7 +75,8 @@ function Core:start_main_loop(game)
 			local data = type(game.show_status) == "table" and game.show_status or {}
 			if game.debug then
 				data.Ticks = game.sf
-				data.Briefs = briefs and #briefs or 0
+				data["Queued Briefs"] = #game.queue
+				data["Active Briefs"] = briefs and #briefs or 0
 			end
 			self:show_status(game, data)
 		end

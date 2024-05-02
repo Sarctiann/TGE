@@ -2,12 +2,11 @@ local tge = require("tge")
 local SecondsFrames = require("tge.entities.seconds_frames")
 
 local game = tge.game.new({
-	width = 150,
+	width = 160,
 	height = 40,
 	frame_rate = 30,
 	show_status = {
-		Author = "Sarctiann",
-		keys = "Ctrl+c (quit), c (clear), h (large), H (short), a (align), A (unalign)",
+		Keys = "Ctrl+c \u{f0a48} | c \u{f1da} 10fr \u{eabf} | h \u{f13a7} | H \u{f13a3} | a \u{f038} | A \u{f036} |",
 	},
 	debug = true,
 })
@@ -27,7 +26,7 @@ local t = Text.new({
 		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
 		lf = 5,
 	},
-}, Boundaries.new(1, 1, 150, 40))
+}, Boundaries.new(1, 1, 160, 39))
 
 local message = {
 	"Terminal Game Engine",

@@ -1,4 +1,5 @@
 local clock = os.clock
+local utf8 = require("utf8")
 local uv = require("luv")
 local luabox = require("luabox")
 
@@ -96,11 +97,11 @@ end
 --- @vararg any
 function Utils:show_status(game, data)
 	local x, y = game.dimensions.width, game.dimensions.height
-	local position = self.cursor.goTo(1, y + 1)
+	local position = self.cursor.goTo(1, y)
 	local color = self.colors.fg(self.colors.black) .. self.colors.bg(self.colors.white)
 
 	local status = {}
-	local status_len = 0
+	local status_len = #data < 2 and -3 or 0
 	for k, v in pairs(data) do
 		table.insert(
 			status,
@@ -112,14 +113,14 @@ function Utils:show_status(game, data)
 				v
 			)
 		)
-		status_len = status_len + #k + #tostring(v) + 5
+		status_len = status_len + utf8.len(k) + utf8.len(tostring(v)) + 7
 	end
 
 	local status_str = table.concat(status, " | ")
-	local line = string.rep(" ", x - 9 - status_len)
+	local line = string.rep(" ", x - 2 - status_len)
 	local reset = self.colors.resetFg .. self.colors.resetBg
 
-	self.console:write(string.format("%s%s%s" .. "| %s |  %s", position, color, line, status_str, reset))
+	self.console:write(string.format("%s%s%s%s  %s", position, color, line, status_str, reset))
 end
 
 --- Write in the screen checking the given boundaries
@@ -146,22 +147,22 @@ function Utils:puts(data, pos, bound, options)
 	end
 	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
 		if align then
-			if pos.y + #fdata + 1 > bound.bottom then
+			if pos.y + #fdata > bound.bottom then
 				fpos.y = bound.bottom + 1 - #fdata
 			end
 		else
 			for i, line in ipairs(fdata) do
-				if pos.x + #line + 1 > bound.right then
+				if pos.x + utf8.len(line) + 1 > bound.right then
 					fdata[i] = string.sub(line, 1, bound.right + 1 - pos.x)
 				end
 			end
 		end
 		for i, line in ipairs(fdata) do
 			-- TODO: take the background elements from the "state.static_collection.background"
-			local fline = clear and string.rep(" ", #line) or line
+			local fline = clear and string.rep(" ", utf8.len(line)) or line
 			local x = fpos.x
-			if align and pos.x + #line + 1 > bound.right then
-				x = bound.right + 1 - #line
+			if align and pos.x + utf8.len(line) > bound.right then
+				x = bound.right + 1 - utf8.len(line)
 			end
 			if not align and fpos.y + i > bound.bottom + 1 then
 				break

@@ -24,7 +24,7 @@ local t = Text.new({
 	text = "TGE",
 	options = {
 		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
-		lf = 5,
+		lf = 1,
 	},
 }, Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 1))
 
@@ -82,7 +82,7 @@ game.on_event = function(e)
 		})
 	elseif e.event and e.event ~= "press" then
 		local x, y = e.x, e.y
-		if x > 0 and x <= game.dimensions.width and y <= game.dimensions.height then
+		if x > 0 and x <= game.dimensions.width and y <= game.dimensions.height - 1 then
 			q:enqueue({
 				action = ACTION.move,
 				when = game.sf,

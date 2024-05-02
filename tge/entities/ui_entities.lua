@@ -1,13 +1,20 @@
 local utils = require("tge.utils")
 
---- @enum ACTION
+--- @alias ACTION 1 | 2 | 3 | 4 | 5 | 6 | 7
 local ACTION = {
+	---| draw: Creates the UI element, draws it on the screen and returns the instance
 	draw = 1,
+	---| clear: Clears the UI element from the screen
 	clear = 2,
+	---| move: Moves the UI element on the screen
 	move = 3,
+	---| move_or_draw: Moves the UI element on the screen and returns the instance
 	move_or_draw = 4,
+	---| update: Updates the UI element
 	update = 5,
+	---| update_or_draw: Updates the UI element and returns the instance
 	update_or_draw = 6,
+	---| copy: Copies the UI element and returns the instance
 	copy = 7,
 }
 

@@ -26,7 +26,7 @@ local t = Text.new({
 		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
 		lf = 5,
 	},
-}, Boundaries.new(1, 1, 160, 39))
+}, Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 1))
 
 local message = {
 	"Terminal Game Engine",

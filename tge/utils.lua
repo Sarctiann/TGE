@@ -94,33 +94,46 @@ function Utils:exit_with_error(err, ...)
 end
 
 --- @param game Game
---- @vararg any
-function Utils:show_status(game, data)
+--- @param data table
+--- @param y_offset integer | nil
+--- @param align 'left' | 'right' | 'center' | nil
+function Utils:show_status(game, data, y_offset, align)
 	local x, y = game.dimensions.width, game.dimensions.height
+	if y_offset then
+		y = y - y_offset
+	end
+
 	local position = self.cursor.goTo(1, y)
-	local color = self.colors.fg(self.colors.black) .. self.colors.bg(self.colors.white)
+	local color = self.colors.fg(self.colors.cyan) .. self.colors.bg(self.colors.black)
 
 	local status = {}
-	local status_len = #data < 2 and -3 or 0
-	for k, v in pairs(data) do
+	local status_len = -3
+	for _, entry in pairs(data) do
 		table.insert(
 			status,
 			string.format(
 				"%s %s: %s %s",
 				self.colors.bg(self.colors.lightBlack),
-				k,
-				self.colors.bg(self.colors.white),
-				v
+				entry[1],
+				self.colors.bg(self.colors.black),
+				entry[2]
 			)
 		)
-		status_len = status_len + utf8.len(k) + utf8.len(tostring(v)) + 7
+		status_len = status_len + utf8.len(entry[1]) + utf8.len(tostring(entry[2])) + 7
 	end
 
 	local status_str = table.concat(status, " | ")
 	local line = string.rep(" ", x - 2 - status_len)
 	local reset = self.colors.resetFg .. self.colors.resetBg
-
-	self.console:write(string.format("%s%s%s%s  %s", position, color, line, status_str, reset))
+	if align and align == "left" then
+		self.console:write(string.format("%s%s%s%s  %s", position, color, status_str, line, reset))
+	elseif align and align == "center" then
+		local half_l1 = string.sub(line, 1, math.floor(#line / 2))
+		local half_l2 = string.sub(line, 1, math.ceil(#line / 2))
+		self.console:write(string.format("%s%s%s%s%s  %s", position, color, half_l1, status_str, half_l2, reset))
+	else
+		self.console:write(string.format("%s%s%s%s  %s", position, color, line, status_str, reset))
+	end
 end
 
 --- Write in the screen checking the given boundaries

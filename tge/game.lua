@@ -8,12 +8,12 @@ local entities = require("tge.entities")
 --- @field public frame_rate integer The frames per second of the game
 --- @field public on_event (fun(event: (keyboardEvent | mouseEvent)): nil) | nil The hook that is called when data from stdin is received. (Alias for luabux.Console -> console.onData).
 --- @field public sf SecondsFrames The seconds and frames of each second of the entire game life cycle
---- @field public show_status boolean
+--- @field public status_bar table | nil
 --- @field public debug boolean | table
 Game = {}
 
 --- Creates a.new game window.
---- @param init {width: integer, height: integer, frame_rate: integer, show_status: boolean | table | nil, debug: boolean | nil}
+--- @param init {width: integer, height: integer, frame_rate: integer, status_bar: table | nil, debug: boolean | nil}
 --- @return Game game
 function Game.new(init)
 	-- TODO: is there is space, draw a line to surround the game
@@ -28,7 +28,7 @@ function Game.new(init)
 		frame_rate = init.frame_rate,
 		on_event = nil,
 		sf = entities.SecondsFrames.new(init.frame_rate),
-		show_status = init.show_status and init.show_status or false,
+		status_bar = init.status_bar and init.status_bar,
 		debug = init.debug and init.debug or false,
 	}, {
 		__index = Game,

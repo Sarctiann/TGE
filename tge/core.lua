@@ -54,7 +54,7 @@ function Core:make_event_handler(handler)
 		if event == nil then
 			return
 		end
-
+		self.event_monitor = event
 		handler(event)
 	end
 	self.console.onData = event_loop
@@ -71,14 +71,27 @@ function Core:start_main_loop(game)
 			end
 		end
 
-		if game.show_status then
-			local data = type(game.show_status) == "table" and game.show_status or {}
-			if game.debug then
-				data.Ticks = game.sf
-				data["Queued Briefs"] = #game.queue
-				data["Active Briefs"] = briefs and #briefs or 0
-			end
+		if game.debug then
+			local e = self.event_monitor
+			local data = {
+				e and { "Key", string.format("%-9s", e.key) },
+				e and {
+					"Char",
+					string.format("%-3s", e.char == "\n" and "\\n" or e.char == "\t" and "\\t" or e.char),
+				},
+				e and { "Event", string.format("%-7s", e.event) },
+				e and { "Button", string.format("%-9s", e.button) },
+				e and { "X", string.format("%-3s", e.x) },
+				e and { "Y", string.format("%-3s", e.y) },
+				{ "Queued Briefs", #game.queue },
+				{ "Active Briefs", briefs and #briefs or 0 },
+				{ "Ticks", game.sf },
+			}
 			self:show_status(game, data)
+		end
+		if game.status_bar then
+			local data = type(game.status_bar) == "table" and game.status_bar or {}
+			self:show_status(game, data, game.debug and 1 or 0, "center")
 		end
 
 		-- This is basically the clock of the game

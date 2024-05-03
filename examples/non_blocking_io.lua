@@ -5,8 +5,11 @@ local game = tge.game.new({
 	width = 160,
 	height = 40,
 	frame_rate = 30,
-	show_status = {
-		Keys = "Ctrl+c \u{f0a48} | c \u{f1da} 10fr \u{eabf} | h \u{f13a7} | H \u{f13a3} | a \u{f038} | A \u{f036} |",
+	status_bar = {
+		{
+			"Listen Keys",
+			"Ctrl+c \u{f0a48} | c \u{f1da} 10fr \u{eabf} | h \u{f13a7} | H \u{f13a3} | a \u{f038} | A \u{f036} |",
+		},
 	},
 	debug = true,
 })
@@ -26,7 +29,7 @@ local t = Text.new({
 		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
 		lf = 1,
 	},
-}, Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 1))
+}, Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 local message = {
 	"Terminal Game Engine",
@@ -82,7 +85,7 @@ game.on_event = function(e)
 		})
 	elseif e.event and e.event ~= "press" then
 		local x, y = e.x, e.y
-		if x > 0 and x <= game.dimensions.width and y <= game.dimensions.height - 1 then
+		if x > 0 and x <= game.dimensions.width and y <= game.dimensions.height - 2 then
 			q:enqueue({
 				action = ACTION.move,
 				when = game.sf,

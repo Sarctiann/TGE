@@ -1,6 +1,5 @@
 local uv = require("luv")
 local Utils = require("tge.utils")
-local call_action = require("tge.entities.ui_entities").call_action
 
 --- @class Core : Utils
 --- @field private create_main_loop fun(self: self, interval: integer, callback: function)
@@ -67,7 +66,7 @@ function Core:start_main_loop(game)
 		local briefs = game.queue:dequeue(game.sf)
 		if briefs then
 			for _, brief in ipairs(briefs) do
-				call_action[brief.action](brief.ui_element, brief.data)
+				brief.ui_element:call_action(brief.action, brief.data, brief.boundaries)
 			end
 		end
 

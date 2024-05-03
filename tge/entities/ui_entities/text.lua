@@ -1,5 +1,7 @@
-local UIEntity = require("tge.entities.ui_entities.base_ui_entity")
+local base = require("tge.entities.ui_entities.base_ui_entity")
 local utils = require("tge.utils")
+
+local UIEntity, ACTION = base.UIEntity, base.ACTION
 
 --- @class Text : UIEntity to put/move/remove text on screen ( size: 1,1 )
 --- @field public pos Point | nil
@@ -8,6 +10,9 @@ local utils = require("tge.utils")
 --- @field public align boolean | nil
 local Text = {}
 Text.__index = Text
+Text[1] = function()
+	return "Text"
+end
 setmetatable(Text, UIEntity)
 
 --- @class TextOptions
@@ -35,7 +40,7 @@ end
 --- Creates and draws a Text ui_element and return the instance
 --- @param data {pos: Point, text: string | string[], options: TextOptions}
 --- @param boundaries Boundaries
-function Text:draw(data, boundaries)
+Text[ACTION.draw] = function(self, data, boundaries)
 	self = {
 		pos = data.pos,
 		text = data.text,
@@ -55,7 +60,7 @@ function Text:draw(data, boundaries)
 end
 
 --- Clear the ui element from the screen
-function Text:clear()
+Text[ACTION.clear] = function(self)
 	if self.pos then
 		utils:puts(self.text, self.pos, self.boundaries, { clear = true, align = self.align })
 	end
@@ -63,10 +68,10 @@ end
 
 --- Moves the text instance to a new location
 --- @param data {pos: Point}
-function Text:move(data)
-	self:clear()
+Text[ACTION.move] = function(self, data)
+	self[ACTION.clear](self)
 	self.pos = data.pos
-	self:draw({
+	self[ACTION.draw](self, {
 		pos = self.pos,
 		text = self.text,
 		options = { color = self.color, lf = self.lock_frames, align = self.align },
@@ -76,8 +81,8 @@ end
 --- Moves or Draw the Text instance in a new location, with the given data and return the instance
 --- @param data {pos: Point, text: string | string[], options: TextOptions}
 --- @param boundaries Boundaries
-function Text:move_or_draw(data, boundaries)
-	self:clear()
+Text[ACTION.move_or_draw] = function(self, data, boundaries)
+	self[ACTION.clear](self)
 	self.pos = data.pos
 	self.text = data.text
 	if data.options then
@@ -94,8 +99,8 @@ end
 
 --- Update the Text instance with the given data
 --- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
-function Text:update(data)
-	self:clear()
+Text[ACTION.update] = function(self, data)
+	self[ACTION.clear](self)
 	self.pos = data.pos or self.pos
 	self.text = data.text or self.text
 	if data.options then
@@ -113,8 +118,8 @@ end
 --- Update or Draw the Text instance with the given data and return the instance
 --- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
 --- @param boundaries Boundaries
-function Text:update_or_draw(data, boundaries)
-	self:clear()
+Text[ACTION.update_or_draw] = function(self, data, boundaries)
+	self[ACTION.clear](self)
 	self.pos = data.pos or self.pos
 	self.text = data.text or self.text
 	if data.options then
@@ -132,7 +137,7 @@ end
 --- Copy a Text instance and return the new instance
 --- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
 --- @param boundaries Boundaries
-function Text:copy(data, boundaries)
+Text[ACTION.copy] = function(self, data, boundaries)
 	local new_text = {
 		pos = data.pos or self.pos,
 		text = data.text or self.text,

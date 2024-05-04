@@ -9,7 +9,7 @@ local game = tge.game.new({
 	status_bar = {
 		{
 			"Do something with",
-			"\u{f037d} | Ctrl+c \u{f0a48} | c \u{f1da} 10fr \u{eabf} | h \u{f13a7} | H \u{f13a3} | a \u{f038} | A \u{f036} | \u{ea9b} \u{ea9a} \u{eaa1} \u{ea9c} |",
+			"[\u{f037d}] | [Ctrl+c] \u{f0a48} | [c] \u{f1556} | [d] \u{f05a} | [a] \u{f11c4} | [\u{ea9b}] [\u{ea9a}] [\u{eaa1}] [\u{ea9c}] |",
 		},
 	},
 	debug = true,
@@ -24,48 +24,45 @@ local Text, ACTION, COLOR, DIRECTION = ui.Text, ui.ACTION, ui.COLOR, utils.DIREC
 -- game.add_panel({91, 1 120, 38}, {id = "chat", with_border = "solid", title = "Chat", title_align = "left"})
 -- game.add_panel({1, 39, 120, 40}, {id = "status", with_border = "line"})
 
+local details = false
+
+local function get_text()
+	local text = details
+			and {
+				"Terminal Game Engine",
+				"Is a text based engine that provides a high",
+				"level api to asynchronously read and write in to the terminal screen",
+			}
+		or "TGE"
+	details = not details
+	return text
+end
+
+local aligned = false
+
+local function toggle_align()
+	aligned = not aligned
+	return aligned
+end
+
 local t = Text.new({
-	text = "TGE",
+	text = get_text(),
 	options = {
 		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
 		lf = 7,
 	},
 }, Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
-local message = {
-	"Terminal Game Engine",
-	"Is a text based engine that provides a high",
-	"level api to asynchronously read and write in to the terminal screen",
-}
-
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
 		game:exit()
-	elseif e.char == "H" then
+	elseif e.char == "d" then
 		q:enqueue({
 			action = ACTION.update,
 			when = game.sf,
 			ui_element = t,
 			data = {
-				text = "TGE",
-			},
-		})
-	elseif e.char == "h" then
-		q:enqueue({
-			action = ACTION.update,
-			when = game.sf,
-			ui_element = t,
-			data = {
-				text = message,
-			},
-		})
-	elseif e.char == "A" then
-		q:enqueue({
-			action = ACTION.update,
-			when = game.sf,
-			ui_element = t,
-			data = {
-				options = { align = false },
+				text = get_text(),
 			},
 		})
 	elseif e.char == "a" then
@@ -74,7 +71,7 @@ game.on_event = function(e)
 			when = game.sf,
 			ui_element = t,
 			data = {
-				options = { align = true },
+				options = { align = toggle_align() },
 			},
 		})
 	elseif e.char == "c" then

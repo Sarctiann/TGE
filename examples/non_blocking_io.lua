@@ -28,7 +28,7 @@ local t = Text.new({
 	text = "TGE",
 	options = {
 		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
-		lf = 1,
+		lf = 7,
 	},
 }, Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 

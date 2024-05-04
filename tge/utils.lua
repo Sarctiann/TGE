@@ -209,7 +209,7 @@ function Utils:puts(data, pos, bound, options)
 		end
 		for i, line in ipairs(fdata) do
 			-- TODO: take the background elements from the "state.static_collection.background"
-			local fline = clear and string.rep(" ", utf8.len(line)) or line
+			local fline = clear and string.rep(" ", utf8.len(line) or 1) or line
 			local x = fpos.x
 			if align and pos.x + utf8.len(line) > bound.right then
 				x = bound.right + 1 - utf8.len(line)

@@ -1,5 +1,6 @@
 local tge = require("tge")
 local SecondsFrames = require("tge.entities.seconds_frames")
+local utils = require("tge.utils")
 
 local game = tge.game.new({
 	width = 160,
@@ -7,8 +8,8 @@ local game = tge.game.new({
 	frame_rate = 30,
 	status_bar = {
 		{
-			"Listen Keys",
-			"Ctrl+c \u{f0a48} | c \u{f1da} 10fr \u{eabf} | h \u{f13a7} | H \u{f13a3} | a \u{f038} | A \u{f036} |",
+			"Do something with",
+			"\u{f037d} | Ctrl+c \u{f0a48} | c \u{f1da} 10fr \u{eabf} | h \u{f13a7} | H \u{f13a3} | a \u{f038} | A \u{f036} | \u{ea9b} \u{ea9a} \u{eaa1} \u{ea9c} |",
 		},
 	},
 	debug = true,
@@ -16,7 +17,7 @@ local game = tge.game.new({
 
 local ui = tge.entities.ui
 local q = game.queue
-local Text, ACTION, COLOR = ui.Text, ui.ACTION, ui.COLOR
+local Text, ACTION, COLOR, DIRECTION = ui.Text, ui.ACTION, ui.COLOR, utils.DIRECTION
 
 -- TODO: create a panel system
 -- game.add_panel({1, 1 90, 38}, {id = "scene", with_border = "double", title = "My Game", title_align = "left"})
@@ -82,6 +83,15 @@ game.on_event = function(e)
 			when = game.sf + SecondsFrames.from_frames(15, 30),
 			ui_element = t,
 			data = {},
+		})
+	elseif e.key == "up" or e.key == "down" or e.key == "left" or e.key == "right" then
+		q:enqueue({
+			action = ACTION.move,
+			when = game.sf,
+			ui_element = t,
+			data = {
+				pos = DIRECTION[e.key],
+			},
 		})
 	elseif e.event and e.event ~= "press" then
 		local x, y = e.x, e.y

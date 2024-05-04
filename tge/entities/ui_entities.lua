@@ -1,3 +1,4 @@
+local base = require("tge.entities.ui_entities.base_ui_entity")
 local utils = require("tge.utils")
 
 -- I had to rewrite this enum because the LS was not working properly identifying the values
@@ -29,19 +30,11 @@ local COLOR = {
 --- @field fg COLOR | TrueColor | nil
 --- @field bg COLOR | TrueColor | nil
 
---- @enum DIRECTION
-local DIRECTION = {
-	Up = 1,
-	Down = 2,
-	Left = 3,
-	Right = 4,
-}
-
 return {
 	-- Other
-	ACTION = require("tge.entities.ui_entities.base_ui_entity").ACTION,
+	ACTION = base.ACTION,
+	DIRECTION = utils.DIRECTION,
 	COLOR = COLOR,
-	DIRECTION = DIRECTION,
 	truecolor = utils.colors.truecolor,
 	-- UI Entities
 	Text = require("tge.entities.ui_entities.text"),

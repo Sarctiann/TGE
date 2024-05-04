@@ -40,6 +40,16 @@ function Utils.write_as_human_old(write_fn, text, speed)
 	write_fn(text:sub(#text, #text) .. "\n")
 end
 
+--- @enum DIRECTION
+local DIRECTION = {
+	up = 1,
+	down = 2,
+	left = 3,
+	right = 4,
+}
+
+Utils.DIRECTION = DIRECTION
+
 --- Initialize a timer to call a function periodically
 --- @param interval integer time in milliseconds
 --- @param callback function the function to be executed
@@ -91,6 +101,33 @@ function Utils:exit_with_error(err, ...)
 	cons:close()
 
 	os.exit(1)
+end
+
+--- Tries to move the point to a new location
+--- @param current Point | nil must be a `Point` to use `new_pos` = `DIRECTION`
+--- @param new_pos Point | DIRECTION could be a `Point` to replace `current` or a `DIRECTION` to move `current`
+--- @param x_amt integer amount of characters for the step in the X axis.
+--- @param y_amt integer amount of characters for the step in the Y axis.
+--- @return Point | nil
+function Utils:move_point_or_nil(current, new_pos, x_amt, y_amt)
+	if type(new_pos) == "table" and type(new_pos.x) == "number" and type(new_pos.y) == "number" then
+		return new_pos
+	end
+	if current and type(new_pos) == "number" then
+		if new_pos == DIRECTION.up then
+			current.y = current.y - y_amt
+			return current
+		elseif new_pos == DIRECTION.down then
+			current.y = current.y + y_amt
+			return current
+		elseif new_pos == DIRECTION.left then
+			current.x = current.x - x_amt
+			return current
+		elseif new_pos == DIRECTION.right then
+			current.x = current.x + x_amt
+			return current
+		end
+	end
 end
 
 --- @param game Game

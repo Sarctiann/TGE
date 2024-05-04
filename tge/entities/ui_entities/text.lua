@@ -10,9 +10,6 @@ local UIEntity, ACTION = base.UIEntity, base.ACTION
 --- @field public align boolean | nil
 local Text = {}
 Text.__index = Text
-Text[1] = function()
-	return "Text"
-end
 setmetatable(Text, UIEntity)
 
 --- @class TextOptions
@@ -38,6 +35,7 @@ function Text.new(data, boundaries)
 end
 
 --- Creates and draws a Text ui_element and return the instance
+--- @param self Text
 --- @param data {pos: Point, text: string | string[], options: TextOptions}
 --- @param boundaries Boundaries
 Text[ACTION.draw] = function(self, data, boundaries)
@@ -60,6 +58,7 @@ Text[ACTION.draw] = function(self, data, boundaries)
 end
 
 --- Clear the ui element from the screen
+--- @param self Text
 Text[ACTION.clear] = function(self)
 	if self.pos then
 		utils:puts(self.text, self.pos, self.boundaries, { clear = true, align = self.align })
@@ -67,18 +66,23 @@ Text[ACTION.clear] = function(self)
 end
 
 --- Moves the text instance to a new location
---- @param data {pos: Point}
+--- @param self Text
+--- @param data {pos: Point | DIRECTION}
 Text[ACTION.move] = function(self, data)
 	self[ACTION.clear](self)
-	self.pos = data.pos
-	self[ACTION.draw](self, {
-		pos = self.pos,
-		text = self.text,
-		options = { color = self.color, lf = self.lock_frames, align = self.align },
-	}, self.boundaries)
+
+	self.pos = utils:move_point_or_nil(self.pos, data.pos, 1, 1)
+	if self.pos then
+		self[ACTION.draw](self, {
+			pos = self.pos,
+			text = self.text,
+			options = { color = self.color, lf = self.lock_frames, align = self.align },
+		}, self.boundaries)
+	end
 end
 
 --- Moves or Draw the Text instance in a new location, with the given data and return the instance
+--- @param self Text
 --- @param data {pos: Point, text: string | string[], options: TextOptions}
 --- @param boundaries Boundaries
 Text[ACTION.move_or_draw] = function(self, data, boundaries)
@@ -98,6 +102,7 @@ Text[ACTION.move_or_draw] = function(self, data, boundaries)
 end
 
 --- Update the Text instance with the given data
+--- @param self Text
 --- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
 Text[ACTION.update] = function(self, data)
 	self[ACTION.clear](self)
@@ -116,6 +121,7 @@ Text[ACTION.update] = function(self, data)
 end
 
 --- Update or Draw the Text instance with the given data and return the instance
+--- @param self Text
 --- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
 --- @param boundaries Boundaries
 Text[ACTION.update_or_draw] = function(self, data, boundaries)
@@ -135,6 +141,7 @@ Text[ACTION.update_or_draw] = function(self, data, boundaries)
 end
 
 --- Copy a Text instance and return the new instance
+--- @param self Text
 --- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
 --- @param boundaries Boundaries
 Text[ACTION.copy] = function(self, data, boundaries)

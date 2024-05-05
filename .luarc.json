@@ -1,6 +1,7 @@
 {
-    "workspace.library": [
-        "/Users/sebastianrodriguezcapurro/Documents/TGE",
-        "${3rd}/luv/library"
-    ]
+  "workspace.library": [
+    "/Users/sebastianrodriguezcapurro/Documents/SARCTIANN/LUA/TGE/",
+    "/Users/sebastianrodriguezcapurro/Documents/SARCTIANN/LUA/TGE/lua_modules/share/lua/5.4/luabox/",
+    "${3rd}/luv/library"
+  ]
 }

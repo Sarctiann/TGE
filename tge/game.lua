@@ -12,7 +12,7 @@ local entities = require("tge.entities")
 --- @field public debug boolean | table
 Game = {}
 
---- Creates a.new game window.
+--- Creates a new game window.
 --- @param init {width: integer, height: integer, frame_rate: integer, status_bar: table | nil, debug: boolean | nil}
 --- @return Game game
 function Game.new(init)

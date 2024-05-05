@@ -10,7 +10,7 @@ local entities = require("tge.entities")
 --- @field public sf SecondsFrames The seconds and frames of each second of the entire game life cycle
 --- @field public status_bar table | nil
 --- @field public debug boolean | table
-Game = {}
+local Game = {}
 
 --- Creates a new game window.
 --- @param init {width: integer, height: integer, frame_rate: integer, status_bar: table | nil, debug: boolean | nil}

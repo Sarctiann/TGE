@@ -3,7 +3,7 @@ local utils = require("tge.utils")
 --- @class Dimensions
 --- @field public width integer
 --- @field public height integer
-Dimensions = {}
+local Dimensions = {}
 
 --- @param width integer
 --- @param height integer

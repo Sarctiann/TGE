@@ -5,7 +5,7 @@ local utils = require("tge.utils")
 --- @field public left integer
 --- @field public bottom integer
 --- @field public right integer
-Boundaries = {}
+local Boundaries = {}
 
 --- @param left integer
 --- @param top integer
@@ -24,7 +24,13 @@ function Boundaries.new(left, top, right, bottom)
 			utils:exit_with_error("Attempt Boundaries (%s = %s)", key, value)
 		end,
 		__tostring = function(self)
-			return string.format("Boundaries: %dx%d", self.width, self.height)
+			return string.format(
+				"Boundaries: { top %d, left %d, bottom %d, right %d }",
+				self.top,
+				self.left,
+				self.bottom,
+				self.right
+			)
 		end,
 	})
 end

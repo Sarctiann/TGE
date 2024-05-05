@@ -51,7 +51,7 @@ local t = Text.new({
 		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
 		lf = 7,
 	},
-}, Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
+}, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then

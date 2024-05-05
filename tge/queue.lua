@@ -2,7 +2,7 @@ local SecondsFrames = require("tge.entities.seconds_frames")
 
 --- @class Queue
 --- @field private brief_queue Brief[]
-Queue = {}
+local Queue = {}
 
 --- @return Queue queue
 function Queue.new()

@@ -4,7 +4,7 @@ local Utils = require("tge.utils")
 --- @class Core : Utils
 --- @field private create_main_loop fun(self: self, interval: integer, callback: function)
 --- @field private clear_main_loop fun(self: self)
-Core = {}
+local Core = {}
 Core.__index = Core
 setmetatable(Core, Utils)
 

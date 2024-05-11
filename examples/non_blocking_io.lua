@@ -3,7 +3,7 @@ local SecondsFrames = require("tge.entities.seconds_frames")
 local utils = require("tge.utils")
 
 -- Measure the memory usage before running the game
-local a = collectgarbage("count")
+local a = collectgarbage("count") * 1024
 
 local game = tge.game.new({
 	width = 160,
@@ -111,9 +111,9 @@ game.on_event = function(e)
 end
 
 -- Measure the memory usage after running the game
-local b = collectgarbage("count")
-print("Memory usage before running the game: " .. a .. "KB")
-print("Memory usage after running the game:  " .. b .. "KB")
-print("Memory estimated usage increased by:  " .. b - a .. "KB")
+local b = collectgarbage("count") * 1024
+print("Memory usage before running the game: " .. a .. " Bytes")
+print("Memory usage after running the game:  " .. b .. " Bytes")
+print("Memory estimated usage increased by:  " .. b - a .. " Bytes")
 
 game:run()

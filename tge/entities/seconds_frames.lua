@@ -111,4 +111,8 @@ function SecondsFrames.from_frames(frames, frame_rate)
 	return SecondsFrames.new(frame_rate, math.floor(frames / frame_rate), frames % frame_rate)
 end
 
+-- local sf = SecondsFrames.new(30)
+--
+-- print(sf)
+
 return SecondsFrames

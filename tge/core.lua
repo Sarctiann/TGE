@@ -63,7 +63,7 @@ end
 --- @param game Game
 function Core:start_main_loop(game)
 	self:create_main_loop(math.floor(1000 / game.sf.frame_rate), function()
-		local briefs = game.queue:dequeue(game.sf)
+		local briefs = game.queue.dequeue(game.sf)
 		if briefs then
 			for _, brief in ipairs(briefs) do
 				brief.ui_element:call_action(brief.action, brief.data, brief.boundaries)

@@ -60,7 +60,7 @@ game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
 		game:exit()
 	elseif e.char == "d" then
-		q:enqueue({
+		q.enqueue({
 			action = ACTION.update,
 			when = game.sf,
 			ui_element = t,
@@ -69,7 +69,7 @@ game.on_event = function(e)
 			},
 		})
 	elseif e.char == "a" then
-		q:enqueue({
+		q.enqueue({
 			action = ACTION.update,
 			when = game.sf,
 			ui_element = t,
@@ -78,14 +78,14 @@ game.on_event = function(e)
 			},
 		})
 	elseif e.char == "c" then
-		q:enqueue({
+		q.enqueue({
 			action = ACTION.clear,
 			when = game.sf + SecondsFrames.from_frames(15, 30),
 			ui_element = t,
 			data = {},
 		})
 	elseif e.key == "up" or e.key == "down" or e.key == "left" or e.key == "right" then
-		q:enqueue({
+		q.enqueue({
 			action = ACTION.move,
 			when = game.sf,
 			ui_element = t,
@@ -96,7 +96,7 @@ game.on_event = function(e)
 	elseif e.event and e.event ~= "press" then
 		local x, y = e.x, e.y
 		if x > 0 and x <= game.dimensions.width and y <= game.dimensions.height - 2 then
-			q:enqueue({
+			q.enqueue({
 				action = ACTION.move,
 				when = game.sf,
 				ui_element = t,

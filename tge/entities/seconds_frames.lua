@@ -15,6 +15,7 @@ local function validate_op(sf1, sf2, value)
 	assert(value >= 0, "Cannot create SecondsFrames with negative values")
 	return value
 end
+
 local SecondsFrames = {
 
 	__tostring = function(self)
@@ -48,7 +49,7 @@ local function increment(self)
 	end
 end
 
---- Converts itself to frames (integer)
+--- Converts itself seconds and frames to frames (integer)
 --- @return integer frames
 local function to_frames(self)
 	return self.frame_rate * self.s + self.f
@@ -64,14 +65,20 @@ local function new(frame_rate, seconds, frames)
 
 	--- @class SecondsFrames
 	local self = {
+		--- @type integer Frames per second
 		frame_rate = frame_rate,
+		--- @type integer Seconds
 		s = seconds or 0,
+		--- @type integer Frames
 		f = frames or 0,
 	}
+
+	--- @type fun(): integer Converts itself seconds and frames to frames (integer)
 	self.to_frames = function()
-		to_frames(self)
+		return to_frames(self)
 	end
 
+	--- @type fun():nil Increments by one Frames
 	self.increment = function()
 		increment(self)
 	end
@@ -104,9 +111,5 @@ end
 SecondsFrames.__div = function(self, sf_other)
 	return from_frames(validate_op(self, sf_other, self.to_frames() / sf_other.to_frames()), self.frame_rate)
 end
-
-local sf = new(30)
-
-print(sf)
 
 return { from_frames = from_frames, new = new }

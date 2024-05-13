@@ -82,8 +82,9 @@ function Core:start_main_loop(game)
 				e and { "Button", string.format("%-9s", e.button) },
 				e and { "X", string.format("%-3s", e.x) },
 				e and { "Y", string.format("%-3s", e.y) },
-				{ "Queued Briefs", #game.queue },
-				{ "Active Briefs", briefs and #briefs or 0 },
+				{ "Memory Usage", string.format("%-7d bytes", collectgarbage("count") * 1024) },
+				-- { "Queued Briefs", #game.queue },
+				-- { "Active Briefs", briefs and #briefs or 0 },
 				{ "Ticks", game.sf },
 			}
 			self:show_status(game, data)

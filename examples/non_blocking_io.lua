@@ -1,11 +1,9 @@
 local tge = require("tge")
-local SecondsFrames = require("tge.entities.seconds_frames")
-local utils = require("tge.utils")
 
 -- Measure the memory usage before running the game
 local a = collectgarbage("count") * 1024
 
-local game = tge.game.new({
+local game = tge.Game.new({
 	width = 160,
 	height = 40,
 	frame_rate = 30,
@@ -18,9 +16,10 @@ local game = tge.game.new({
 	debug = true,
 })
 
+local SecondsFrames = tge.entities.SecondsFrames
 local ui = tge.entities.ui
+local Text, ACTION, COLOR, DIRECTION = ui.Text, ui.ACTION, ui.COLOR, tge.utils.DIRECTION
 local q = game.queue
-local Text, ACTION, COLOR, DIRECTION = ui.Text, ui.ACTION, ui.COLOR, utils.DIRECTION
 
 -- TODO: create a panel system
 -- game.add_panel({1, 1 90, 38}, {id = "scene", with_border = "double", title = "My Game", title_align = "left"})
@@ -58,7 +57,7 @@ local t = Text.new({
 
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
-		game:exit()
+		game.exit()
 	elseif e.char == "d" then
 		q.enqueue({
 			action = ACTION.update,
@@ -80,7 +79,7 @@ game.on_event = function(e)
 	elseif e.char == "c" then
 		q.enqueue({
 			action = ACTION.clear,
-			when = game.sf + SecondsFrames.from_frames(15, 30),
+			when = game.sf + SecondsFrames.from_frames(15, game.frame_rate),
 			ui_element = t,
 			data = {},
 		})
@@ -116,4 +115,4 @@ print("Memory usage before running the game: " .. a .. " Bytes")
 print("Memory usage after running the game:  " .. b .. " Bytes")
 print("Memory estimated usage increased by:  " .. b - a .. " Bytes")
 
-game:run()
+game.run()

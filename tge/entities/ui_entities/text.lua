@@ -3,42 +3,11 @@ local utils = require("tge.utils")
 
 local UIEntity, ACTION = base.UIEntity, base.ACTION
 
---- @class Text : UIEntity to put/move/remove text on screen ( size: 1,1 )
---- @field public pos Point | nil
---- @field public text string | string[]
---- @field public color Color | nil
---- @field public align boolean | nil
-local Text = {}
-Text.__index = Text
-setmetatable(Text, UIEntity)
-
---- @class TextOptions
---- @field public color Color | nil
---- @field public lf integer | nil
---- @field public align boolean | nil
-
---- Creates a Text ui_element and return the instance
---- @param data {text: string | string[], options: TextOptions}
---- @param boundaries Boundaries
-function Text.new(data, boundaries)
-	local self = {
-		text = data.text,
-		boundaries = boundaries,
-	}
-	if data.options then
-		self.color = data.options.color
-		self.lock_frames = data.options.lf and data.options.lf > 0 and data.options.lf
-			or utils:exit_with_error("lock_frames should be grather or equal to 1")
-		self.align = data.options.align
-	end
-	return setmetatable(self, Text)
-end
-
 --- Creates and draws a Text ui_element and return the instance
 --- @param self Text
 --- @param data {pos: Point, text: string | string[], options: TextOptions}
 --- @param boundaries Boundaries
-Text[ACTION.draw] = function(self, data, boundaries)
+local draw = function(self, data, boundaries)
 	self = {
 		pos = data.pos,
 		text = data.text,
@@ -53,13 +22,12 @@ Text[ACTION.draw] = function(self, data, boundaries)
 	end
 
 	utils:puts(self.text, self.pos, self.boundaries, { color = self.color, align = self.align })
-
-	return setmetatable(self, Text)
+	return self
 end
 
 --- Clear the ui element from the screen
 --- @param self Text
-Text[ACTION.clear] = function(self)
+local clear = function(self)
 	if self.pos then
 		utils:puts(self.text, self.pos, self.boundaries, { clear = true, align = self.align })
 	end
@@ -68,12 +36,12 @@ end
 --- Moves the text instance to a new location
 --- @param self Text
 --- @param data {pos: Point | DIRECTION}
-Text[ACTION.move] = function(self, data)
-	self[ACTION.clear](self)
+local move = function(self, data)
+	clear(self)
 
-	self.pos = utils:move_point_or_nil(self.pos, data.pos, 1, 1)
+	self.pos = base.move_point_or_nil(self.pos, data.pos, 1, 1)
 	if self.pos then
-		self[ACTION.draw](self, {
+		draw(self, {
 			pos = self.pos,
 			text = self.text,
 			options = { color = self.color, lf = self.lock_frames, align = self.align },
@@ -85,8 +53,8 @@ end
 --- @param self Text
 --- @param data {pos: Point, text: string | string[], options: TextOptions}
 --- @param boundaries Boundaries
-Text[ACTION.move_or_draw] = function(self, data, boundaries)
-	self[ACTION.clear](self)
+local move_or_draw = function(self, data, boundaries)
+	clear(self)
 	self.pos = data.pos
 	self.text = data.text
 	if data.options then
@@ -104,8 +72,8 @@ end
 --- Update the Text instance with the given data
 --- @param self Text
 --- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
-Text[ACTION.update] = function(self, data)
-	self[ACTION.clear](self)
+local update = function(self, data)
+	clear(self)
 	self.pos = data.pos or self.pos
 	self.text = data.text or self.text
 	if data.options then
@@ -124,8 +92,8 @@ end
 --- @param self Text
 --- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
 --- @param boundaries Boundaries
-Text[ACTION.update_or_draw] = function(self, data, boundaries)
-	self[ACTION.clear](self)
+local update_or_draw = function(self, data, boundaries)
+	clear(self)
 	self.pos = data.pos or self.pos
 	self.text = data.text or self.text
 	if data.options then
@@ -144,7 +112,7 @@ end
 --- @param self Text
 --- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
 --- @param boundaries Boundaries
-Text[ACTION.copy] = function(self, data, boundaries)
+local copy = function(self, data, boundaries)
 	local new_text = {
 		pos = data.pos or self.pos,
 		text = data.text or self.text,
@@ -157,8 +125,47 @@ Text[ACTION.copy] = function(self, data, boundaries)
 			new_text.align = data.options.align
 		end
 		utils:puts(new_text.text, new_text.pos, new_text.boundaries, { color = new_text.color, align = new_text.align })
-		return setmetatable(new_text, Text)
 	end
+	return new_text
 end
 
-return Text
+--- @class TextOptions
+--- @field public lf integer | nil
+--- @field public align boolean | nil
+--- @field public color Color | nil
+
+--- Creates a Text ui_element
+--- @param data {text: string | string[], options: TextOptions}
+--- @param boundaries Boundaries
+local function new(data, boundaries)
+	--- @class Text : UIEntity to put/move/remove text on screen ( size: 1,1 )
+	local self = UIEntity
+
+	--- @type string | string[] text to be displayed
+	self.text = data.text
+	--- @type Boundaries the boundaries of the text
+	self.boundaries = boundaries
+	--- @type Point | nil the position of the text
+	self.pos = nil
+
+	if data.options then
+		--- @type Color | nil the color to be used to display the text
+		self.color = data.options.color
+		self.lock_frames = data.options.lf and data.options.lf > 0 and data.options.lf
+			or utils:exit_with_error("lock_frames should be grather or equal to 1")
+		--- @type boolean | nil if true, text will be always in the screen
+		self.align = data.options.align
+	end
+
+	self[ACTION.draw] = draw
+	self[ACTION.clear] = clear
+	self[ACTION.move] = move
+	self[ACTION.move_or_draw] = move_or_draw
+	self[ACTION.update] = update
+	self[ACTION.update_or_draw] = update_or_draw
+	self[ACTION.copy] = copy
+
+	return self
+end
+
+return { new = new }

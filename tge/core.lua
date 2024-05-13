@@ -1,32 +1,34 @@
 local uv = require("luv")
-local Utils = require("tge.utils")
+local utils = require("tge.utils")
 
---- @class Core : Utils
---- @field private create_main_loop fun(self: self, interval: integer, callback: function)
---- @field private clear_main_loop fun(self: self)
-local Core = {}
-Core.__index = Core
-setmetatable(Core, Utils)
+--- This class holds the uv.timer instance and the methods to create and stop the main loop
+--- @class Core
+local Core = {
+	--- @type Timer | nil
+	timer = nil,
+}
 
---- Creates the Main loop
-function Core:create_main_loop(interval, callback)
-	self.timer = uv.new_timer()
-	self.timer:start(0, interval, function()
+--- @param interval integer time in milliseconds
+--- @param callback function the function to be executed
+--- Initialize and starts the Core.timer (the main loop)
+local function create_main_loop(interval, callback)
+	Core.timer = uv.new_timer()
+	Core.timer:start(0, interval, function()
 		callback()
 	end)
 end
 
 --- Stops the Main Loop
-function Core:clear_main_loop()
-	self.timer:stop()
-	self.timer:close()
+local function clear_main_loop()
+	Core.timer:stop()
+	Core.timer:close()
 end
 
 --- function that chacks if there are space to create the game window
 --- @param width integer width of the window in characters
 --- @param height integer height of the window in characters
 function Core.checkDimensions(width, height)
-	local term_width, term_height = Core.console:getDimensions()
+	local term_width, term_height = utils.console:getDimensions()
 	if width > term_width or height > term_height then
 		return false
 	end
@@ -47,8 +49,8 @@ function Core:make_event_handler(handler)
 				table.insert(rest, char)
 			end
 		end
-		local iter = self.luabox_util.StringIterator(table.concat(rest))
-		local event = self.event.parse(first, iter)
+		local iter = utils.luabox_util.StringIterator(table.concat(rest))
+		local event = utils.event.parse(first, iter)
 
 		if event == nil then
 			return
@@ -56,13 +58,13 @@ function Core:make_event_handler(handler)
 		self.event_monitor = event
 		handler(event)
 	end
-	self.console.onData = event_loop
+	utils.console.onData = event_loop
 end
 
 --- starts the main buble to handle incoming events and brief queue
 --- @param game Game
 function Core:start_main_loop(game)
-	self:create_main_loop(math.floor(1000 / game.sf.frame_rate), function()
+	create_main_loop(math.floor(1000 / game.sf.frame_rate), function()
 		local briefs = game.queue.dequeue(game.sf)
 		if briefs then
 			for _, brief in ipairs(briefs) do
@@ -87,11 +89,11 @@ function Core:start_main_loop(game)
 				-- { "Active Briefs", briefs and #briefs or 0 },
 				{ "Ticks", game.sf },
 			}
-			self:show_status(game, data)
+			utils:show_status(game, data)
 		end
 		if game.status_bar then
 			local data = type(game.status_bar) == "table" and game.status_bar or {}
-			self:show_status(game, data, game.debug and 1 or 0, "center")
+			utils:show_status(game, data, game.debug and 1 or 0, "center")
 		end
 
 		-- This is basically the clock of the game
@@ -101,17 +103,17 @@ end
 
 --- Run uv
 function Core:run()
-	self.console:setMode(1)
-	self.console:intoMouseMode()
-	self.console:write(string.format("%s%s", self.cursor.hide, self.clear.all))
+	utils.console:setMode(1)
+	utils.console:intoMouseMode()
+	utils.console:write(string.format("%s%s", utils.cursor.hide, utils.clear.all))
 
 	uv.run()
 end
 
 --- Exits the game.
 function Core:exit()
-	local cons = self.console
-	local curs = self.cursor
+	local cons = utils.console
+	local curs = utils.cursor
 
 	cons:setMode(0)
 	cons:exitMouseMode()
@@ -122,7 +124,7 @@ function Core:exit()
 	cons:write("\n")
 	cons:write(curs.show)
 
-	self:clear_main_loop()
+	clear_main_loop()
 	cons:close()
 
 	os.exit(0)

@@ -33,7 +33,7 @@ local COLOR = {
 return {
 	-- Other
 	ACTION = base.ACTION,
-	DIRECTION = utils.DIRECTION,
+	DIRECTION = base.DIRECTION,
 	COLOR = COLOR,
 	truecolor = utils.colors.truecolor,
 	-- UI Entities

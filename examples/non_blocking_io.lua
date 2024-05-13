@@ -18,7 +18,7 @@ local game = tge.Game.new({
 
 local SecondsFrames = tge.entities.SecondsFrames
 local ui = tge.entities.ui
-local Text, ACTION, COLOR, DIRECTION = ui.Text, ui.ACTION, ui.COLOR, tge.utils.DIRECTION
+local Text, ACTION, COLOR, DIRECTION = ui.Text, ui.ACTION, ui.COLOR, ui.DIRECTION
 local q = game.queue
 
 -- TODO: create a panel system

@@ -115,4 +115,4 @@ print("Memory usage before running the game: " .. a .. " Bytes")
 print("Memory usage after running the game:  " .. b .. " Bytes")
 print("Memory estimated usage increased by:  " .. b - a .. " Bytes")
 
-game.run()
+game:run()

@@ -1,8 +1,8 @@
 local Unit = require("tge.entities.ui_entities.unit")
 
---- @class Line : Unit to put/move/remove/delimite unit-based lines on screen ( size: 2n,m )
-local Line = {}
-Line.__index = Line
-setmetatable(Line, Unit)
+local function new()
+	local self = Unit.new()
+	return self
+end
 
-return Line
+return { new = new }

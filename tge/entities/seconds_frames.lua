@@ -16,29 +16,6 @@ local function validate_op(sf1, sf2, value)
 	return value
 end
 
-local SecondsFrames = {
-
-	__tostring = function(self)
-		return string.format("%.5d : %.3d", self.s, self.f)
-	end,
-
-	__len = function(self)
-		return #string.format("%.5d : %.3d", self.s, self.f)
-	end,
-
-	__eq = function(self, sf_other)
-		return validate_op(self, sf_other, self.to_frames() == sf_other.to_frames())
-	end,
-
-	__le = function(self, sf_other)
-		return validate_op(self, sf_other, self.to_frames() <= sf_other.to_frames())
-	end,
-
-	__lt = function(self, sf_other)
-		return validate_op(self, sf_other, self.to_frames() < sf_other.to_frames())
-	end,
-}
-
 --- Increments by one Frames
 local function increment(self)
 	if self.frame_rate - 1 <= self.f then
@@ -54,6 +31,9 @@ end
 local function to_frames(self)
 	return self.frame_rate * self.s + self.f
 end
+
+-- Since metamethods require future declarations this is a workaround
+local SecondsFramesMeta = {}
 
 --- Returns a.new SecondsFrames
 --- @param frame_rate integer frames per second
@@ -83,7 +63,7 @@ local function new(frame_rate, seconds, frames)
 		increment(self)
 	end
 
-	setmetatable(self, SecondsFrames)
+	setmetatable(self, SecondsFramesMeta)
 
 	return self
 end
@@ -96,19 +76,39 @@ local function from_frames(frames, frame_rate)
 	return new(frame_rate, math.floor(frames / frame_rate), frames % frame_rate)
 end
 
-SecondsFrames.__add = function(self, sf_other)
+SecondsFramesMeta.__tostring = function(self)
+	return string.format("%.5d : %.3d", self.s, self.f)
+end
+
+SecondsFramesMeta.__len = function(self)
+	return #string.format("%.5d : %.3d", self.s, self.f)
+end
+
+SecondsFramesMeta.__eq = function(self, sf_other)
+	return validate_op(self, sf_other, self.to_frames() == sf_other.to_frames())
+end
+
+SecondsFramesMeta.__le = function(self, sf_other)
+	return validate_op(self, sf_other, self.to_frames() <= sf_other.to_frames())
+end
+
+SecondsFramesMeta.__lt = function(self, sf_other)
+	return validate_op(self, sf_other, self.to_frames() < sf_other.to_frames())
+end
+
+SecondsFramesMeta.__add = function(self, sf_other)
 	return from_frames(validate_op(self, sf_other, self.to_frames() + sf_other.to_frames()), self.frame_rate)
 end
 
-SecondsFrames.__sub = function(self, sf_other)
+SecondsFramesMeta.__sub = function(self, sf_other)
 	return from_frames(validate_op(self, sf_other, self.to_frames() - sf_other.to_frames()), self.frame_rate)
 end
 
-SecondsFrames.__mul = function(self, sf_other)
+SecondsFramesMeta.__mul = function(self, sf_other)
 	return from_frames(validate_op(self, sf_other, self.to_frames() * sf_other.to_frames()), self.frame_rate)
 end
 
-SecondsFrames.__div = function(self, sf_other)
+SecondsFramesMeta.__div = function(self, sf_other)
 	return from_frames(validate_op(self, sf_other, self.to_frames() / sf_other.to_frames()), self.frame_rate)
 end
 

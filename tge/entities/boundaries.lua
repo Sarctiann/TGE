@@ -1,18 +1,30 @@
 local utils = require("tge.utils")
 
---- @class Boundaries
---- @field public top integer
---- @field public left integer
---- @field public bottom integer
---- @field public right integer
-local Boundaries = {}
+local function new_index(_, key, value)
+	utils:exit_with_error("Attempt to modify Boundaries (%s = %s)", key, value)
+end
+
+local function to_string(self)
+	return string.format(
+		"Boundaries: { top %d, left %d, bottom %d, right %d }",
+		self.top,
+		self.left,
+		self.bottom,
+		self.right
+	)
+end
 
 --- @param left integer
 --- @param top integer
 --- @param right integer
 --- @param bottom integer
 --- @return Boundaries boundaries
-function Boundaries.new(left, top, right, bottom)
+local function new(left, top, right, bottom)
+	--- @class Boundaries
+	--- @field top integer
+	--- @field left integer
+	--- @field bottom integer
+	--- @field right integer
 	return setmetatable({}, {
 		__index = {
 			top = top,
@@ -20,19 +32,9 @@ function Boundaries.new(left, top, right, bottom)
 			bottom = bottom,
 			right = right,
 		},
-		__newindex = function(_, key, value)
-			utils:exit_with_error("Attempt Boundaries (%s = %s)", key, value)
-		end,
-		__tostring = function(self)
-			return string.format(
-				"Boundaries: { top %d, left %d, bottom %d, right %d }",
-				self.top,
-				self.left,
-				self.bottom,
-				self.right
-			)
-		end,
+		__newindex = new_index,
+		__tostring = to_string,
 	})
 end
 
-return Boundaries
+return { new = new }

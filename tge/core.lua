@@ -6,6 +6,8 @@ local utils = require("tge.utils")
 local Core = {
 	--- @type Timer | nil
 	timer = nil,
+	--- @type (keyboardEvent | mouseEvent) | nil
+	enent_monitor = nil,
 }
 
 --- @param interval integer time in milliseconds
@@ -37,7 +39,7 @@ end
 
 --- Initialize the envent handler
 --- @param handler fun(event: (keyboardEvent | mouseEvent)): nil
-function Core:make_event_handler(handler)
+function Core.make_event_handler(handler)
 	local function event_loop(data)
 		local first
 		local rest = {}
@@ -55,7 +57,7 @@ function Core:make_event_handler(handler)
 		if event == nil then
 			return
 		end
-		self.event_monitor = event
+		Core.event_monitor = event
 		handler(event)
 	end
 	utils.console.onData = event_loop
@@ -63,7 +65,7 @@ end
 
 --- starts the main buble to handle incoming events and brief queue
 --- @param game Game
-function Core:start_main_loop(game)
+function Core.start_main_loop(game)
 	create_main_loop(math.floor(1000 / game.sf.frame_rate), function()
 		local briefs = game.queue.dequeue(game.sf)
 		if briefs then
@@ -73,7 +75,7 @@ function Core:start_main_loop(game)
 		end
 
 		if game.debug then
-			local e = self.event_monitor
+			local e = Core.event_monitor
 			local data = {
 				e and { "Key", string.format("%-9s", e.key) },
 				e and {
@@ -102,7 +104,7 @@ function Core:start_main_loop(game)
 end
 
 --- Run uv
-function Core:run()
+function Core.run()
 	utils.console:setMode(1)
 	utils.console:intoMouseMode()
 	utils.console:write(string.format("%s%s", utils.cursor.hide, utils.clear.all))
@@ -111,7 +113,7 @@ function Core:run()
 end
 
 --- Exits the game.
-function Core:exit()
+function Core.exit()
 	local cons = utils.console
 	local curs = utils.cursor
 

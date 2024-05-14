@@ -21,14 +21,10 @@ local function run(game)
 		utils:exit_with_error("The on_event hook is not defined.")
 	end
 
-	core:make_event_handler(game.on_event)
-	core:start_main_loop(game)
+	core.make_event_handler(game.on_event)
+	core.start_main_loop(game)
 
-	core:run()
-end
-
-local function exit()
-	core:exit()
+	core.run()
 end
 
 --- Creates a new game window.
@@ -61,7 +57,7 @@ local function new(init)
 
 	--- Exits the game.
 	--- @type fun(): nil
-	self.exit = exit
+	self.exit = core.exit
 
 	return self
 end

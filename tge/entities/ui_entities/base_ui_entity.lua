@@ -2,20 +2,14 @@ local utils = require("tge.utils")
 
 --- @enum ACTION
 local ACTION = {
-	---| fun(self, data: any, boundaries: Boundaries): self Draws the UI entity on the screen and returns the instance
+	---| fun(self, data: any): nil Draws the UI entity on the screen and returns the instance
 	draw = 1,
 	---| fun(self): nil Clears the UI entity from the screen
 	clear = 2,
 	---| fun(self, data: any): nil Moves the UI entity in the specified direction
 	move = 3,
-	---| fun(self, data: any, boundaries: Boundaries): self Tries to move the instance or draws and returns it
-	move_or_draw = 4,
 	---| fun(self, data: any): nil Updates the UI entity with the new data
-	update = 5,
-	---| fun(self, data: any, boundaries: Boundaries): self Tries to update the instance or draws and returns it
-	update_or_draw = 6,
-	---| fun(self, data: any, boundaries: Boundaries): self Tries to copy the instance or draws and returns it
-	copy = 7,
+	update = 4,
 }
 
 --- @enum DIRECTION
@@ -75,23 +69,14 @@ local UIEntity = {
 	[ACTION.move] = function()
 		not_implemented("MOVE")
 	end,
-	[ACTION.move_or_draw] = function()
-		not_implemented("MOVE_OR_DRAW")
-	end,
 	[ACTION.update] = function()
 		not_implemented("UPDATE")
 	end,
-	[ACTION.update_or_draw] = function()
-		not_implemented("UPDATE_OR_DRAW")
-	end,
-	[ACTION.copy] = function()
-		not_implemented("COPY")
-	end,
 }
 
-function UIEntity:call_action(action, data, boundaries)
+function UIEntity:call_action(action, data)
 	---@diagnostic disable-next-line: redundant-parameter
-	return self[action](self, data, boundaries)
+	return self[action](self, data)
 end
 
 return { UIEntity = UIEntity, ACTION = ACTION, DIRECTION = DIRECTION, move_point_or_nil = move_point_or_nil }

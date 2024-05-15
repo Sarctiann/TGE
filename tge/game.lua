@@ -28,7 +28,7 @@ local function run(game)
 end
 
 --- Creates a new game window.
---- @param init {width: integer, height: integer, frame_rate: integer, status_bar: table | nil, debug: boolean | nil}
+--- @param init {width: integer, height: integer, frame_rate: integer, status_bar: table | nil, debug: debug_key[] | nil}
 local function new(init)
 	--- @class Game
 	local self = {
@@ -36,8 +36,8 @@ local function new(init)
 		frame_rate = init.frame_rate,
 		--- @type table | nil
 		status_bar = init.status_bar and init.status_bar,
-		--- @type boolean | nil
-		debug = init.debug and init.debug or false,
+		--- @type debug_key[] | nil
+		debug = init.debug and init.debug,
 	}
 	--- @type Dimensions {width: integer, height: integer} The dimensions of the game window in characters
 	self.dimensions = init_dimensions(init.width, init.height)

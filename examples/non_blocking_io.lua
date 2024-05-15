@@ -13,7 +13,8 @@ local game = tge.Game.new({
 			"[\u{f037d}] | [Ctrl+c] \u{f0a48} | [c] \u{f1556} | [d] \u{f05a} | [a] \u{f11c4} | [\u{ea9b}] [\u{ea9a}] [\u{eaa1}] [\u{ea9c}] |",
 		},
 	},
-	debug = true,
+	-- This will consume some memory bytes
+	debug = { "Event", "X", "Y", "Ticks" },
 })
 
 local SecondsFrames = tge.entities.SecondsFrames

@@ -8,17 +8,15 @@ end
 --- @param action ACTION What the element should do
 --- @param data table The required data for the element's action.
 --- @param when SecondsFrames | nil The delay time before puting the element
---- @param boundaries Boundaries | nil The boundaries of the elemen
 --- @return Brief brief # A.new brief
-local function new(ui_element, action, data, when, boundaries)
+local function new(ui_element, action, data, when)
 	--- @class Brief
 	--- @field public ui_element UIEntity
 	--- @field public action ACTION
 	--- @field public data table
 	--- @field public when SecondsFrames | nil
-	--- @field public boundaries Boundaries | nil
 	return setmetatable({}, {
-		__index = { ui_element = ui_element, action = action, data = data, when = when, boundaries = boundaries },
+		__index = { ui_element = ui_element, action = action, data = data, when = when },
 		__newindex = new_index,
 	})
 end

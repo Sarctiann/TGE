@@ -63,6 +63,47 @@ function Core.make_event_handler(handler)
 	utils.console.onData = event_loop
 end
 
+--- @alias debug_key
+--- | "Key"
+--- | "Char"
+--- | "Event"
+--- | "Button"
+--- | "X"
+--- | "Y"
+--- | "MemoryUsage"
+--- | "QueuedBriefs"
+--- | "ActiveBriefs"
+--- | "Ticks"
+
+local hv = utils.has_value_or_nil
+
+local function _build_status_bar(game, briefs)
+	if game.debug ~= nil then
+		local e = Core.event_monitor
+		local data = {
+			hv(game.debug, "Key") and e and { "Key", string.format("%-9s", e.key) },
+			hv(game.debug, "Char") and e and {
+				"Char",
+				string.format("%-3s", e.char == "\n" and "\\n" or e.char == "\t" and "\\t" or e.char),
+			},
+			hv(game.debug, "Event") and e and { "Event", string.format("%-7s", e.event) },
+			hv(game.debug, "Button") and e and { "Button", string.format("%-9s", e.button) },
+			hv(game.debug, "X") and e and { "X", string.format("%-3s", e.x) },
+			hv(game.debug, "Y") and e and { "Y", string.format("%-3s", e.y) },
+			hv(game.debug, "MemoryUsage")
+				and { "Memory Usage", string.format("%-7d bytes", collectgarbage("count") * 1024) },
+			hv(game.debug, "QueuedBriefs") and { "Queued Briefs", #game.queue },
+			hv(game.debug, "ActiveBriefs") and { "Active Briefs", briefs and #briefs or 0 },
+			hv(game.debug, "Ticks") and { "Ticks", game.sf },
+		}
+		utils:show_status(game, data)
+	end
+	if game.status_bar then
+		local data = game.status_bar and game.status_bar or {}
+		utils:show_status(game, data, game.debug and 1 or 0, "center")
+	end
+end
+
 --- starts the main buble to handle incoming events and brief queue
 --- @param game Game
 function Core.start_main_loop(game)
@@ -70,33 +111,11 @@ function Core.start_main_loop(game)
 		local briefs = game.queue.dequeue(game.sf)
 		if briefs then
 			for _, brief in ipairs(briefs) do
-				brief.ui_element:call_action(brief.action, brief.data, brief.boundaries)
+				brief.ui_element:call_action(brief.action, brief.data)
 			end
 		end
 
-		if game.debug then
-			local e = Core.event_monitor
-			local data = {
-				e and { "Key", string.format("%-9s", e.key) },
-				e and {
-					"Char",
-					string.format("%-3s", e.char == "\n" and "\\n" or e.char == "\t" and "\\t" or e.char),
-				},
-				e and { "Event", string.format("%-7s", e.event) },
-				e and { "Button", string.format("%-9s", e.button) },
-				e and { "X", string.format("%-3s", e.x) },
-				e and { "Y", string.format("%-3s", e.y) },
-				{ "Memory Usage", string.format("%-7d bytes", collectgarbage("count") * 1024) },
-				-- { "Queued Briefs", #game.queue },
-				-- { "Active Briefs", briefs and #briefs or 0 },
-				{ "Ticks", game.sf },
-			}
-			utils:show_status(game, data)
-		end
-		if game.status_bar then
-			local data = type(game.status_bar) == "table" and game.status_bar or {}
-			utils:show_status(game, data, game.debug and 1 or 0, "center")
-		end
+		_build_status_bar(game, briefs)
 
 		-- This is basically the clock of the game
 		game.sf:increment()

@@ -138,6 +138,35 @@ function Utils:show_status(game, data, y_offset, align)
 	end
 end
 
+function Utils.has_value_or_nil(tab, val)
+	for _, value in pairs(tab) do
+		if value == val then
+			return true
+		end
+	end
+end
+
+--- Write in the screen checking the given boundaries
+--- @param data string
+--- @param pos Point
+--- @param bound Boundaries
+--- @param options {color: Color | nil, clear: boolean | nil} | nil
+function Utils:simple_puts(data, pos, bound, options)
+	local color = options and options.color or nil
+	local clear = options and options.clear or false
+	---@diagnostic disable-next-line: param-type-mismatch
+	local fg = color and color.fg and self.colors.fg(color.fg) or ""
+	---@diagnostic disable-next-line: param-type-mismatch
+	local bg = color and color.bg and self.colors.bg(color.bg) or ""
+	local rfg = color and color.fg and self.colors.resetFg or ""
+	local rbg = color and color.bg and self.colors.resetBg or ""
+	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
+		--TODO: take the background elements from the "state.static_collection.background"
+		local fdata = clear and string.rep(" ", utf8.len(data) or 1) or data
+		self.console:write(string.format("%s%s%s%s%s%s", self.cursor.goTo(pos.x, pos.y), fg, bg, fdata, rfg, rbg))
+	end
+end
+
 --- Write in the screen checking the given boundaries
 --- @param data string | string[]
 --- @param pos Point

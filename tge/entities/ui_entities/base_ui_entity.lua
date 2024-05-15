@@ -51,32 +51,30 @@ local function move_point_or_nil(current, new_pos, x_amt, y_amt)
 	end
 end
 
---- @class UIEntity
-local UIEntity = {
-	--- @type  Boundaries | nil The boundaries of the UI entity
-	boundaries = nil,
-	--- @type SecondsFrames | nil The time in seconds and frames until the entity is unlocked
-	locked_until = nil,
-	--- @type integer The ammount of frames must wait to unlock
-	lock_frames = 1,
-
-	[ACTION.draw] = function()
-		not_implemented("DRAW")
-	end,
-	[ACTION.clear] = function()
-		not_implemented("CLEAR")
-	end,
-	[ACTION.move] = function()
-		not_implemented("MOVE")
-	end,
-	[ACTION.update] = function()
-		not_implemented("UPDATE")
-	end,
-}
-
-function UIEntity:call_action(action, data)
-	---@diagnostic disable-next-line: redundant-parameter
-	return self[action](self, data)
+local function new()
+	--- @class UIEntity
+	local self = {
+		boundaries = nil,
+		locked_until = nil,
+		lock_frames = 1,
+		call_action = function(self, action, data)
+			---@diagnostic disable-next-line: redundant-parameter
+			return self[action](self, data)
+		end,
+		[ACTION.draw] = function()
+			not_implemented("DRAW")
+		end,
+		[ACTION.clear] = function()
+			not_implemented("CLEAR")
+		end,
+		[ACTION.move] = function()
+			not_implemented("MOVE")
+		end,
+		[ACTION.update] = function()
+			not_implemented("UPDATE")
+		end,
+	}
+	return self
 end
 
-return { UIEntity = UIEntity, ACTION = ACTION, DIRECTION = DIRECTION, move_point_or_nil = move_point_or_nil }
+return { UIEntity = { new = new }, ACTION = ACTION, DIRECTION = DIRECTION, move_point_or_nil = move_point_or_nil }

@@ -10,10 +10,9 @@ local UIEntity, ACTION = base.UIEntity, base.ACTION
 
 --- Creates and draws a Text ui_element and return the instance
 --- @param self Text
---- @param data {pos: Point, text: string | string[], options: TextOptions}
+--- @param data {pos: Point,  options: TextOptions}
 local draw = function(self, data)
 	self.pos = data.pos
-	self.text = data.text
 	if data.options then
 		self.color = data.options.color or self.color
 		self.lock_frames = data.options.lf or self.lock_frames
@@ -43,7 +42,6 @@ local move = function(self, data)
 	if self.pos then
 		draw(self, {
 			pos = self.pos,
-			text = self.text,
 			options = { color = self.color, lf = self.lock_frames, align = self.align },
 		})
 	end
@@ -73,7 +71,7 @@ end
 --- @param boundaries Boundaries
 local function new(data, boundaries)
 	--- @class Text : UIEntity to put/move/remove text on screen ( size: 1,1 )
-	local self = UIEntity
+	local self = UIEntity.new()
 
 	--- @type string | string[] text to be displayed
 	self.text = data.text

@@ -10,16 +10,17 @@ local game = tge.Game.new({
 	status_bar = {
 		{
 			"Do something with",
-			"[\u{f037d}] | [Ctrl+c] \u{f0a48} | [c] \u{f1556} | [d] \u{f05a} | [a] \u{f11c4} | [\u{ea9b}] [\u{ea9a}] [\u{eaa1}] [\u{ea9c}] |",
+			"[\u{f037d}] | [Ctrl+c] \u{f0a48} | [c] \u{f1556} | [d] \u{f05a} | [a] \u{f11c4} | [\u{ea9b}] [\u{ea9a}] [\u{eaa1}] [\u{ea9c}] | hjkl |",
 		},
 	},
 	-- This will consume some memory bytes
-	debug = { "QueuedBriefs", "Key", "Char", "Button", "Event", "MemoryUsage", "Ticks" },
+	debug = { "QueuedBriefs", "ActiveBriefs", "Key", "Char", "Button", "Event", "Ticks" },
 })
 
 local SecondsFrames = tge.entities.SecondsFrames
 local ui = tge.entities.ui
-local Text, ACTION, COLOR, DIRECTION = ui.Text, ui.ACTION, ui.COLOR, ui.DIRECTION
+local ACTION, COLOR, DIRECTION = ui.ACTION, ui.COLOR, ui.DIRECTION
+local Text, Unit = ui.Text, ui.Unit
 local q = game.queue
 
 -- TODO: create a panel system
@@ -48,14 +49,46 @@ local function toggle_align()
 	return aligned
 end
 
+-- CREATION OF THE UI ELEMENTS
 local t = Text.new({
 	text = get_text(),
 	options = {
 		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
-		lf = 7,
+		lf = 1,
 	},
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
+local u = Unit.new({
+	pair = "  ",
+	options = {
+		color = { bg = COLOR.Yellow },
+		lf = 10,
+	},
+}, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
+
+-- SCHDULE SOME UI ELEMENTS BRIEFS
+q.enqueue({
+	action = ACTION.draw,
+	when = SecondsFrames.from_frames(30, game.frame_rate),
+	ui_element = u,
+	data = { pos = { x = 10, y = 5 } },
+})
+
+q.enqueue({
+	action = ACTION.draw,
+	when = SecondsFrames.from_frames(60, game.frame_rate),
+	ui_element = t,
+	data = { pos = { x = 14, y = 5 } },
+})
+
+q.enqueue({
+	action = ACTION.move,
+	when = SecondsFrames.from_frames(90, game.frame_rate),
+	ui_element = t,
+	data = { pos = DIRECTION.down },
+}, true)
+
+-- EVENT HANDLING
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
 		game.exit()
@@ -107,6 +140,42 @@ game.on_event = function(e)
 			-- else
 			-- 	tge.utils:exit_with_error("Trying to write out of bound")
 		end
+	elseif e.char == "h" then
+		q.enqueue({
+			action = ACTION.move,
+			when = game.sf,
+			ui_element = u,
+			data = {
+				pos = DIRECTION.left,
+			},
+		})
+	elseif e.char == "l" then
+		q.enqueue({
+			action = ACTION.move,
+			when = game.sf,
+			ui_element = u,
+			data = {
+				pos = DIRECTION.right,
+			},
+		})
+	elseif e.char == "k" then
+		q.enqueue({
+			action = ACTION.move,
+			when = game.sf,
+			ui_element = u,
+			data = {
+				pos = DIRECTION.up,
+			},
+		})
+	elseif e.char == "j" then
+		q.enqueue({
+			action = ACTION.move,
+			when = game.sf,
+			ui_element = u,
+			data = {
+				pos = DIRECTION.down,
+			},
+		})
 	end
 end
 

@@ -7,21 +7,24 @@ local UIEntity, ACTION = base.UIEntity, base.ACTION
 --- @field lf number
 --- @field color Color
 
+local function validate_pair(pair)
+	if #pair ~= 2 then
+		utils:exit_with_error("The pair must have 2 characters")
+	end
+	return pair
+end
+
 --- Creates and draws a Text ui_element and return the instance
 --- @param self Unit
---- @param data {pos: Point, pair: string, options: UnitOptions}
+--- @param data {pos: Point, options: UnitOptions}
 local draw = function(self, data)
-	self = {
-		pos = data.pos,
-		text = data.pair,
-	}
+	self.pos = data.pos
 	if data.options then
 		self.color = data.options.color or self.color
 		self.lock_frames = data.options.lf or self.lock_frames
 	end
 
-	utils:simple_puts(self.text, self.pos, self.boundaries, { color = self.color })
-	return self
+	utils:simple_puts(self.pair, self.pos, self.boundaries, { color = self.color })
 end
 
 --- Clear the ui element from the screen
@@ -42,7 +45,6 @@ local move = function(self, data)
 	if self.pos then
 		draw(self, {
 			pos = self.pos,
-			pair = self.pair,
 			options = { color = self.color, lf = self.lock_frames },
 		})
 	end
@@ -54,7 +56,7 @@ end
 local update = function(self, data)
 	clear(self)
 	self.pos = data.pos or self.pos
-	self.pair = data.pair or self.pair
+	self.pair = data.pair and validate_pair(data.pair) or self.pair
 	if data.options then
 		self.color = data.options.color or self.color
 		self.lock_frames = data.options.lf or self.lock_frames
@@ -68,10 +70,10 @@ end
 --- @param boundaries Boundaries
 local function new(data, boundaries)
 	--- @class Unit : UIEntity to put/move/remove the minimal symmetrical ui element on screen ( size: 2,1 )
-	local self = UIEntity
+	local self = UIEntity.new()
 
 	--- @type string the pair of the unit
-	self.pair = data.pair
+	self.pair = validate_pair(data.pair)
 	--- @type Boundaries the boundaries of the unit
 	self.boundaries = boundaries
 	--- @type Point | nil the position of the unit

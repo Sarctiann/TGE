@@ -1,6 +1,6 @@
 local SecondsFrames = require("tge.entities.seconds_frames")
 
-local function enqueue(brief_queue, brief)
+local function enqueue(brief_queue, brief, unlocked)
 	local uelu = brief.ui_element.locked_until
 	local when = brief.when
 
@@ -10,25 +10,17 @@ local function enqueue(brief_queue, brief)
 	end
 
 	-- Apply the lock_frames to the ui_element
-	brief.ui_element.locked_until = when
+	brief.ui_element.locked_until = (when and not unlocked)
 			and when + SecondsFrames.from_frames(brief.ui_element.lock_frames, when.frame_rate)
-		or nil
+		or uelu
 
 	-- Check if the brief_queue is empty or if the brief should be executed immediately
-	if #brief_queue == 0 or not when then
-		table.insert(brief_queue, brief)
-
-		-- Enqueue the brief in the correct order
-	else
-		for i, q_brief in ipairs(brief_queue) do
-			if when < q_brief.when then
-				table.insert(brief_queue, i, brief)
-				break
-			end
-			if i == #brief_queue then
-				table.insert(brief_queue, brief)
-			end
-		end
+	table.insert(brief_queue, brief)
+	-- Enqueue the brief and sort the queue
+	if #brief_queue ~= 0 or not when then
+		table.sort(brief_queue, function(a, b)
+			return a.when < b.when
+		end)
 	end
 end
 
@@ -38,10 +30,13 @@ local function dequeue(brief_queue, game_sf)
 	if #brief_queue == 0 then
 		return nil
 	end
-	for i, q_brief in ipairs(brief_queue) do
-		if not q_brief.when or q_brief.when <= game_sf then
-			table.insert(exec_brief_list, table.remove(brief_queue, i))
+	-- Check if the first brief should be executed and remove it from the queue if so.
+	-- Since the queue is sorted, we can just check the first element every time.
+	while #brief_queue > 0 do
+		if brief_queue[1].when and brief_queue[1].when > game_sf then
+			break
 		end
+		table.insert(exec_brief_list, table.remove(brief_queue, 1))
 	end
 	if #exec_brief_list == 0 then
 		return nil
@@ -59,13 +54,16 @@ local function new()
 	--- @class Queue
 	local self = {
 		--- queue a.new brief in its corresponding order based on its "when" attribute.
-		--- @type fun(brief: Brief): nil
-		enqueue = function(brief)
-			enqueue(brief_queue, brief)
+		--- @type fun(brief: Brief, unlocked: boolean | nil): nil
+		--- @param brief Brief The brief to be queued
+		--- @param unlocked boolean | nil If the brief should not lock the ui_element
+		enqueue = function(brief, unlocked)
+			enqueue(brief_queue, brief, unlocked)
 		end,
 
 		--- dequeues (and returns) the briefs that should be executed or nil if there is no brief to be executed yet.
 		--- @type fun(game_sf: SecondsFrames): Brief[] | nil
+		--- @param game_sf SecondsFrames The current game's seconds and frames
 		dequeue = function(game_sf)
 			return dequeue(brief_queue, game_sf)
 		end,

@@ -14,7 +14,7 @@ local game = tge.Game.new({
 		},
 	},
 	-- This will consume some memory bytes
-	debug = { "Event", "X", "Y", "Ticks" },
+	debug = { "QueuedBriefs", "Key", "Char", "Button", "Event", "MemoryUsage", "Ticks" },
 })
 
 local SecondsFrames = tge.entities.SecondsFrames

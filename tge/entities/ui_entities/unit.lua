@@ -38,7 +38,7 @@ end
 local move = function(self, data)
 	clear(self)
 
-	self.pos = base.move_point_or_nil(self.pos, data.pos, 1, 1)
+	self.pos = base.move_point_or_nil(self.pos, data.pos, 2, 1)
 	if self.pos then
 		draw(self, {
 			pos = self.pos,

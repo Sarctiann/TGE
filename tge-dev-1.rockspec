@@ -29,7 +29,6 @@ build = {
 		["tge.entities.ui_entities.base_ui_entity"] = "tge/entities/ui_entities/base_ui_entity.lua",
 		["tge.entities.ui_entities.box"] = "tge/entities/ui_entities/box.lua",
 		["tge.entities.ui_entities.line"] = "tge/entities/ui_entities/line.lua",
-		["tge.entities.ui_entities.nf_icon"] = "tge/entities/ui_entities/nf_icon.lua",
 		["tge.entities.ui_entities.sprite"] = "tge/entities/ui_entities/sprite.lua",
 		["tge.entities.ui_entities.text"] = "tge/entities/ui_entities/text.lua",
 		["tge.entities.ui_entities.unit"] = "tge/entities/ui_entities/unit.lua",

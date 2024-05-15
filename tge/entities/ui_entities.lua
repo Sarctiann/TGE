@@ -42,5 +42,4 @@ return {
 	Line = require("tge.entities.ui_entities.line"),
 	Box = require("tge.entities.ui_entities.box"),
 	Sprite = require("tge.entities.ui_entities.sprite"),
-	NFIcon = require("tge.entities.ui_entities.nf_icon"),
 }

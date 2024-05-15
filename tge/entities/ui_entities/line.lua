@@ -1,7 +1,10 @@
 local Unit = require("tge.entities.ui_entities.unit")
 
-local function new()
-	local self = Unit.new()
+--- @param data { pair: string, options: UnitOptions }
+--- @param boundaries Boundaries
+local function new(data, boundaries)
+	--- @class Line : Unit to put/move/remove/delimite unit-based spaces on screen ( size: (2n*m)*o )
+	local self = Unit.new(data, boundaries)
 	return self
 end
 

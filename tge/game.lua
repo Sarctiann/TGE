@@ -1,7 +1,7 @@
 local core = require("tge.core")
 local utils = require("tge.utils")
 local entities = require("tge.entities")
-local Queue = require("tge.Queue")
+local Queue = require("tge.queue")
 
 local function init_dimensions(width, height)
 	if core.checkDimensions(width, height) == false then

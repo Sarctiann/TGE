@@ -21,16 +21,18 @@ local function clear(self)
 	utils:ortogonal_puts("  ", self.from, self.to, { clear = true })
 end
 
---- @param data { pair: string, from: Point, to: Point, options: UnitOptions }
+--- @param data { pair: string, from: Point, to: Point, color: Color | nil}
 --- @param boundaries Boundaries
 local function new(data, boundaries)
-	validate_pair(data.pair)
-
 	--- @class Line : Unit to put/move/remove/delimite unit-based spaces on screen ( size: (2n*m)*o )
 	local self = UIEntity.new()
+
+	self.pair = validate_pair(data.pair)
 	validate_line(data.from, data.to)
 	self.from, self.to = validate_boundaries(data.from, data.to, boundaries)
 	self.boundaries = boundaries
+	--- @type Color
+	self.color = data.color
 
 	self[ACTION.draw] = draw
 	self[ACTION.clear] = clear

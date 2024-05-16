@@ -17,7 +17,7 @@ local game = tge.Game.new({
 local SecondsFrames = tge.entities.SecondsFrames
 local ui = tge.entities.ui
 local ACTION, COLOR, DIRECTION = ui.ACTION, ui.COLOR, ui.DIRECTION
-local Text, Unit = ui.Text, ui.Unit
+local Text, Unit, Line = ui.Text, ui.Unit, ui.Line
 local q = game.queue
 
 -- TODO: create a panel system
@@ -63,6 +63,20 @@ local u = Unit.new({
 	},
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
+local l1 = Line.new({
+	pair = "  ",
+	from = { x = 40, y = 10 },
+	to = { x = 40, y = 30 },
+	color = { bg = COLOR.Red },
+}, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
+
+local l2 = Line.new({
+	pair = "  ",
+	from = { x = 45, y = 20 },
+	to = { x = 90, y = 20 },
+	color = { bg = COLOR.Red },
+}, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
+
 -- SCHDULE SOME UI ELEMENTS BRIEFS
 q.enqueue({
 	action = ACTION.draw,
@@ -84,6 +98,20 @@ q.enqueue({
 	ui_element = t,
 	data = { pos = DIRECTION.down },
 }, true)
+
+q.enqueue({
+	action = ACTION.draw,
+	when = game.sf,
+	ui_element = l1,
+	data = {},
+})
+
+q.enqueue({
+	action = ACTION.draw,
+	when = game.sf,
+	ui_element = l2,
+	data = {},
+})
 
 -- EVENT HANDLING
 game.on_event = function(e)

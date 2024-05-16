@@ -93,7 +93,7 @@ end
 --- @param boundaries Boundaries
 --- @return Point orig, Point dest
 local function validate_boundaries(from, to, boundaries)
-	local orig, dest
+	local orig, dest = { x = nil, y = nil }, { x = nil, y = nil }
 	orig.x, orig.y = math.min(from.x, to.x), math.min(from.y, to.y)
 	dest.x, dest.y = math.max(from.x, to.x), math.max(from.y, to.y)
 	if

@@ -5,8 +5,8 @@ local UIEntity, ACTION, validate_pair, get_move_boundaries_for_unit =
 	base.UIEntity, base.ACTION, base.validate_pair, base.get_move_boundaries_for_unit
 
 --- @class UnitOptions
---- @field lf number
---- @field color Color
+--- @field lf number | nil
+--- @field color Color | nil
 
 --- Creates and draws a Text ui_element and return the instance
 --- @param self Unit

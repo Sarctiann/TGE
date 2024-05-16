@@ -1,27 +1,12 @@
 local base = require("tge.entities.ui_entities.base_ui_entity")
 local utils = require("tge.utils")
 
-local UIEntity, ACTION = base.UIEntity, base.ACTION
+local UIEntity, ACTION, validate_pair, get_move_boundaries_for_unit =
+	base.UIEntity, base.ACTION, base.validate_pair, base.get_move_boundaries_for_unit
 
 --- @class UnitOptions
 --- @field lf number
 --- @field color Color
-
-local function validate_pair(pair)
-	if #pair ~= 2 then
-		utils:exit_with_error("The pair must have 2 characters")
-	end
-	return pair
-end
-
-local function get_move_boundaries(boundaries)
-	return {
-		top = boundaries.top,
-		bottom = boundaries.bottom,
-		left = boundaries.left + 1,
-		right = boundaries.right - 2,
-	}
-end
 
 --- Creates and draws a Text ui_element and return the instance
 --- @param self Unit
@@ -40,7 +25,7 @@ end
 --- @param self Unit
 local clear = function(self)
 	if self.pos then
-		utils:simple_puts(self.pair, self.pos, self.boundaries, { clear = true })
+		utils:simple_puts("  ", self.pos, self.boundaries, { clear = true })
 	end
 end
 
@@ -50,7 +35,7 @@ end
 local move = function(self, data)
 	clear(self)
 
-	base.try_move(self.pos, data.pos, 2, 1, get_move_boundaries(self.boundaries))
+	base.try_move(self.pos, data.pos, 2, 1, get_move_boundaries_for_unit(self.boundaries))
 	if self.pos then
 		draw(self, {
 			pos = self.pos,

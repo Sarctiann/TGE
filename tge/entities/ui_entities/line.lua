@@ -1,10 +1,40 @@
-local Unit = require("tge.entities.ui_entities.unit")
+local base = require("tge.entities.ui_entities.base_ui_entity")
+local utils = require("tge.utils")
 
---- @param data { pair: string, options: UnitOptions }
+local UIEntity, ACTION, validate_pair, validate_boundaries =
+	base.UIEntity, base.ACTION, base.validate_pair, base.validate_boundaries
+
+local function validate_line(from, to)
+	if from.x ~= to.x and from.y ~= to.y then
+		utils:exit_with_error("Lines must be horizontal or vertical")
+	end
+	if from.x == to.x and from.y == to.y then
+		utils:exit_with_error("Lines requires at different coordinates for origin and destination")
+	end
+end
+
+local function draw(self)
+	utils:ortogonal_puts(self.pair, self.from, self.to, { color = self.color })
+end
+
+local function clear(self)
+	utils:ortogonal_puts("  ", self.from, self.to, { clear = true })
+end
+
+--- @param data { pair: string, from: Point, to: Point, options: UnitOptions }
 --- @param boundaries Boundaries
 local function new(data, boundaries)
+	validate_pair(data.pair)
+
 	--- @class Line : Unit to put/move/remove/delimite unit-based spaces on screen ( size: (2n*m)*o )
-	local self = Unit.new(data, boundaries)
+	local self = UIEntity.new()
+	validate_line(data.from, data.to)
+	self.from, self.to = validate_boundaries(data.from, data.to, boundaries)
+	self.boundaries = boundaries
+
+	self[ACTION.draw] = draw
+	self[ACTION.clear] = clear
+
 	return self
 end
 

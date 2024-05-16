@@ -72,4 +72,47 @@ local function new()
 	return self
 end
 
-return { UIEntity = { new = new }, ACTION = ACTION, DIRECTION = DIRECTION, try_move = try_move }
+local function validate_pair(pair)
+	if #pair ~= 2 then
+		utils:exit_with_error("The pair must have 2 characters")
+	end
+	return pair
+end
+
+local function get_move_boundaries_for_unit(boundaries)
+	return {
+		top = boundaries.top,
+		bottom = boundaries.bottom,
+		left = boundaries.left + 1,
+		right = boundaries.right - 2,
+	}
+end
+
+--- @param from Point
+--- @param to Point
+--- @param boundaries Boundaries
+--- @return Point orig, Point dest
+local function validate_boundaries(from, to, boundaries)
+	local orig, dest
+	orig.x, orig.y = math.min(from.x, to.x), math.min(from.y, to.y)
+	dest.x, dest.y = math.max(from.x, to.x), math.max(from.y, to.y)
+	if
+		orig.x < boundaries.left
+		or orig.y < boundaries.top
+		or dest.x > boundaries.right
+		or dest.y > boundaries.bottom
+	then
+		utils:exit_with_error("The coordinates are out of bound")
+	end
+	return orig, dest
+end
+
+return {
+	UIEntity = { new = new },
+	ACTION = ACTION,
+	DIRECTION = DIRECTION,
+	try_move = try_move,
+	validate_pair = validate_pair,
+	get_move_boundaries_for_unit = get_move_boundaries_for_unit,
+	validate_boundaries = validate_boundaries,
+}

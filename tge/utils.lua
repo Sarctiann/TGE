@@ -185,7 +185,7 @@ function Utils:ortogonal_puts(data, from, to, options)
 	local fdata = clear and string.rep(" ", utf8.len(data) or 1) or data
 	-- If is a horizontal line
 	if from.y == to.y then
-		local line = string.rep(fdata, to.x - from.x)
+		local line = string.rep(fdata, math.floor((to.x - from.x) / 2) + 1)
 		self.console:write(string.format("%s%s%s%s%s%s", self.cursor.goTo(from.x, from.y), fg, bg, line, rfg, rbg))
 	-- If is a vertical line
 	elseif from.x == to.x then
@@ -194,7 +194,7 @@ function Utils:ortogonal_puts(data, from, to, options)
 		end
 	-- else is a box
 	else
-		local line = string.rep(fdata, to.x - from.x)
+		local line = string.rep(fdata, math.floor((to.x - from.x) / 2) + 1)
 		self.console:write(string.format("%s%s%s%s%s%s", self.cursor.goTo(from.x, from.y), fg, bg, line, rfg, rbg))
 		self.console:write(string.format("%s%s%s%s%s%s", self.cursor.goTo(from.x, to.y), fg, bg, line, rfg, rbg))
 		for i = from.y + 1, to.y - 1 do

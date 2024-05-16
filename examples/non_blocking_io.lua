@@ -11,13 +11,13 @@ local game = tge.Game.new({
 		},
 	},
 	-- This will consume some memory bytes
-	debug = { "QueuedBriefs", "ActiveBriefs", "MemoryUsage", "Ticks" },
+	debug = { "X", "Y", "QueuedBriefs", "ActiveBriefs", "MemoryUsage", "Ticks" },
 })
 
 local SecondsFrames = tge.entities.SecondsFrames
 local ui = tge.entities.ui
 local ACTION, COLOR, DIRECTION = ui.ACTION, ui.COLOR, ui.DIRECTION
-local Text, Unit, Line = ui.Text, ui.Unit, ui.Line
+local Text, Unit, Line, Box = ui.Text, ui.Unit, ui.Line, ui.Box
 local q = game.queue
 
 -- TODO: create a panel system
@@ -77,6 +77,13 @@ local l2 = Line.new({
 	color = { bg = COLOR.Red },
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
+local b = Box.new({
+	pair = "  ",
+	from = { x = 50, y = 5 },
+	to = { x = 70, y = 15 },
+	color = { fg = COLOR.Black, bg = COLOR.Green },
+}, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
+
 -- SCHDULE SOME UI ELEMENTS BRIEFS
 q.enqueue({
 	action = ACTION.draw,
@@ -103,20 +110,30 @@ q.enqueue({
 	action = ACTION.draw,
 	when = game.sf,
 	ui_element = l1,
-	data = {},
 })
 
 q.enqueue({
 	action = ACTION.draw,
 	when = game.sf,
 	ui_element = l2,
-	data = {},
+})
+
+q.enqueue({
+	action = ACTION.clear,
+	when = SecondsFrames.from_frames(120, game.frame_rate),
+	ui_element = l1,
+})
+
+q.enqueue({
+	action = ACTION.draw,
+	when = SecondsFrames.from_frames(70, game.frame_rate),
+	ui_element = b,
 })
 
 -- EVENT HANDLING
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
-		game.exit()
+		game.exit("Good Bye")
 	elseif e.char == "d" then
 		q.enqueue({
 			action = ACTION.update,
@@ -140,7 +157,6 @@ game.on_event = function(e)
 			action = ACTION.clear,
 			when = game.sf + SecondsFrames.from_frames(15, game.frame_rate),
 			ui_element = t,
-			data = {},
 		})
 	elseif e.key == "up" or e.key == "down" or e.key == "left" or e.key == "right" then
 		q.enqueue({

@@ -56,7 +56,7 @@ local function new(init)
 	self.run = run
 
 	--- Exits the game.
-	--- @type fun(): nil
+	--- @type fun(exit_message: string | nil): nil
 	self.exit = core.exit
 
 	return self

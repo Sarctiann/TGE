@@ -24,7 +24,7 @@ end
 --- @param data { pair: string, from: Point, to: Point, color: Color | nil}
 --- @param boundaries Boundaries
 local function new(data, boundaries)
-	--- @class Line : Unit to put/move/remove/delimite unit-based spaces on screen ( size: (2n*m)*o )
+	--- @class Line : UIEntity to put/move/remove/delimite unit-based spaces on screen ( size: (2n*m)*o )
 	local self = UIEntity.new()
 
 	self.pair = validate_pair(data.pair)

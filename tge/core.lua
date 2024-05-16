@@ -132,7 +132,7 @@ function Core.run()
 end
 
 --- Exits the game.
-function Core.exit()
+function Core.exit(exit_message)
 	local cons = utils.console
 	local curs = utils.cursor
 
@@ -147,6 +147,10 @@ function Core.exit()
 
 	clear_main_loop()
 	cons:close()
+
+	if exit_message then
+		print(exit_message)
+	end
 
 	os.exit(0)
 end

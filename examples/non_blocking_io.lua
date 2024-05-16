@@ -81,7 +81,7 @@ local b = Box.new({
 	pair = "  ",
 	from = { x = 50, y = 5 },
 	to = { x = 70, y = 15 },
-	color = { fg = COLOR.Black, bg = COLOR.Green },
+	color = { bg = COLOR.Green },
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 -- SCHDULE SOME UI ELEMENTS BRIEFS

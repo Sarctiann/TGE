@@ -181,21 +181,17 @@ function Utils:ortogonal_puts(data, from, to, options)
 	local bg = color and color.bg and self.colors.bg(color.bg) or ""
 	local rfg = color and color.fg and self.colors.resetFg or ""
 	local rbg = color and color.bg and self.colors.resetBg or ""
-
 	-- TODO: take the background elements from the "state.static_collection.background"
 	local fdata = clear and string.rep(" ", utf8.len(data) or 1) or data
-
 	-- If is a horizontal line
 	if from.y == to.y then
 		local line = string.rep(fdata, to.x - from.x)
 		self.console:write(string.format("%s%s%s%s%s%s", self.cursor.goTo(from.x, from.y), fg, bg, line, rfg, rbg))
-
 	-- If is a vertical line
 	elseif from.x == to.x then
 		for i = from.y, to.y do
 			self.console:write(string.format("%s%s%s%s%s%s", self.cursor.goTo(from.x, i), fg, bg, fdata, rfg, rbg))
 		end
-
 	-- else is a box
 	else
 		local line = string.rep(fdata, to.x - from.x)

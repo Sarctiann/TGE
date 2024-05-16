@@ -14,6 +14,15 @@ local function validate_pair(pair)
 	return pair
 end
 
+local function get_move_boundaries(boundaries)
+	return {
+		top = boundaries.top,
+		bottom = boundaries.bottom,
+		left = boundaries.left + 1,
+		right = boundaries.right - 2,
+	}
+end
+
 --- Creates and draws a Text ui_element and return the instance
 --- @param self Unit
 --- @param data {pos: Point, options: UnitOptions}
@@ -41,7 +50,7 @@ end
 local move = function(self, data)
 	clear(self)
 
-	self.pos = base.move_point_or_nil(self.pos, data.pos, 2, 1)
+	base.try_move(self.pos, data.pos, 2, 1, get_move_boundaries(self.boundaries))
 	if self.pos then
 		draw(self, {
 			pos = self.pos,

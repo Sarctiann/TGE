@@ -1,8 +1,5 @@
 local tge = require("tge")
 
--- Measure the memory usage before running the game
-local a = collectgarbage("count") * 1024
-
 local game = tge.Game.new({
 	width = 160,
 	height = 40,
@@ -14,7 +11,7 @@ local game = tge.Game.new({
 		},
 	},
 	-- This will consume some memory bytes
-	debug = { "QueuedBriefs", "ActiveBriefs", "Key", "Char", "Button", "Event", "Ticks" },
+	debug = { "QueuedBriefs", "ActiveBriefs", "MemoryUsage", "Ticks" },
 })
 
 local SecondsFrames = tge.entities.SecondsFrames
@@ -54,7 +51,7 @@ local t = Text.new({
 	text = get_text(),
 	options = {
 		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
-		lf = 1,
+		lf = 10,
 	},
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
@@ -62,7 +59,7 @@ local u = Unit.new({
 	pair = "  ",
 	options = {
 		color = { bg = COLOR.Yellow },
-		lf = 10,
+		lf = 1,
 	},
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
@@ -78,7 +75,7 @@ q.enqueue({
 	action = ACTION.draw,
 	when = SecondsFrames.from_frames(60, game.frame_rate),
 	ui_element = t,
-	data = { pos = { x = 14, y = 5 } },
+	data = { pos = { x = 13, y = 5 } },
 })
 
 q.enqueue({
@@ -178,11 +175,5 @@ game.on_event = function(e)
 		})
 	end
 end
-
--- Measure the memory usage after running the game
-local b = collectgarbage("count") * 1024
-print("Memory usage before running the game: " .. a .. " Bytes")
-print("Memory usage after running the game:  " .. b .. " Bytes")
-print("Memory estimated usage increased by:  " .. b - a .. " Bytes")
 
 game:run()

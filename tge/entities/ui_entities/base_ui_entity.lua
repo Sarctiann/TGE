@@ -25,28 +25,23 @@ local function not_implemented(action)
 end
 
 --- Tries to move the point to a new location
---- @param current Point | nil must be a `Point` to use `new_pos` = `DIRECTION`
---- @param new_pos Point | DIRECTION could be a `Point` to replace `current` or a `DIRECTION` to move `current`
+--- @param point Point | nil must be a `Point` to use `new_pos` = `DIRECTION`
+--- @param new_pos Point | DIRECTION could be a `Point` to replace `point` or a `DIRECTION` to move `point`
 --- @param x_amt integer amount of characters for the step in the X axis.
 --- @param y_amt integer amount of characters for the step in the Y axis.
---- @return Point | nil
-local function move_point_or_nil(current, new_pos, x_amt, y_amt)
+--- @param boundaries Boundaries the limits for the direction movement.
+local function try_move(point, new_pos, x_amt, y_amt, boundaries)
 	if type(new_pos) == "table" and type(new_pos.x) == "number" and type(new_pos.y) == "number" then
-		return new_pos
-	end
-	if current and type(new_pos) == "number" then
-		if new_pos == DIRECTION.up then
-			current.y = current.y - y_amt
-			return current
-		elseif new_pos == DIRECTION.down then
-			current.y = current.y + y_amt
-			return current
-		elseif new_pos == DIRECTION.left then
-			current.x = current.x - x_amt
-			return current
-		elseif new_pos == DIRECTION.right then
-			current.x = current.x + x_amt
-			return current
+		point.x, point.y = new_pos.x, new_pos.y
+	elseif point and type(new_pos) == "number" then
+		if new_pos == DIRECTION.up and point.y > boundaries.top then
+			point.y = point.y - y_amt
+		elseif new_pos == DIRECTION.down and point.y < boundaries.bottom then
+			point.y = point.y + y_amt
+		elseif new_pos == DIRECTION.left and point.x > boundaries.left then
+			point.x = point.x - x_amt
+		elseif new_pos == DIRECTION.right and point.x < boundaries.right then
+			point.x = point.x + x_amt
 		end
 	end
 end
@@ -77,4 +72,4 @@ local function new()
 	return self
 end
 
-return { UIEntity = { new = new }, ACTION = ACTION, DIRECTION = DIRECTION, move_point_or_nil = move_point_or_nil }
+return { UIEntity = { new = new }, ACTION = ACTION, DIRECTION = DIRECTION, try_move = try_move }

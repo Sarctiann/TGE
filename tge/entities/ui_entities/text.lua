@@ -38,7 +38,7 @@ end
 local move = function(self, data)
 	clear(self)
 
-	self.pos = base.move_point_or_nil(self.pos, data.pos, 1, 1)
+	base.try_move(self.pos, data.pos, 1, 1, self.boundaries)
 	if self.pos then
 		draw(self, {
 			pos = self.pos,
@@ -52,7 +52,8 @@ end
 --- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
 local update = function(self, data)
 	clear(self)
-	self.pos = data.pos or self.pos
+
+	base.try_move(self.pos, data.pos, 1, 1, self.boundaries)
 	self.text = data.text or self.text
 	if data.options then
 		self.color = data.options.color or self.color

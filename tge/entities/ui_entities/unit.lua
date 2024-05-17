@@ -1,8 +1,16 @@
 local base = require("tge.entities.ui_entities.base_ui_entity")
 local utils = require("tge.utils")
 
-local UIEntity, ACTION, validate_pair, get_move_boundaries_for_unit =
-	base.UIEntity, base.ACTION, base.validate_pair, base.get_move_boundaries_for_unit
+local UIEntity, ACTION, validate_pair = base.UIEntity, base.ACTION, base.validate_pair
+
+local function get_move_boundaries_for_unit(boundaries)
+	return {
+		top = boundaries.top,
+		bottom = boundaries.bottom,
+		left = boundaries.left + 1,
+		right = boundaries.right - 2,
+	}
+end
 
 --- @class UnitOptions
 --- @field lf number | nil

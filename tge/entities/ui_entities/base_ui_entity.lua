@@ -20,6 +20,14 @@ local DIRECTION = {
 	right = 4,
 }
 
+--- @enum ORIENTATION
+local ORIENTATION = {
+	north = 1,
+	south = 2,
+	west = 3,
+	east = 4,
+}
+
 local function not_implemented(action)
 	utils:exit_with_error("%s action is not implemented by this UI Entity", action)
 end
@@ -79,15 +87,6 @@ local function validate_pair(pair)
 	return pair
 end
 
-local function get_move_boundaries_for_unit(boundaries)
-	return {
-		top = boundaries.top,
-		bottom = boundaries.bottom,
-		left = boundaries.left + 1,
-		right = boundaries.right - 2,
-	}
-end
-
 --- @param from Point
 --- @param to Point
 --- @param boundaries Boundaries
@@ -111,8 +110,8 @@ return {
 	UIEntity = { new = new },
 	ACTION = ACTION,
 	DIRECTION = DIRECTION,
+	ORIENTATION = ORIENTATION,
 	try_move = try_move,
 	validate_pair = validate_pair,
-	get_move_boundaries_for_unit = get_move_boundaries_for_unit,
 	validate_boundaries = validate_boundaries,
 }

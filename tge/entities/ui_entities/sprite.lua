@@ -3,22 +3,22 @@ local utils = require("tge.utils")
 
 local UIEntity, ACTION, validate_pair = base.UIEntity, base.ACTION, base.validate_pair
 
-local function validate_graph_and_create_orientations(graph)
+local function validate_graph_and_create_orientations(graph, orientation)
 	for _, line in ipairs(graph) do
 		if #line / 2 ~= #graph then
 			utils:exit_with_error("The graph must have 2 characters")
 		end
 	end
+	-- TODO: generate every oriented graph
 	return graph
 end
 
-local function get_move_boundaries_for_sprite(graph, boundaries)
-	local length = math.floor(graph[0] / 2)
+local function get_move_boundaries_for_sprite(size, boundaries)
 	return {
 		top = boundaries.top,
 		bottom = boundaries.bottom,
 		left = boundaries.left + 1,
-		right = boundaries.right - length,
+		right = boundaries.right - size,
 	}
 end
 
@@ -53,7 +53,7 @@ end
 local move = function(self, data)
 	clear(self)
 
-	base.try_move(self.pos, data.pos, 2, 1, get_move_boundaries_for_sprite(self.graph, self.boundaries))
+	base.try_move(self.pos, data.pos, 2, 1, get_move_boundaries_for_sprite(self.unit_size, self.boundaries))
 	if self.pos then
 		draw(self, {
 			pos = self.pos,
@@ -84,14 +84,16 @@ local function new(data, boundaries)
 	--- @class Sprite : Unit to put/move/remove the minimal symmetrical ui element on screen ( size: 2,1 )
 	local self = UIEntity.new()
 
-	--- @type string[] the pair of the unit
-	self.graph = validate_graph_and_create_orientations(data.graph)
+	--- @type {[ORIENTATION]: string[]} The graph in the four orientations
+	self.graphs = validate_graph_and_create_orientations(data.graph, data.orientation)
 	--- @type ORIENTATION the orientation of the given graph
 	self.orientation = data.orientation
 	--- @type Boundaries the boundaries of the unit
 	self.boundaries = boundaries
 	--- @type Point | nil the position of the unit
 	self.pos = nil
+	--- @type integer
+	self.unit_size = data.graph[0] / 2
 
 	if data.options then
 		--- @type Color

@@ -14,11 +14,15 @@ end
 
 local function create_oriented_graphs(graph, orientation)
 	-- TODO: refactor this function to take the given orientation and create the utils.rotatation functions
+
+	local axis_rotated_graph = utils.rotate_left(graph)
+
+	-- This is only valid for orientation eq north
 	return {
 		[ORIENTATION.north] = graph,
-		[ORIENTATION.south] = utils.rotate_graph_verticaly(graph),
-		[ORIENTATION.west] = utils.rotate_graph_90_deg(graph),
-		[ORIENTATION.east] = utils.rotate_graph_horizontaly(graph),
+		[ORIENTATION.south] = utils.flip_verticaly(graph),
+		[ORIENTATION.west] = axis_rotated_graph,
+		[ORIENTATION.east] = utils.flip_horizontaly(axis_rotated_graph),
 	}
 end
 

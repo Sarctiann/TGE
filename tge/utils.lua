@@ -255,7 +255,15 @@ function Utils:puts(data, pos, bound, options)
 	end
 end
 
-function Utils.rotate_graph_90_deg(graph)
+function Utils.flip_verticaly(graph)
+	local new_graph = {}
+	for i = 1, #graph do
+		new_graph[i] = graph[#graph - i + 1]
+	end
+	return new_graph
+end
+
+function Utils.rotate_left(graph)
 	local cols = #graph * 2
 	local rows = #graph
 
@@ -269,17 +277,41 @@ function Utils.rotate_graph_90_deg(graph)
 	return new_graph
 end
 
+function Utils.flip_horizontaly(graph)
+	local cols = #graph * 2
+	local rows = #graph
+
+	local new_graph = {}
+	for i = 1, rows do
+		new_graph[i] = ""
+		for j = 1, rows do
+			new_graph[i] = new_graph[i] .. graph[i]:sub(cols - (j * 2 - 1), cols - (j * 2 - 2))
+		end
+	end
+	return new_graph
+end
+
 -- local test = {
 -- 	"abcdef",
 -- 	"ghijkl",
 -- 	"mnopqr",
 -- }
---
--- local result = Utils.rotate_graph_90_deg(test)
+
+-- local result = Utils.flip_verticaly(test)
+-- -- mnopqr
+-- -- ghijkl
+-- -- abcdef
+
+-- local result = Utils.rotate_left(test)
 -- -- efklqr
 -- -- cdijop
 -- -- abghmn
---
+
+-- local result = Utils.flip_horizontaly(test)
+-- -- efcdab
+-- -- klijgh
+-- -- qropmn
+
 -- print(result[1])
 -- print(result[2])
 -- print(result[3])

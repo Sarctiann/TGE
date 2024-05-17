@@ -1,16 +1,25 @@
 local base = require("tge.entities.ui_entities.base_ui_entity")
 local utils = require("tge.utils")
 
-local UIEntity, ACTION, validate_pair = base.UIEntity, base.ACTION, base.validate_pair
+local UIEntity, ACTION, validate_pair, ORIENTATION = base.UIEntity, base.ACTION, base.validate_pair, base.ORIENTATION
 
-local function validate_graph_and_create_orientations(graph, orientation)
+local function validate_graph(graph)
 	for _, line in ipairs(graph) do
 		if #line / 2 ~= #graph then
 			utils:exit_with_error("The graph must have 2 characters")
 		end
 	end
-	-- TODO: generate every oriented graph
-	return graph
+	return graph[0] / 2
+end
+
+local function create_oriented_graphs(graph, orientation)
+	-- TODO: refactor this function to take the given orientation and create the utils.rotatation functions
+	return {
+		[ORIENTATION.north] = graph,
+		[ORIENTATION.south] = utils.rotate_graph_verticaly(graph),
+		[ORIENTATION.west] = utils.rotate_graph_90_deg(graph),
+		[ORIENTATION.east] = utils.rotate_graph_horizontaly(graph),
+	}
 end
 
 local function get_move_boundaries_for_sprite(size, boundaries)
@@ -20,6 +29,15 @@ local function get_move_boundaries_for_sprite(size, boundaries)
 		left = boundaries.left + 1,
 		right = boundaries.right - size,
 	}
+end
+
+--- @type fun(self, data: {graph: string[], orientation: ORIENTATION})
+local set_random_graph = function(self, data)
+	local new_graph_size = validate_graph(data.graph)
+	if new_graph_size ~= self.unit_size then
+		utils:exit_with_error("The new graph must have the same size as the previous one")
+	end
+	self.graphs[ORIENTATION[data.orientation]] = data.graph
 end
 
 --- @class SpriteOptions
@@ -81,11 +99,13 @@ end
 --- @param data {graph: string[], orientation: ORIENTATION, options: SpriteOptions}
 --- @param boundaries Boundaries
 local function new(data, boundaries)
+	validate_graph(data.graph)
+
 	--- @class Sprite : Unit to put/move/remove the minimal symmetrical ui element on screen ( size: 2,1 )
 	local self = UIEntity.new()
 
 	--- @type {[ORIENTATION]: string[]} The graph in the four orientations
-	self.graphs = validate_graph_and_create_orientations(data.graph, data.orientation)
+	self.graphs = create_oriented_graphs(data.graph, data.orientation)
 	--- @type ORIENTATION the orientation of the given graph
 	self.orientation = data.orientation
 	--- @type Boundaries the boundaries of the unit
@@ -100,6 +120,8 @@ local function new(data, boundaries)
 		self.color = data.options.color
 		self.lock_frames = data.options.lf
 	end
+
+	self.set_random_graph = set_random_graph
 
 	self[ACTION.draw] = draw
 	self[ACTION.clear] = clear

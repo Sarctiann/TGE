@@ -255,4 +255,33 @@ function Utils:puts(data, pos, bound, options)
 	end
 end
 
+function Utils.rotate_graph_90_deg(graph)
+	local cols = #graph * 2
+	local rows = #graph
+
+	local new_graph = {}
+	for i = 1, rows do
+		new_graph[i] = ""
+		for j = 1, rows do
+			new_graph[i] = new_graph[i] .. graph[j]:sub(cols - (i * 2 - 1), cols - (i * 2 - 2))
+		end
+	end
+	return new_graph
+end
+
+-- local test = {
+-- 	"abcdef",
+-- 	"ghijkl",
+-- 	"mnopqr",
+-- }
+--
+-- local result = Utils.rotate_graph_90_deg(test)
+-- -- efklqr
+-- -- cdijop
+-- -- abghmn
+--
+-- print(result[1])
+-- print(result[2])
+-- print(result[3])
+
 return Utils

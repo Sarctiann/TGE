@@ -23,8 +23,8 @@ local DIRECTION = {
 --- @enum ORIENTATION
 local ORIENTATION = {
 	north = 1,
-	south = 2,
-	west = 3,
+	west = 2,
+	south = 3,
 	east = 4,
 }
 

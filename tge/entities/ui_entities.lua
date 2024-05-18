@@ -35,6 +35,7 @@ return {
 	ACTION = base.ACTION,
 	DIRECTION = base.DIRECTION,
 	COLOR = COLOR,
+	ORIENTATION = base.ORIENTATION,
 	truecolor = utils.colors.truecolor,
 	-- UI Entities
 	Text = require("tge.entities.ui_entities.text"),

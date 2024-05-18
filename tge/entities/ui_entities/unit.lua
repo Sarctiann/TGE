@@ -16,7 +16,7 @@ end
 --- @field lf number | nil
 --- @field color Color | nil
 
---- Creates and draws a Text ui_element and return the instance
+--- Draws a Text ui_element and return the instance
 --- @param self Unit
 --- @param data {pos: Point, options: UnitOptions}
 local draw = function(self, data)
@@ -26,14 +26,14 @@ local draw = function(self, data)
 		self.lock_frames = data.options.lf or self.lock_frames
 	end
 
-	utils:simple_puts(self.pair, self.pos, self.boundaries, { color = self.color })
+	utils:unit_puts(self.pair, self.pos, self.boundaries, { color = self.color })
 end
 
 --- Clear the ui element from the screen
 --- @param self Unit
 local clear = function(self)
 	if self.pos then
-		utils:simple_puts("  ", self.pos, self.boundaries, { clear = true })
+		utils:unit_puts("  ", self.pos, self.boundaries, { clear = true })
 	end
 end
 
@@ -64,7 +64,7 @@ local update = function(self, data)
 		self.lock_frames = data.options.lf or self.lock_frames
 	end
 	if self.pos then
-		utils:simple_puts(self.pair, self.pos, self.boundaries, { color = self.color })
+		utils:unit_puts(self.pair, self.pos, self.boundaries, { color = self.color })
 	end
 end
 

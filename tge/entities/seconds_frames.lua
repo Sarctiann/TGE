@@ -104,12 +104,14 @@ SecondsFramesMeta.__sub = function(self, sf_other)
 	return from_frames(validate_op(self, sf_other, self.to_frames() - sf_other.to_frames()), self.frame_rate)
 end
 
-SecondsFramesMeta.__mul = function(self, sf_other)
-	return from_frames(validate_op(self, sf_other, self.to_frames() * sf_other.to_frames()), self.frame_rate)
+SecondsFramesMeta.__mul = function(self, factor)
+	assert(type(factor) == "number", "Can only multiply SecondsFrames by a number")
+	return from_frames(validate_op(self, factor, math.floor(self.to_frames() * factor)), self.frame_rate)
 end
 
-SecondsFramesMeta.__div = function(self, sf_other)
-	return from_frames(validate_op(self, sf_other, self.to_frames() / sf_other.to_frames()), self.frame_rate)
+SecondsFramesMeta.__div = function(self, divisor)
+	assert(type(divisor) == "number", "Can only divided SecondsFrames by a number")
+	return from_frames(validate_op(self, divisor, math.floor(self.to_frames() / divisor)), self.frame_rate)
 end
 
 return { from_frames = from_frames, new = new }

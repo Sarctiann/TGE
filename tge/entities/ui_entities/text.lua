@@ -8,7 +8,7 @@ local UIEntity, ACTION = base.UIEntity, base.ACTION
 --- @field public align boolean | nil
 --- @field public color Color | nil
 
---- Creates and draws a Text ui_element and return the instance
+--- Draws a Text ui_element and return the instance
 --- @param self Text
 --- @param data {pos: Point,  options: TextOptions}
 local draw = function(self, data)

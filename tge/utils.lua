@@ -151,7 +151,7 @@ end
 --- @param pos Point
 --- @param bound Boundaries
 --- @param options {color: Color | nil, clear: boolean | nil} | nil
-function Utils:simple_puts(data, pos, bound, options)
+function Utils:unit_puts(data, pos, bound, options)
 	local color = options and options.color or nil
 	local clear = options and options.clear or false
 	---@diagnostic disable-next-line: param-type-mismatch
@@ -162,8 +162,26 @@ function Utils:simple_puts(data, pos, bound, options)
 	local rbg = color and color.bg and self.colors.resetBg or ""
 	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
 		-- TODO: take the background elements from the "state.static_collection.background"
-		local fdata = clear and string.rep(" ", utf8.len(data) or 1) or data
+		local fdata = clear and "  " or data
 		self.console:write(string.format("%s%s%s%s%s%s", self.cursor.goTo(pos.x, pos.y), fg, bg, fdata, rfg, rbg))
+	end
+end
+
+--- Write in the screen checking the given boundaries
+--- @param data table<string[]>
+--- @param pos Point
+--- @param bound Boundaries
+--- @param clear boolean | nil
+function Utils:sprite_puts(data, pos, bound, clear)
+	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
+		for i, line in ipairs(data) do
+			for j, unit in ipairs(line) do
+				-- TODO: take the background elements from the "state.static_collection.background"
+				local u = (clear or unit == "") and "  " or unit
+				local fpos = { x = pos.x + (j - 1 * 2), y = pos.y + i - 1 }
+				self.console:write(string.format("%s%s", self.cursor.goTo(fpos.x, fpos.y), u))
+			end
+		end
 	end
 end
 
@@ -182,7 +200,7 @@ function Utils:ortogonal_puts(data, from, to, options)
 	local rfg = color and color.fg and self.colors.resetFg or ""
 	local rbg = color and color.bg and self.colors.resetBg or ""
 	-- TODO: take the background elements from the "state.static_collection.background"
-	local fdata = clear and string.rep(" ", utf8.len(data) or 1) or data
+	local fdata = clear and "  " or data
 	-- If is a horizontal line
 	if from.y == to.y then
 		local line = string.rep(fdata, math.floor((to.x - from.x) / 2) + 1)
@@ -264,56 +282,50 @@ function Utils.flip_verticaly(graph)
 end
 
 function Utils.rotate_left(graph)
-	local cols = #graph * 2
-	local rows = #graph
-
 	local new_graph = {}
-	for i = 1, rows do
-		new_graph[i] = ""
-		for j = 1, rows do
-			new_graph[i] = new_graph[i] .. graph[j]:sub(cols - (i * 2 - 1), cols - (i * 2 - 2))
+	for i = 1, #graph do
+		new_graph[i] = {}
+		for j = 1, #graph do
+			table.insert(new_graph[i], graph[j][#graph - i + 1])
 		end
 	end
 	return new_graph
 end
 
 function Utils.flip_horizontaly(graph)
-	local cols = #graph * 2
-	local rows = #graph
-
 	local new_graph = {}
-	for i = 1, rows do
-		new_graph[i] = ""
-		for j = 1, rows do
-			new_graph[i] = new_graph[i] .. graph[i]:sub(cols - (j * 2 - 1), cols - (j * 2 - 2))
+	for i = 1, #graph do
+		new_graph[i] = {}
+		for j = 1, #graph do
+			table.insert(new_graph[i], graph[i][#graph - j + 1])
 		end
 	end
 	return new_graph
 end
 
 -- local test = {
--- 	"abcdef",
--- 	"ghijkl",
--- 	"mnopqr",
+-- 	{ "ab", "cd", "ef" },
+-- 	{ "gh", "ij", "kl" },
+-- 	{ "mn", "op", "qr" },
 -- }
 
 -- local result = Utils.flip_verticaly(test)
--- -- mnopqr
--- -- ghijkl
--- -- abcdef
+-- -- mn op qr
+-- -- gh ij kl
+-- -- ab cd ef
 
 -- local result = Utils.rotate_left(test)
--- -- efklqr
--- -- cdijop
--- -- abghmn
+-- -- ef kl qr
+-- -- cd ij op
+-- -- ab gh mn
 
 -- local result = Utils.flip_horizontaly(test)
--- -- efcdab
--- -- klijgh
--- -- qropmn
+-- -- ef cd ab
+-- -- kl ij gh
+-- -- qr op mn
 
--- print(result[1])
--- print(result[2])
--- print(result[3])
+-- print(result[1][1], result[1][2], result[1][3])
+-- print(result[2][1], result[2][2], result[2][3])
+-- print(result[3][1], result[3][2], result[3][3])
 
 return Utils

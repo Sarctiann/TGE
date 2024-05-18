@@ -51,7 +51,7 @@ local t = Text.new({
 	text = get_text(),
 	options = {
 		color = { fg = COLOR.Cyan, bg = COLOR.LightBlack },
-		lf = 10,
+		lf = 7,
 	},
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 

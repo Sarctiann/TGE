@@ -22,7 +22,7 @@ local s = Sprite.new({
 	},
 	orientation = ent.ui.ORIENTATION.north,
 	options = { lf = 3 },
-}, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 1))
+}, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 game.queue.enqueue({
 	action = ACTION.draw,

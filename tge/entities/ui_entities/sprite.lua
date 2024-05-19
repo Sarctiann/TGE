@@ -21,13 +21,14 @@ local function validate_graph(graph)
 end
 
 local function set_next_rotations(graphs_tbl, cur_orient)
-	graphs_tbl[(cur_orient + 1) % 4] = utils.rotate_left(graphs_tbl[cur_orient])
-	graphs_tbl[(cur_orient + 2) % 4] = utils.rotate_left(graphs_tbl[(cur_orient + 1) % 4])
-	graphs_tbl[(cur_orient + 3) % 4] = utils.rotate_left(graphs_tbl[(cur_orient + 2) % 4])
+	local idx = cur_orient - 1
+	graphs_tbl[((idx + 1) % 4) + 1] = utils.rotate_left(graphs_tbl[cur_orient])
+	graphs_tbl[((idx + 2) % 4) + 1] = utils.rotate_left(graphs_tbl[((idx + 1) % 4 + 1)])
+	graphs_tbl[((idx + 3) % 4) + 1] = utils.rotate_left(graphs_tbl[((idx + 2) % 4 + 1)])
 end
 
 local function set_complementary_h_flip(graphs_tbl, cur_orient)
-	graphs_tbl[(cur_orient + 2) % 4] = utils.flip_horizontaly(graphs_tbl[cur_orient])
+	graphs_tbl[((cur_orient + 1) % 4) + 1] = utils.flip_horizontaly(graphs_tbl[cur_orient])
 end
 
 local function set_flips(graphs_tbl, cur_orient)
@@ -39,9 +40,10 @@ local function set_flips(graphs_tbl, cur_orient)
 		first_flip = utils.flip_horizontaly
 		second_flip = utils.flip_verticaly
 	end
-	graphs_tbl[(cur_orient + 2) % 4] = first_flip(graphs_tbl[cur_orient])
-	graphs_tbl[(cur_orient + 1) % 4] = utils.rotate_left(graphs_tbl[(cur_orient + 2) % 4])
-	graphs_tbl[(cur_orient + 3) % 4] = second_flip(graphs_tbl[(cur_orient + 1) % 4])
+	local idx = cur_orient - 1
+	graphs_tbl[((idx + 1) % 4) + 1] = first_flip(graphs_tbl[cur_orient])
+	graphs_tbl[((idx + 2) % 4) + 1] = utils.rotate_left(graphs_tbl[(cur_orient + 2) % 4])
+	graphs_tbl[((idx + 3) % 4) + 1] = second_flip(graphs_tbl[(cur_orient + 1) % 4])
 end
 
 --- @param graph table<string[]>
@@ -61,16 +63,16 @@ local function create_oriented_graphs(graph, orientation, behavior)
 	elseif behavior == "flip" then
 		set_flips(graphs, orientation)
 	end
-
+	print(graphs[ORIENTATION.east])
 	return graphs
 end
 
 local function get_move_boundaries_for_sprite(size, boundaries)
 	return {
 		top = boundaries.top,
-		bottom = boundaries.bottom,
+		bottom = boundaries.bottom - size + 1,
 		left = boundaries.left + 1,
-		right = boundaries.right - size,
+		right = boundaries.right - size * 2,
 	}
 end
 
@@ -90,11 +92,11 @@ end
 --- @param data {pos: Point, orientation: ORIENTATION, options: SpriteOptions}
 local draw = function(self, data)
 	self.pos = data.pos
-	local graph = self.graphs[data.orientation]
+	self.orientation = data.orientation or self.orientation
+	local graph = self.graphs[self.orientation]
 	if data.options then
 		self.lock_frames = data.options.lf or self.lock_frames
 	end
-
 	utils:sprite_puts(graph, self.pos, self.boundaries)
 end
 
@@ -116,7 +118,7 @@ local move = function(self, data)
 	if self.pos then
 		draw(self, {
 			pos = self.pos,
-			orientation = data.orientation or self.orientation,
+			orientation = data.orientation,
 			options = { lf = self.lock_frames },
 		})
 	end

@@ -121,7 +121,7 @@ function Utils:show_status(game, data, y_offset, align)
 				entry[2]
 			)
 		)
-		status_len = status_len + utf8.len(entry[1]) + utf8.len(tostring(entry[2])) + 7
+		status_len = status_len + utf8.len(tostring(entry[1])) + utf8.len(tostring(entry[2])) + 7
 	end
 
 	local status_str = table.concat(status, " | ")
@@ -174,14 +174,16 @@ end
 --- @param clear boolean | nil
 function Utils:sprite_puts(data, pos, bound, clear)
 	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
+		local fstring = ""
 		for i, line in ipairs(data) do
 			for j, unit in ipairs(line) do
 				-- TODO: take the background elements from the "state.static_collection.background"
 				local u = (clear or unit == "") and "  " or unit
-				local fpos = { x = pos.x + (j - 1 * 2), y = pos.y + i - 1 }
-				self.console:write(string.format("%s%s", self.cursor.goTo(fpos.x, fpos.y), u))
+				local fpos = { x = pos.x + (j - 1) * 2, y = pos.y + i - 1 }
+				fstring = fstring .. string.format("%s%s", self.cursor.goTo(fpos.x, fpos.y), u)
 			end
 		end
+		self.console:write(fstring)
 	end
 end
 

@@ -136,20 +136,19 @@ function Core.exit(exit_message)
 	local cons = utils.console
 	local curs = utils.cursor
 
+	cons:write("\x1b[2j\x1b[H") -- Clear the screen and returns the prompt to the top
 	cons:setMode(0)
 	cons:exitMouseMode()
-	cons:write("\x1b[2j\x1b[H") -- Clear the screen and returns the prompt to the top
 
 	curs.goTo(1, 1)
 
-	cons:write("\n")
 	cons:write(curs.show)
 
 	clear_main_loop()
 	cons:close()
 
 	if exit_message then
-		print(exit_message)
+		print("\n" .. exit_message)
 	end
 
 	os.exit(0)

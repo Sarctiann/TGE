@@ -37,9 +37,6 @@ local function set_flips(graphs_tbl, cur_orient)
 	if cur_orient == ORIENTATION.south or cur_orient == ORIENTATION.north then
 		first_flip = utils.flip_verticaly
 		second_flip = utils.flip_horizontaly
-	else
-		first_flip = utils.flip_horizontaly
-		second_flip = utils.flip_verticaly
 	end
 	local idx = cur_orient - 1
 	graphs_tbl[((idx + 1) % 4) + 1] = first_flip(graphs_tbl[cur_orient])
@@ -64,7 +61,7 @@ local function create_oriented_graphs(graph, orientation, behavior)
 	elseif behavior == "flip" then
 		set_flips(graphs, orientation)
 	end
-	print(graphs[ORIENTATION.east])
+
 	return graphs
 end
 
@@ -80,10 +77,10 @@ end
 --- @type fun(self: self, data: {graph: table<string[]>, orientation: ORIENTATION})
 local set_random_graph = function(self, data)
 	local new_graph_size = validate_graph(data.graph)
-	if new_graph_size ~= self.unit_size then
+	if new_graph_size ~= self.size then
 		utils:exit_with_error("The new graph must have the same size as the previous one")
 	end
-	self.graphs[ORIENTATION[data.orientation]] = data.graph
+	self.graphs[data.orientation] = data.graph
 end
 
 --------------------------------- ACTIONS IMPLEMENTATION ------------------------------

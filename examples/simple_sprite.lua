@@ -12,21 +12,41 @@ local game = tge.Game.new({
 
 local ent = tge.entities
 local Sprite, ACTION = ent.ui.Sprite, ent.ui.ACTION
-local cu = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Cyan), "  ", tge.utils.colors.resetBg)
+local c1 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Cyan), "  ", tge.utils.colors.resetBg)
+local c2 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Green), "  ", tge.utils.colors.resetBg)
+local c3 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Red), "  ", tge.utils.colors.resetBg)
 
 local s = Sprite.new({
 	graph = {
-		{ "", cu, "" },
-		{ cu, cu, cu },
-		{ cu, "", cu },
+		{ c1, c1, "" },
+		{ "", c1, c1 },
+		{ c1, c1, "" },
 	},
-	orientation = ent.ui.ORIENTATION.north,
+	orientation = ent.ui.ORIENTATION.east,
 	options = { lf = 5 },
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
+s:set_random_graph({
+	graph = {
+		{ "", c2, "" },
+		{ c1, c2, c1 },
+		{ c1, "", c1 },
+	},
+	orientation = ent.ui.ORIENTATION.north,
+})
+
+s:set_random_graph({
+	graph = {
+		{ c1, "", c1 },
+		{ c1, c3, c1 },
+		{ "", c3, "" },
+	},
+	orientation = ent.ui.ORIENTATION.south,
+})
+
 game.queue.enqueue({
 	action = ACTION.draw,
-	data = { pos = { x = 55, y = 20 } },
+	data = { pos = { x = 55, y = 20 }, orientation = ent.ui.ORIENTATION.north },
 	when = game.sf,
 	ui_element = s,
 })

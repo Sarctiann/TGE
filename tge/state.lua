@@ -132,10 +132,10 @@ end
 
 local screen_repr = {}
 
---- screen_repr in the foreground.
+--- screen_repr of the foreground-ui elements.
 screen_repr.foreground = {}
 
---- screen_repr in the background.
+--- screen_repr of the background-ui elements.
 screen_repr.background = {}
 
 return {

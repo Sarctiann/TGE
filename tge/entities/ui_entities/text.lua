@@ -1,4 +1,5 @@
 local base = require("tge.entities.ui_entities.base_ui_entity")
+local state = require("tge.state")
 local utils = require("tge.utils")
 
 local UIEntity, ACTION = base.UIEntity, base.ACTION
@@ -21,14 +22,14 @@ local draw = function(self, data)
 		end
 	end
 
-	utils:puts(self.text, self.pos, self.boundaries, { color = self.color, align = self.align })
+	state.puts(self.text, self.pos, self.boundaries, { color = self.color, align = self.align })
 end
 
 --- Clear the ui element from the screen
 --- @param self Text
 local clear = function(self)
 	if self.pos then
-		utils:puts(self.text, self.pos, self.boundaries, { clear = true, align = self.align })
+		state.puts(self.text, self.pos, self.boundaries, { clear = true, align = self.align })
 	end
 end
 
@@ -63,7 +64,7 @@ local update = function(self, data)
 		end
 	end
 	if self.pos then
-		utils:puts(self.text, self.pos, self.boundaries, { color = self.color, align = self.align })
+		state.puts(self.text, self.pos, self.boundaries, { color = self.color, align = self.align })
 	end
 end
 

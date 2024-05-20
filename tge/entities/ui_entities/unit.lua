@@ -1,5 +1,5 @@
 local base = require("tge.entities.ui_entities.base_ui_entity")
-local utils = require("tge.utils")
+local state = require("tge.state")
 
 local UIEntity, ACTION, validate_pair = base.UIEntity, base.ACTION, base.validate_pair
 
@@ -26,14 +26,14 @@ local draw = function(self, data)
 		self.lock_frames = data.options.lf or self.lock_frames
 	end
 
-	utils:unit_puts(self.pair, self.pos, self.boundaries, { color = self.color })
+	state.unit_puts(self.pair, self.pos, self.boundaries, { color = self.color })
 end
 
 --- Clear the ui element from the screen
 --- @param self Unit
 local clear = function(self)
 	if self.pos then
-		utils:unit_puts("  ", self.pos, self.boundaries, { clear = true })
+		state.unit_puts("  ", self.pos, self.boundaries, { clear = true })
 	end
 end
 
@@ -64,7 +64,7 @@ local update = function(self, data)
 		self.lock_frames = data.options.lf or self.lock_frames
 	end
 	if self.pos then
-		utils:unit_puts(self.pair, self.pos, self.boundaries, { color = self.color })
+		state.unit_puts(self.pair, self.pos, self.boundaries, { color = self.color })
 	end
 end
 

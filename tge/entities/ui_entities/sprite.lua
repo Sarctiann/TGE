@@ -1,5 +1,6 @@
 local base = require("tge.entities.ui_entities.base_ui_entity")
 local utils = require("tge.utils")
+local state = require("tge.state")
 
 local UIEntity, ACTION, ORIENTATION = base.UIEntity, base.ACTION, base.ORIENTATION
 
@@ -97,14 +98,14 @@ local draw = function(self, data)
 	if data.options then
 		self.lock_frames = data.options.lf or self.lock_frames
 	end
-	utils:sprite_puts(graph, self.pos, self.boundaries)
+	state.sprite_puts(graph, self.pos, self.boundaries)
 end
 
 --- Clear the ui element from the screen
 --- @param self Sprite
 local clear = function(self)
 	if self.pos then
-		utils:sprite_puts(self.graph, self.pos, self.boundaries, true)
+		state.sprite_puts(self.graph, self.pos, self.boundaries, true)
 	end
 end
 

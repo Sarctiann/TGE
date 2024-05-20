@@ -21,7 +21,7 @@ local s = Sprite.new({
 		{ cu, "", cu },
 	},
 	orientation = ent.ui.ORIENTATION.north,
-	options = { lf = 3 },
+	options = { lf = 5 },
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 game.queue.enqueue({
@@ -33,7 +33,7 @@ game.queue.enqueue({
 
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
-		game.exit("Just another step")
+		game.exit("Just another step done")
 	elseif e.char == "w" then
 		game.queue.enqueue({
 			action = ACTION.move,

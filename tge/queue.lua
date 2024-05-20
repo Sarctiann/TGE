@@ -1,8 +1,9 @@
 local SecondsFrames = require("tge.entities.seconds_frames")
 
-local function enqueue(brief_queue, brief, unlocked)
+local function enqueue(brief_queue, brief, options)
 	local uelu = brief.ui_element.locked_until
 	local when = brief.when
+	local unlocked = options and options.unlocked
 
 	-- Check if the ui_element is locked
 	if uelu and when and uelu > when then
@@ -54,11 +55,11 @@ local function new()
 	--- @class Queue
 	local self = {
 		--- queue a.new brief in its corresponding order based on its "when" attribute.
-		--- @type fun(brief: Brief, unlocked: boolean | nil): nil
+		--- @type fun(brief: Brief, options: {unlocked: boolean | nil} | nil): nil
 		--- @param brief Brief The brief to be queued
-		--- @param unlocked boolean | nil If the brief should not lock the ui_element
-		enqueue = function(brief, unlocked)
-			enqueue(brief_queue, brief, unlocked)
+		--- @param options {unlocked: boolean | nil} | nil
+		enqueue = function(brief, options)
+			enqueue(brief_queue, brief, options)
 		end,
 
 		--- dequeues (and returns) the briefs that should be executed or nil if there is no brief to be executed yet.

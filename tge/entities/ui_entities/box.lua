@@ -1,5 +1,6 @@
 local base = require("tge.entities.ui_entities.base_ui_entity")
 local utils = require("tge.utils")
+local state = require("tge.state")
 
 local UIEntity, ACTION, validate_pair, validate_boundaries =
 	base.UIEntity, base.ACTION, base.validate_pair, base.validate_boundaries
@@ -11,11 +12,11 @@ local function validate_line(from, to)
 end
 
 local function draw(self)
-	utils:ortogonal_puts(self.pair, self.from, self.to, { color = self.color })
+	state.ortogonal_puts(self.pair, self.from, self.to, { color = self.color })
 end
 
 local function clear(self)
-	utils:ortogonal_puts("  ", self.from, self.to, { clear = true })
+	state.ortogonal_puts("  ", self.from, self.to, { clear = true })
 end
 
 --- @param data { pair: string, from: Point, to: Point, color: Color | nil}

@@ -104,7 +104,7 @@ q.enqueue({
 	when = SecondsFrames.from_frames(90, game.frame_rate),
 	ui_element = t,
 	data = { pos = DIRECTION.down },
-}, true)
+}, { unlocked = true })
 
 q.enqueue({
 	action = ACTION.draw,

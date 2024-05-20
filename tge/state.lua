@@ -16,7 +16,7 @@ local function unit_puts(data, pos, bound, options)
 	local rfg = color and color.fg and utils.colors.resetFg or ""
 	local rbg = color and color.bg and utils.colors.resetBg or ""
 	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
-		-- TODO: take the background elements from the "state.objects.background"
+		-- TODO: take the background elements from the "state.screen_repr.background"
 		local fdata = clear and "  " or data
 		utils.console:write(string.format("%s%s%s%s%s%s", utils.cursor.goTo(pos.x, pos.y), fg, bg, fdata, rfg, rbg))
 	end
@@ -32,7 +32,7 @@ local function sprite_puts(data, pos, bound, clear)
 		local fstring = ""
 		for i, line in ipairs(data) do
 			for j, unit in ipairs(line) do
-				-- TODO: take the background elements from the "state.objects.background"
+				-- TODO: take the background elements from the "state.screen_repr.background"
 				local u = (clear or unit == "") and "  " or unit
 				local fpos = { x = pos.x + (j - 1) * 2, y = pos.y + i - 1 }
 				fstring = fstring .. string.format("%s%s", utils.cursor.goTo(fpos.x, fpos.y), u)
@@ -56,7 +56,7 @@ local function ortogonal_puts(data, from, to, options)
 	local bg = color and color.bg and utils.colors.bg(color.bg) or ""
 	local rfg = color and color.fg and utils.colors.resetFg or ""
 	local rbg = color and color.bg and utils.colors.resetBg or ""
-	-- TODO: take the background elements from the "state.objects.background"
+	-- TODO: take the background elements from the "state.screen_repr.background"
 	local fdata = clear and "  " or data
 	-- If is a horizontal line
 	if from.y == to.y then
@@ -114,7 +114,7 @@ local function puts(data, pos, bound, options)
 			end
 		end
 		for i, line in ipairs(fdata) do
-			-- TODO: take the background elements from the "state.objects.background"
+			-- TODO: take the background elements from the "state.screen_repr.background"
 			local fline = clear and string.rep(" ", utf8.len(line) or 1) or line
 			local x = fpos.x
 			if align and pos.x + utf8.len(line) > bound.right then
@@ -130,16 +130,16 @@ local function puts(data, pos, bound, options)
 	end
 end
 
-local objects = {}
+local screen_repr = {}
 
---- Objects in the foreground.
-objects.foreground = {}
+--- screen_repr in the foreground.
+screen_repr.foreground = {}
 
---- Objects in the background.
-objects.background = {}
+--- screen_repr in the background.
+screen_repr.background = {}
 
 return {
-	objects = objects,
+	screen_repr = screen_repr,
 	ortogonal_puts = ortogonal_puts,
 	sprite_puts = sprite_puts,
 	unit_puts = unit_puts,

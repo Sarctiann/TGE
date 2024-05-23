@@ -9,9 +9,7 @@ local utils = require("tge.utils")
 local function unit_puts(data, pos, bound, options)
 	local color = options and options.color or nil
 	local clear = options and options.clear or false
-	---@diagnostic disable-next-line: param-type-mismatch
 	local fg = color and color.fg and utils.colors.fg(color.fg) or ""
-	---@diagnostic disable-next-line: param-type-mismatch
 	local bg = color and color.bg and utils.colors.bg(color.bg) or ""
 	local rfg = color and color.fg and utils.colors.resetFg or ""
 	local rbg = color and color.bg and utils.colors.resetBg or ""
@@ -50,9 +48,7 @@ end
 local function ortogonal_puts(data, from, to, options)
 	local color = options and options.color or nil
 	local clear = options and options.clear or false
-	---@diagnostic disable-next-line: param-type-mismatch
 	local fg = color and color.fg and utils.colors.fg(color.fg) or ""
-	---@diagnostic disable-next-line: param-type-mismatch
 	local bg = color and color.bg and utils.colors.bg(color.bg) or ""
 	local rfg = color and color.fg and utils.colors.resetFg or ""
 	local rbg = color and color.bg and utils.colors.resetBg or ""
@@ -88,9 +84,7 @@ local function puts(data, pos, bound, options)
 	local color = options and options.color or nil
 	local align = options and options.align or false
 	local clear = options and options.clear or false
-	---@diagnostic disable-next-line: param-type-mismatch
 	local fg = color and color.fg and utils.colors.fg(color.fg) or ""
-	---@diagnostic disable-next-line: param-type-mismatch
 	local bg = color and color.bg and utils.colors.bg(color.bg) or ""
 	local rfg = color and color.fg and utils.colors.resetFg or ""
 	local rbg = color and color.bg and utils.colors.resetBg or ""

@@ -1,98 +1,65 @@
 local tge = require("tge")
 
 local game = tge.Game.new({
-	width = 110,
+	width = 130,
 	height = 40,
 	frame_rate = 30,
 	status_bar = {
-		{ "Use the keys [w] [a] [s] [d] to move the tank", "and the mouse to teleport it to another location" },
+		{ "[w] [a] [s] [d] moves the tank [D] holds moving to right [x] stops it", "Mouse to teleport the Tank" },
 	},
 	debug = { "MemoryUsage", "Ticks", "Key", "Char", "X", "Y" },
 })
 
+local sprite_seq = tge.sequences.SpriteSeqs.new(game)
 local ent = tge.entities
-local Sprite, ACTION = ent.ui.Sprite, ent.ui.ACTION
-local c1 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Cyan), "  ", tge.utils.colors.resetBg)
-local c2 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Green), "  ", tge.utils.colors.resetBg)
-local c3 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Red), "  ", tge.utils.colors.resetBg)
+
+local Sprite, ORIENTATION = ent.ui.Sprite, ent.ui.ORIENTATION
+local c1 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Black), " ", tge.utils.colors.resetBg)
+local c2 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Red), "  ", tge.utils.colors.resetBg)
+local c3 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Yellow), " ", tge.utils.colors.resetBg)
 
 local s = Sprite.new({
 	graph = {
-		{ c1, c1, "" },
-		{ "", c1, c1 },
-		{ c1, c1, "" },
+		{ "", c2, "" },
+		{ c2, c2, c2 },
+		{ c2, "", c2 },
 	},
-	orientation = ent.ui.ORIENTATION.east,
+	orientation = ORIENTATION.north,
 	options = { lf = 5 },
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 s:set_random_graph({
 	graph = {
-		{ "", c2, "" },
-		{ c1, c2, c1 },
-		{ c1, "", c1 },
+		{ c1, c1, "" },
+		{ "", c2, c2 },
+		{ c3, c3, "" },
 	},
-	orientation = ent.ui.ORIENTATION.north,
+	orientation = ORIENTATION.east,
 })
 
-s:set_random_graph({
-	graph = {
-		{ c1, "", c1 },
-		{ c1, c3, c1 },
-		{ "", c3, "" },
-	},
-	orientation = ent.ui.ORIENTATION.south,
-})
+sprite_seq.spawn(s, { x = 55, y = 20 }, ORIENTATION.north)
 
-game.queue.enqueue({
-	action = ACTION.draw,
-	data = { pos = { x = 55, y = 20 }, orientation = ent.ui.ORIENTATION.north },
-	when = game.sf,
-	ui_element = s,
-})
+local c -- cancel signal var/flag
 
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
 		game.exit("Just another step done")
 	elseif e.char == "w" then
-		game.queue.enqueue({
-			action = ACTION.move,
-			when = game.sf,
-			ui_element = s,
-			data = { pos = ent.ui.DIRECTION.up, orientation = ent.ui.ORIENTATION.north },
-		})
+		sprite_seq.move_up_now(s, { oriented = true })
 	elseif e.char == "s" then
-		game.queue.enqueue({
-			action = ACTION.move,
-			when = game.sf,
-			ui_element = s,
-			data = { pos = ent.ui.DIRECTION.down, orientation = ent.ui.ORIENTATION.south },
-		})
+		sprite_seq.move_down_now(s, { oriented = true })
 	elseif e.char == "a" then
-		game.queue.enqueue({
-			action = ACTION.move,
-			when = game.sf,
-			ui_element = s,
-			data = { pos = ent.ui.DIRECTION.left, orientation = ent.ui.ORIENTATION.west },
-		})
+		sprite_seq.move_left_now(s, { oriented = true })
 	elseif e.char == "d" then
-		game.queue.enqueue({
-			action = ACTION.move,
-			when = game.sf,
-			ui_element = s,
-			data = { pos = ent.ui.DIRECTION.right, orientation = ent.ui.ORIENTATION.east },
-		})
+		sprite_seq.move_right_now(s, { oriented = true })
+	elseif e.char == "D" then
+		c = sprite_seq.hold_moving_right(s, 5)
+	elseif e.char == "x" then
+		c()
 	elseif e.event and (e.event == "press" or e.event == "hold") then
 		local x, y = e.x, e.y
 		if x > 2 and x <= game.dimensions.width - 2 and y > 1 and y <= game.dimensions.height - 3 then
-			game.queue.enqueue({
-				action = ACTION.move,
-				when = game.sf,
-				ui_element = s,
-				data = {
-					pos = { x = x - 2, y = y - 1 },
-				},
-			})
+			sprite_seq.translate(s, x - 2, y - 1)
 		end
 	end
 end

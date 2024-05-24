@@ -1,3 +1,3 @@
 return {
-	sprite = require("tge.sequences.sprite"),
+	SpriteSeqs = require("tge.sequences.sprite_seqs"),
 }

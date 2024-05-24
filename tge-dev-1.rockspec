@@ -36,7 +36,7 @@ build = {
 		["tge.loader"] = "tge/loader.lua",
 		["tge.queue"] = "tge/queue.lua",
 		["tge.sequences"] = "tge/sequences.lua",
-		["tge.sequences.sprite"] = "tge/sequences/sprite.lua",
+		["tge.sequences.sprite_seqs"] = "tge/sequences/sprite_seqs.lua",
 		["tge.state"] = "tge/state.lua",
 		["tge.utils"] = "tge/utils.lua",
 	},

@@ -7,4 +7,5 @@ return {
 	connection = require("tge.connection"),
 	loader = require("tge.loader"),
 	state = require("tge.state"),
+	sequences = require("tge.sequences"),
 }

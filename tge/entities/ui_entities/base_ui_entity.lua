@@ -57,9 +57,13 @@ end
 local function new()
 	--- @class UIEntity
 	local self = {
+		--- @type Boundaries the boundaries of the UI Element to move in.
 		boundaries = nil,
+		--- @type SecondsFrames the time until the UI Element is locked
 		locked_until = nil,
+		--- @type integer the frames that the UI Element will be locked after a biref
 		lock_frames = 1,
+		--- @type fun(self, action: ACTION, data: any): nil
 		call_action = function(self, action, data)
 			---@diagnostic disable-next-line: redundant-parameter
 			return self[action](self, data)

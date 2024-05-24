@@ -3,7 +3,7 @@ local utf8 = require("utf8")
 local uv = require("luv")
 local luabox = require("luabox")
 
---- @alias Timer {start: function, stop: function, close: function}
+--- @alias Timer {start: function, stop: function, close: function, is_active: function}
 
 local initial_console = luabox.Console.new(luabox.util.getHandles())
 
@@ -59,8 +59,10 @@ end
 --- @param timer Timer the timer to be terminated
 --- @return nil
 function Utils.clear_timer(timer)
-	timer:stop()
-	timer:close()
+	if timer and timer:is_active() then
+		timer:stop()
+		timer:close()
+	end
 end
 
 --- Waits for the given time to run the callback

@@ -39,7 +39,7 @@ s:set_random_graph({
 
 sprite_seq.spawn(s, { x = 55, y = 20 }, ORIENTATION.north)
 
-local c -- cancel signal var/flag
+local c -- cancel signal var/flag | alternatively this could be initialized as an empty function
 
 game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
@@ -54,7 +54,7 @@ game.on_event = function(e)
 		sprite_seq.move_right_now(s, { oriented = true })
 	elseif e.char == "D" then
 		c = sprite_seq.hold_moving_right(s, 5)
-	elseif e.char == "x" then
+	elseif e.char == "x" and c then -- here we are checking that `c` has been initialized with the cleaner function
 		c()
 	elseif e.event and (e.event == "press" or e.event == "hold") then
 		local x, y = e.x, e.y

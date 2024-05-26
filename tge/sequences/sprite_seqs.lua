@@ -6,7 +6,21 @@ local ui = require("tge.entities.ui_entities")
 
 --- @class SpriteSeqOptions
 --- @field oriented boolean | nil
---- @field cancel_tag string | nil
+--- @field cancel_tags string | string[] | nil
+
+local function _cancel_tags(cancel_tbl, cancel_tags)
+	if type(cancel_tags) == "table" then
+		for _, v in pairs(cancel_tags) do
+			if cancel_tbl[v] then
+				utils.clear_timer(cancel_tbl[v])
+			end
+		end
+	elseif type(cancel_tags) == "string" then
+		if cancel_tbl[cancel_tags] then
+			utils.clear_timer(cancel_tbl[cancel_tags])
+		end
+	end
+end
 
 local function spawn(game, sprite, position, orientation)
 	game.queue.enqueue({
@@ -17,11 +31,8 @@ local function spawn(game, sprite, position, orientation)
 	})
 end
 
-local function delete(game, cancel_tbl, sprite, cancel_tag)
-	local cancel_item = cancel_tbl[cancel_tag]
-	if cancel_item then
-		utils.clear_timer(cancel_item)
-	end
+local function delete(game, cancel_tbl, sprite, cancel_tags)
+	_cancel_tags(cancel_tbl, cancel_tags)
 
 	game.queue.enqueue({
 		ui_element = sprite,
@@ -31,11 +42,8 @@ local function delete(game, cancel_tbl, sprite, cancel_tag)
 end
 
 local function translate(game, cancel_tbl, sprite, x, y, options)
-	local cancel_tag = options and options.cancel_tag
-	local cancel_item = cancel_tbl[cancel_tag]
-	if cancel_item then
-		utils.clear_timer(cancel_item)
-	end
+	local cancel_tags = options and options.cancel_tags
+	_cancel_tags(cancel_tbl, cancel_tags)
 
 	game.queue.enqueue({
 		ui_element = sprite,
@@ -46,11 +54,8 @@ local function translate(game, cancel_tbl, sprite, x, y, options)
 end
 
 local function move_up_now(game, cancel_tbl, sprite, options)
-	local cancel_tag = options and options.cancel_tag
-	local cancel_item = cancel_tbl[cancel_tag]
-	if cancel_item then
-		utils.clear_timer(cancel_item)
-	end
+	local cancel_tags = options and options.cancel_tags
+	_cancel_tags(cancel_tbl, cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.north or nil
 	game.queue.enqueue({
@@ -62,11 +67,8 @@ local function move_up_now(game, cancel_tbl, sprite, options)
 end
 
 local function move_down_now(game, cancel_tbl, sprite, options)
-	local cancel_tag = options and options.cancel_tag
-	local cancel_item = cancel_tbl[cancel_tag]
-	if cancel_item then
-		utils.clear_timer(cancel_item)
-	end
+	local cancel_tags = options and options.cancel_tags
+	_cancel_tags(cancel_tbl, cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.south or nil
 	game.queue.enqueue({
@@ -78,11 +80,8 @@ local function move_down_now(game, cancel_tbl, sprite, options)
 end
 
 local function move_left_now(game, cancel_tbl, sprite, options)
-	local cancel_tag = options and options.cancel_tag
-	local cancel_item = cancel_tbl[cancel_tag]
-	if cancel_item then
-		utils.clear_timer(cancel_item)
-	end
+	local cancel_tags = options and options.cancel_tags
+	_cancel_tags(cancel_tbl, cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.west or nil
 	game.queue.enqueue({
@@ -94,11 +93,8 @@ local function move_left_now(game, cancel_tbl, sprite, options)
 end
 
 local function move_right_now(game, cancel_tbl, sprite, options)
-	local cancel_tag = options and options.cancel_tag
-	local cancel_item = cancel_tbl[cancel_tag]
-	if cancel_item then
-		utils.clear_timer(cancel_item)
-	end
+	local cancel_tags = options and options.cancel_tags
+	_cancel_tags(cancel_tbl, cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.east or nil
 	game.queue.enqueue({
@@ -109,11 +105,8 @@ local function move_right_now(game, cancel_tbl, sprite, options)
 	})
 end
 
-local function hold_moving_up(game, cancel_tbl, sprite, frames, cancel_tag)
-	local cancel_item = cancel_tbl[cancel_tag]
-	if cancel_item then
-		utils.clear_timer(cancel_item)
-	end
+local function hold_moving_up(game, cancel_tbl, sprite, frames, cancel_tags)
+	_cancel_tags(cancel_tbl, cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -124,8 +117,8 @@ local function hold_moving_up(game, cancel_tbl, sprite, frames, cancel_tag)
 		}, { unlocked = true })
 	end)
 
-	if cancel_tag then
-		cancel_tbl[cancel_tag] = seq
+	if cancel_tags then
+		cancel_tbl[cancel_tags] = seq
 	end
 
 	return function()
@@ -133,11 +126,8 @@ local function hold_moving_up(game, cancel_tbl, sprite, frames, cancel_tag)
 	end
 end
 
-local function hold_moving_down(game, cancel_tbl, sprite, frames, cancel_tag)
-	local cancel_item = cancel_tbl[cancel_tag]
-	if cancel_item then
-		utils.clear_timer(cancel_item)
-	end
+local function hold_moving_down(game, cancel_tbl, sprite, frames, cancel_tags)
+	_cancel_tags(cancel_tbl, cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -148,8 +138,8 @@ local function hold_moving_down(game, cancel_tbl, sprite, frames, cancel_tag)
 		}, { unlocked = true })
 	end)
 
-	if cancel_tag then
-		cancel_tbl[cancel_tag] = seq
+	if cancel_tags then
+		cancel_tbl[cancel_tags] = seq
 	end
 
 	return function()
@@ -157,11 +147,8 @@ local function hold_moving_down(game, cancel_tbl, sprite, frames, cancel_tag)
 	end
 end
 
-local function hold_moving_left(game, cancel_tbl, sprite, frames, cancel_tag)
-	local cancel_item = cancel_tbl[cancel_tag]
-	if cancel_item then
-		utils.clear_timer(cancel_item)
-	end
+local function hold_moving_left(game, cancel_tbl, sprite, frames, cancel_tags)
+	_cancel_tags(cancel_tbl, cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -172,8 +159,8 @@ local function hold_moving_left(game, cancel_tbl, sprite, frames, cancel_tag)
 		}, { unlocked = true })
 	end)
 
-	if cancel_tag then
-		cancel_tbl[cancel_tag] = seq
+	if cancel_tags then
+		cancel_tbl[cancel_tags] = seq
 	end
 
 	return function()
@@ -181,11 +168,8 @@ local function hold_moving_left(game, cancel_tbl, sprite, frames, cancel_tag)
 	end
 end
 
-local function hold_moving_right(game, cancel_tbl, sprite, frames, cancel_tag)
-	local cancel_item = cancel_tbl[cancel_tag]
-	if cancel_item then
-		utils.clear_timer(cancel_item)
-	end
+local function hold_moving_right(game, cancel_tbl, sprite, frames, cancel_tags)
+	_cancel_tags(cancel_tbl, cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -196,8 +180,8 @@ local function hold_moving_right(game, cancel_tbl, sprite, frames, cancel_tag)
 		}, { unlocked = true })
 	end)
 
-	if cancel_tag then
-		cancel_tbl[cancel_tag] = seq
+	if cancel_tags then
+		cancel_tbl[cancel_tags] = seq
 	end
 
 	return function()
@@ -205,21 +189,13 @@ local function hold_moving_right(game, cancel_tbl, sprite, frames, cancel_tag)
 	end
 end
 
-local function cancel_sequences(cancel_tbl, tag_or_tags)
-	if not tag_or_tags then
+local function cancel_sequences(cancel_tbl, cancel_tags)
+	if not cancel_tags then
 		for _, v in pairs(cancel_tbl) do
 			utils.clear_timer(v)
 		end
-	elseif type(tag_or_tags) == "table" then
-		for _, v in pairs(tag_or_tags) do
-			if v then
-				utils.clear_timer(cancel_tbl[v])
-			end
-		end
-	elseif type(tag_or_tags) == "string" then
-		if cancel_tbl[tag_or_tags] then
-			utils.clear_timer(cancel_tbl[tag_or_tags])
-		end
+	else
+		_cancel_tags(cancel_tbl, cancel_tags)
 	end
 end
 
@@ -232,9 +208,9 @@ local function new(game)
 		spawn = function(sprite, position, orientation)
 			spawn(game, sprite, position, orientation)
 		end,
-		--- @type fun(sprite: Sprite, cancel_tag: string | nil): nil
-		delete = function(sprite, cancel_tag)
-			delete(game, cancel_table, sprite, cancel_tag)
+		--- @type fun(sprite: Sprite, cancel_tags: string | nil): nil
+		delete = function(sprite, cancel_tags)
+			delete(game, cancel_table, sprite, cancel_tags)
 		end,
 
 		--
@@ -294,9 +270,9 @@ local function new(game)
 
 		--- Takes a `cancel_tag` or a list of `cancel_tags` and cancels the sequences
 		--- or cancels all sequences if no `tag_or_tags` is provided
-		--- @type fun(tag_or_tags: string | string[] | nil): nil
-		cancel_sequences = function(tag_or_tags)
-			cancel_sequences(cancel_table, tag_or_tags)
+		--- @type fun(cancel_tags: string | string[] | nil): nil
+		cancel_sequences = function(cancel_tags)
+			cancel_sequences(cancel_table, cancel_tags)
 		end,
 	}
 

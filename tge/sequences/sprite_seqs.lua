@@ -192,6 +192,24 @@ local function hold_moving_right(game, cancel_tbl, sprite, frames, cancel_tag)
 	end
 end
 
+local function cancel_sequences(cancel_tbl, tag_or_tags)
+	if not tag_or_tags then
+		for _, v in pairs(cancel_tbl) do
+			utils.clear_timer(v)
+		end
+	elseif type(tag_or_tags) == "table" then
+		for _, v in pairs(tag_or_tags) do
+			if v then
+				utils.clear_timer(cancel_tbl[v])
+			end
+		end
+	elseif type(tag_or_tags) == "string" then
+		if cancel_tbl[tag_or_tags] then
+			utils.clear_timer(cancel_tbl[tag_or_tags])
+		end
+	end
+end
+
 --- @param game Game
 local function new(game)
 	local cancel_table = {}
@@ -230,25 +248,38 @@ local function new(game)
 
 		--
 
-		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function Returns the timer clear function
+		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function
+		--- @return function sequence_cleaner_function
 		hold_moving_up = function(sprite, frames, options)
 			local cancel_tag = options and options.cancel_tag
 			return hold_moving_up(game, cancel_table, sprite, frames, cancel_tag)
 		end,
-		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function Returns the timer clear function
+		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function
+		--- @return function sequence_cleaner_function
 		hold_moving_down = function(sprite, frames, options)
 			local cancel_tag = options and options.cancel_tag
 			return hold_moving_down(game, cancel_table, sprite, frames, cancel_tag)
 		end,
-		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function Returns the timer clear function
+		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function
+		--- @return function sequence_cleaner_function
 		hold_moving_left = function(sprite, frames, options)
 			local cancel_tag = options and options.cancel_tag
 			return hold_moving_left(game, cancel_table, sprite, frames, cancel_tag)
 		end,
-		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function Returns the timer clear function
+		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function
+		--- @return function sequence_cleaner_function
 		hold_moving_right = function(sprite, frames, options)
 			local cancel_tag = options and options.cancel_tag
 			return hold_moving_right(game, cancel_table, sprite, frames, cancel_tag)
+		end,
+
+		--
+
+		--- Takes a `cancel_tag` or a list of `cancel_tags` and cancels the sequences
+		--- or cancels all sequences if no `tag_or_tags` is provided
+		--- @type fun(tag_or_tags: string | string[] | nil): nil
+		cancel_sequences = function(tag_or_tags)
+			cancel_sequences(cancel_table, tag_or_tags)
 		end,
 	}
 

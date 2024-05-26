@@ -5,7 +5,10 @@ local game = tge.Game.new({
 	height = 40,
 	frame_rate = 30,
 	status_bar = {
-		{ "[wasd] moves the tank [WASD] keep the tank moving [x] stops it", "Mouse to teleport the Tank" },
+		{ "[wasd]", "moves the tank" },
+		{ "[WASD]", "keep the tank moving" },
+		{ "[x]", "stops it" },
+		{ "Mouse", "teleports the Tank" },
 	},
 	debug = { "MemoryUsage", "Ticks", "Key", "Char", "X", "Y" },
 })

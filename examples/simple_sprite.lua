@@ -66,6 +66,8 @@ game.on_event = function(e)
 		c = sprite_seq.hold_moving_right(s, 5, { cancel_tag = "keep_moving" })
 	elseif e.char == "x" and c then -- here we are checking that `c` has been initialized with the cleaner function
 		c()
+	elseif e.char == "X" then
+		sprite_seq.delete(s, "keep_moving")
 	elseif e.event and (e.event == "press" or e.event == "hold") then
 		local x, y = e.x, e.y
 		if x > 2 and x <= game.dimensions.width - 2 and y > 1 and y <= game.dimensions.height - 3 then

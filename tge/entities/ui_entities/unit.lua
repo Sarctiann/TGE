@@ -27,6 +27,7 @@ local draw = function(self, data)
 	end
 
 	state.unit_puts(self.pair, self.pos, self.boundaries, { color = self.color })
+	self.is_present = true
 end
 
 --- Clear the ui element from the screen
@@ -35,12 +36,17 @@ local clear = function(self)
 	if self.pos then
 		state.unit_puts("  ", self.pos, self.boundaries, { clear = true })
 	end
+	self.is_present = false
 end
 
 --- Moves the text instance to a new location
 --- @param self Unit
 --- @param data {pos: Point | DIRECTION}
 local move = function(self, data)
+	if not self.is_present then
+		return
+	end
+
 	clear(self)
 
 	base.try_move(self.pos, data.pos, 2, 1, get_move_boundaries_for_unit(self.boundaries))
@@ -50,12 +56,14 @@ local move = function(self, data)
 			options = { color = self.color, lf = self.lock_frames },
 		})
 	end
+	self.is_present = true
 end
 
 --- Update the Text instance with the given data
 --- @param self Unit
 --- @param data {pos: Point | nil, pair: string | nil, options: UnitOptions}
 local update = function(self, data)
+	local is_present = self.is_present
 	clear(self)
 	self.pos = data.pos or self.pos
 	self.pair = data.pair and validate_pair(data.pair) or self.pair
@@ -63,9 +71,10 @@ local update = function(self, data)
 		self.color = data.options.color or self.color
 		self.lock_frames = data.options.lf or self.lock_frames
 	end
-	if self.pos then
+	if self.pos and is_present then
 		state.unit_puts(self.pair, self.pos, self.boundaries, { color = self.color })
 	end
+	self.is_present = is_present
 end
 
 --- @param data {pair: string, options: UnitOptions}

@@ -96,6 +96,7 @@ local draw = function(self, data)
 		self.lock_frames = data.options.lf or self.lock_frames
 	end
 	state.sprite_puts(graph, self.pos, self.boundaries)
+	self.is_present = true
 end
 
 --- Clear the ui element from the screen
@@ -104,12 +105,16 @@ local clear = function(self)
 	if self.pos then
 		state.sprite_puts(self.graph, self.pos, self.boundaries, true)
 	end
+	self.is_present = false
 end
 
 --- Moves the text instance to a new location
 --- @param self Sprite
 --- @param data {pos: Point | DIRECTION, orientation: ORIENTATION | nil}
 local move = function(self, data)
+	if not self.is_present then
+		return
+	end
 	clear(self)
 
 	base.try_move(self.pos, data.pos, 2, 1, get_move_boundaries_for_sprite(self.size, self.boundaries))
@@ -120,12 +125,14 @@ local move = function(self, data)
 			options = { lf = self.lock_frames },
 		})
 	end
+	self.is_present = true
 end
 
 --- Update the Text instance with the given data
 --- @param self Sprite
 --- @param data {graph: table<string[]>, behavior: Behavior, orientation: ORIENTATION, pos: Point | nil, options: SpriteOptions}
 local update = function(self, data)
+	local is_present = self.is_present
 	clear(self)
 	local behavior = data.behavior or "rotate"
 	local size = validate_graph(data.graph)
@@ -139,6 +146,11 @@ local update = function(self, data)
 	if data.options then
 		self.lock_frames = data.options.lf
 	end
+
+	if self.pos and is_present then
+		state.sprite_puts(self.graph, self.pos, self.boundaries)
+	end
+	self.is_present = is_present
 end
 
 --- @param data {graph: table<string[]>, behavior: Behavior | nil, orientation: ORIENTATION, options: SpriteOptions}

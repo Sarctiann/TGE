@@ -81,6 +81,8 @@ local function new()
 			not_implemented("UPDATE")
 		end,
 	}
+	--- @type boolean flag to indicate if the ui element is on the screen
+	self.is_present = false
 	return self
 end
 

@@ -23,6 +23,7 @@ local draw = function(self, data)
 	end
 
 	state.puts(self.text, self.pos, self.boundaries, { color = self.color, align = self.align })
+	self.is_present = true
 end
 
 --- Clear the ui element from the screen
@@ -31,12 +32,16 @@ local clear = function(self)
 	if self.pos then
 		state.puts(self.text, self.pos, self.boundaries, { clear = true, align = self.align })
 	end
+	self.is_present = false
 end
 
 --- Moves the text instance to a new location
 --- @param self Text
 --- @param data {pos: Point | DIRECTION}
 local move = function(self, data)
+	if not self.is_present then
+		return
+	end
 	clear(self)
 
 	base.try_move(self.pos, data.pos, 1, 1, self.boundaries)
@@ -46,12 +51,14 @@ local move = function(self, data)
 			options = { color = self.color, lf = self.lock_frames, align = self.align },
 		})
 	end
+	self.is_present = true
 end
 
 --- Update the Text instance with the given data
 --- @param self Text
 --- @param data {pos: Point | nil, text: string | string[] | nil, options: TextOptions}
 local update = function(self, data)
+	local is_present = self.is_present
 	clear(self)
 
 	base.try_move(self.pos, data.pos, 1, 1, self.boundaries)
@@ -63,9 +70,10 @@ local update = function(self, data)
 			self.align = data.options.align
 		end
 	end
-	if self.pos then
+	if self.pos and is_present then
 		state.puts(self.text, self.pos, self.boundaries, { color = self.color, align = self.align })
 	end
+	self.is_present = is_present
 end
 
 --- Creates a Text ui_element

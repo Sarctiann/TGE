@@ -96,6 +96,78 @@ local function move_right_now(game, cancel_tbl, sprite, options)
 	})
 end
 
+local function hold_moving_up(game, cancel_tbl, sprite, frames, cancel_tag)
+	local cancel_item = cancel_tbl[cancel_tag]
+	if cancel_item then
+		utils.clear_timer(cancel_item)
+	end
+
+	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
+		game.queue.enqueue({
+			ui_element = sprite,
+			when = game.sf,
+			data = { pos = ui.DIRECTION.up, orientation = ui.ORIENTATION.north },
+			action = ui.ACTION.move,
+		}, { unlocked = true })
+	end)
+
+	if cancel_tag then
+		cancel_tbl[cancel_tag] = seq
+	end
+
+	return function()
+		utils.clear_timer(seq)
+	end
+end
+
+local function hold_moving_down(game, cancel_tbl, sprite, frames, cancel_tag)
+	local cancel_item = cancel_tbl[cancel_tag]
+	if cancel_item then
+		utils.clear_timer(cancel_item)
+	end
+
+	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
+		game.queue.enqueue({
+			ui_element = sprite,
+			when = game.sf,
+			data = { pos = ui.DIRECTION.down, orientation = ui.ORIENTATION.south },
+			action = ui.ACTION.move,
+		}, { unlocked = true })
+	end)
+
+	if cancel_tag then
+		cancel_tbl[cancel_tag] = seq
+	end
+
+	return function()
+		utils.clear_timer(seq)
+	end
+end
+
+local function hold_moving_left(game, cancel_tbl, sprite, frames, cancel_tag)
+	local cancel_item = cancel_tbl[cancel_tag]
+	if cancel_item then
+		utils.clear_timer(cancel_item)
+	end
+
+	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
+		game.queue.enqueue({
+			ui_element = sprite,
+			when = game.sf,
+			data = { pos = ui.DIRECTION.left, orientation = ui.ORIENTATION.west },
+			action = ui.ACTION.move,
+		}, { unlocked = true })
+	end)
+
+	if cancel_tag then
+		cancel_tbl[cancel_tag] = seq
+	end
+
+	return function()
+		utils.clear_timer(seq)
+	end
+end
+
 local function hold_moving_right(game, cancel_tbl, sprite, frames, cancel_tag)
 	local cancel_item = cancel_tbl[cancel_tag]
 	if cancel_item then
@@ -158,6 +230,21 @@ local function new(game)
 
 		--
 
+		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function Returns the timer clear function
+		hold_moving_up = function(sprite, frames, options)
+			local cancel_tag = options and options.cancel_tag
+			return hold_moving_up(game, cancel_table, sprite, frames, cancel_tag)
+		end,
+		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function Returns the timer clear function
+		hold_moving_down = function(sprite, frames, options)
+			local cancel_tag = options and options.cancel_tag
+			return hold_moving_down(game, cancel_table, sprite, frames, cancel_tag)
+		end,
+		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function Returns the timer clear function
+		hold_moving_left = function(sprite, frames, options)
+			local cancel_tag = options and options.cancel_tag
+			return hold_moving_left(game, cancel_table, sprite, frames, cancel_tag)
+		end,
 		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function Returns the timer clear function
 		hold_moving_right = function(sprite, frames, options)
 			local cancel_tag = options and options.cancel_tag

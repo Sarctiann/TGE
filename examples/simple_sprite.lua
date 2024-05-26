@@ -5,7 +5,7 @@ local game = tge.Game.new({
 	height = 40,
 	frame_rate = 30,
 	status_bar = {
-		{ "[w] [a] [s] [d] moves the tank [D] holds moving to right [x] stops it", "Mouse to teleport the Tank" },
+		{ "[wasd] moves the tank [WASD] keep the tank moving [x] stops it", "Mouse to teleport the Tank" },
 	},
 	debug = { "MemoryUsage", "Ticks", "Key", "Char", "X", "Y" },
 })
@@ -14,15 +14,16 @@ local sprite_seq = tge.sequences.SpriteSeqs.new(game)
 local ent = tge.entities
 
 local Sprite, ORIENTATION = ent.ui.Sprite, ent.ui.ORIENTATION
+local cc = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.White), "  ", tge.utils.colors.resetBg)
 local c1 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Black), " ", tge.utils.colors.resetBg)
-local c2 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Red), "  ", tge.utils.colors.resetBg)
+local c2 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Red), " ", tge.utils.colors.resetBg)
 local c3 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Yellow), " ", tge.utils.colors.resetBg)
 
 local s = Sprite.new({
 	graph = {
-		{ "", c2, "" },
-		{ c2, c2, c2 },
-		{ c2, "", c2 },
+		{ "", cc, "" },
+		{ cc, cc, cc },
+		{ cc, "", cc },
 	},
 	orientation = ORIENTATION.north,
 	options = { lf = 5 },
@@ -52,6 +53,12 @@ game.on_event = function(e)
 		sprite_seq.move_left_now(s, { oriented = true, cancel_tag = "keep_moving" })
 	elseif e.char == "d" then
 		sprite_seq.move_right_now(s, { oriented = true, cancel_tag = "keep_moving" })
+	elseif e.char == "W" then
+		c = sprite_seq.hold_moving_up(s, 5, { cancel_tag = "keep_moving" })
+	elseif e.char == "A" then
+		c = sprite_seq.hold_moving_left(s, 5, { cancel_tag = "keep_moving" })
+	elseif e.char == "S" then
+		c = sprite_seq.hold_moving_down(s, 5, { cancel_tag = "keep_moving" })
 	elseif e.char == "D" then
 		c = sprite_seq.hold_moving_right(s, 5, { cancel_tag = "keep_moving" })
 	elseif e.char == "x" and c then -- here we are checking that `c` has been initialized with the cleaner function

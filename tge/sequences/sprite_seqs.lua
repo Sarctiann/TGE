@@ -17,6 +17,19 @@ local function spawn(game, sprite, position, orientation)
 	})
 end
 
+local function delete(game, cancel_tbl, sprite, cancel_tag)
+	local cancel_item = cancel_tbl[cancel_tag]
+	if cancel_item then
+		utils.clear_timer(cancel_item)
+	end
+
+	game.queue.enqueue({
+		ui_element = sprite,
+		when = game.sf,
+		action = ui.ACTION.clear,
+	})
+end
+
 local function translate(game, cancel_tbl, sprite, x, y, options)
 	local cancel_tag = options and options.cancel_tag
 	local cancel_item = cancel_tbl[cancel_tag]
@@ -218,6 +231,10 @@ local function new(game)
 		--- @type fun(sprite: Sprite, position: Point, orientation: ORIENTATION): nil
 		spawn = function(sprite, position, orientation)
 			spawn(game, sprite, position, orientation)
+		end,
+		--- @type fun(sprite: Sprite, cancel_tag: string | nil): nil
+		delete = function(sprite, cancel_tag)
+			delete(game, cancel_table, sprite, cancel_tag)
 		end,
 
 		--

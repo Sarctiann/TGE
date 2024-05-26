@@ -56,21 +56,21 @@ game.on_event = function(e)
 	if e.key == "ctrl" and e.char == "c" then
 		game.exit("Not a game yet")
 	elseif e.char == "w" then
-		sprite_seq.move_up_now(tank, { oriented = true, cancel_tag = "keep_moving" })
+		sprite_seq.move_up_now(tank, { oriented = true, cancel_tags = "keep_moving" })
 	elseif e.char == "s" then
-		sprite_seq.move_down_now(tank, { oriented = true, cancel_tag = "keep_moving" })
+		sprite_seq.move_down_now(tank, { oriented = true, cancel_tags = "keep_moving" })
 	elseif e.char == "a" then
-		sprite_seq.move_left_now(tank, { oriented = true, cancel_tag = "keep_moving" })
+		sprite_seq.move_left_now(tank, { oriented = true, cancel_tags = "keep_moving" })
 	elseif e.char == "d" then
-		sprite_seq.move_right_now(tank, { oriented = true, cancel_tag = "keep_moving" })
+		sprite_seq.move_right_now(tank, { oriented = true, cancel_tags = "keep_moving" })
 	elseif e.char == "W" then
-		cs = sprite_seq.hold_moving_up(tank, 5, { cancel_tag = "keep_moving" })
+		cs = sprite_seq.hold_moving_up(tank, 5, { cancel_tags = "keep_moving" })
 	elseif e.char == "A" then
-		cs = sprite_seq.hold_moving_left(tank, 5, { cancel_tag = "keep_moving" })
+		cs = sprite_seq.hold_moving_left(tank, 5, { cancel_tags = "keep_moving" })
 	elseif e.char == "S" then
-		cs = sprite_seq.hold_moving_down(tank, 5, { cancel_tag = "keep_moving" })
+		cs = sprite_seq.hold_moving_down(tank, 5, { cancel_tags = "keep_moving" })
 	elseif e.char == "D" then
-		cs = sprite_seq.hold_moving_right(tank, 5, { cancel_tag = "keep_moving" })
+		cs = sprite_seq.hold_moving_right(tank, 5, { cancel_tags = "keep_moving" })
 	elseif e.char == "x" and cs then -- here we are checking that `c` has been initialized with the cleaner function
 		cs()
 	elseif e.char == "X" then

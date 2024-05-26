@@ -244,32 +244,31 @@ local function new(game)
 		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function
 		--- @return function sequence_cleaner_function
 		hold_moving_up = function(sprite, frames, options)
-			local cancel_tag = options and options.cancel_tag
-			return hold_moving_up(game, cancel_table, sprite, frames, cancel_tag)
+			local cancel_tags = options and options.cancel_tags
+			return hold_moving_up(game, cancel_table, sprite, frames, cancel_tags)
 		end,
 		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function
 		--- @return function sequence_cleaner_function
 		hold_moving_down = function(sprite, frames, options)
-			local cancel_tag = options and options.cancel_tag
-			return hold_moving_down(game, cancel_table, sprite, frames, cancel_tag)
+			local cancel_tags = options and options.cancel_tags
+			return hold_moving_down(game, cancel_table, sprite, frames, cancel_tags)
 		end,
 		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function
 		--- @return function sequence_cleaner_function
 		hold_moving_left = function(sprite, frames, options)
-			local cancel_tag = options and options.cancel_tag
-			return hold_moving_left(game, cancel_table, sprite, frames, cancel_tag)
+			local cancel_tags = options and options.cancel_tags
+			return hold_moving_left(game, cancel_table, sprite, frames, cancel_tags)
 		end,
 		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function
 		--- @return function sequence_cleaner_function
 		hold_moving_right = function(sprite, frames, options)
-			local cancel_tag = options and options.cancel_tag
-			return hold_moving_right(game, cancel_table, sprite, frames, cancel_tag)
+			local cancel_tags = options and options.cancel_tags
+			return hold_moving_right(game, cancel_table, sprite, frames, cancel_tags)
 		end,
 
 		--
 
-		--- Takes a `cancel_tag` or a list of `cancel_tags` and cancels the sequences
-		--- or cancels all sequences if no `tag_or_tags` is provided
+		--- Cancels all sequences if no `tag_or_tags` is provided
 		--- @type fun(cancel_tags: string | string[] | nil): nil
 		cancel_sequences = function(cancel_tags)
 			cancel_sequences(cancel_table, cancel_tags)

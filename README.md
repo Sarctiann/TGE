@@ -15,6 +15,15 @@ use
 directly to handle the async io. So we possible reimplement the only the parts
 we need from luabox.
 
+---
+
+We are currently implementing the engine to work with regular font families
+(that are half as wide as they are tall) so a symmetrical unit is represented
+by pairs of characters (visually a square).
+
+We cannot rule out the option of using orthogonal fonts (where each character
+is equal in width and height). But it's a feature we haven't addressed yet.
+
 ## Resources
 
 - [Unicode Characters](https://www.w3.org/TR/xml-entity-names/025.html)
@@ -60,3 +69,4 @@ we need from luabox.
 - [ ] Implement _state.lua_ to handle game state of the running game
 - [ ] Implement _loader.lua_ to handle the different scenes, menus, etc. of games
 - [ ] Implement _connection.lua_ to handle ssh connections
+- [ ] Implement font modes to handle orthogonal fonts

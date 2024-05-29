@@ -2,6 +2,7 @@ local core = require("tge.core")
 local utils = require("tge.utils")
 local entities = require("tge.entities")
 local Queue = require("tge.queue")
+local sequences = require("tge.sequences")
 
 local function init_dimensions(width, height)
 	if core.checkDimensions(width, height) == false then
@@ -58,6 +59,14 @@ local function new(init)
 	--- Exits the game.
 	--- @type fun(exit_message: string | nil): nil
 	self.exit = core.exit
+
+	-- Sequences Hooks
+
+	--- Initialize the collection of sprite sequences
+	--- @type fun(): SpriteSequences
+	self.get_sprite_seqs = function()
+		return sequences.SpriteSeqs.new(self)
+	end
 
 	return self
 end

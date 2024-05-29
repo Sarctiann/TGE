@@ -203,6 +203,7 @@ end
 local function new(game)
 	local cancel_table = {}
 
+	--- @class SpriteSequences
 	local self = {
 		--- @type fun(sprite: Sprite, position: Point, orientation: ORIENTATION): nil
 		spawn = function(sprite, position, orientation)

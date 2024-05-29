@@ -13,14 +13,14 @@ local game = tge.Game.new({
 	debug = { "MemoryUsage", "Ticks", "Key", "Char", "X", "Y" },
 })
 
-local sprite_seq = tge.sequences.SpriteSeqs.new(game)
-local ent = tge.entities
+local sprite_seq = game.get_sprite_seqs()
+local ui = tge.entities.ui
 
-local Sprite, ORIENTATION = ent.ui.Sprite, ent.ui.ORIENTATION
-local cc = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.White), "  ", tge.utils.colors.resetBg)
-local c1 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Black), " ", tge.utils.colors.resetBg)
-local c2 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Red), " ", tge.utils.colors.resetBg)
-local c3 = string.format("%s%s%s", tge.utils.colors.bg(ent.ui.COLOR.Yellow), " ", tge.utils.colors.resetBg)
+local Sprite, ORIENTATION = ui.Sprite, ui.ORIENTATION
+local cc = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.White), "  ", tge.utils.colors.resetBg)
+local c1 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Black), " ", tge.utils.colors.resetBg)
+local c2 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Red), " ", tge.utils.colors.resetBg)
+local c3 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Yellow), " ", tge.utils.colors.resetBg)
 
 local function new_tank()
 	local tank = Sprite.new({

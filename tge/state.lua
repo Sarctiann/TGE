@@ -1,6 +1,40 @@
 -- related to the state of the running game/s, room/s, etc.
 local utils = require("tge.utils")
 
+-------------------------------------------------------------------------------
+-- TODO: Complete and Test all this
+-- Implementing the `target` param to the put methods and updating the `clear` section
+-- Implementing the `layer` attr to the base_ui_element and passing it to the draw methods
+-- Implementing the layer registration into simple_sprite or non_bloking_io examples
+
+local screen_repr = {}
+
+--- Adds a new layer to the screen representation over the previous layers
+local function add_layer(layer_name)
+	local data = setmetatable({}, {
+		__index = function()
+			return {}
+		end,
+	})
+	table.insert(screen_repr, { name = layer_name, data = data, prev_amt = #screen_repr })
+end
+
+--- Gets the background elements of the given layer
+local function get_background_elements(layer_name, line, from, to)
+	local result = {}
+	for i = 1, screen_repr[layer_name].prev_amt do
+		local data = screen_repr[i].data
+		for j = from, to do
+			if data[line][j] then
+				table.insert(result, j, data[line][j])
+			end
+		end
+	end
+	return table.concat(result)
+end
+
+-------------------------------------------------------------------------------
+
 --- Write in the screen checking the given boundaries
 --- @param data string
 --- @param pos Point
@@ -14,7 +48,7 @@ local function unit_puts(data, pos, bound, options)
 	local rfg = color and color.fg and utils.colors.resetFg or ""
 	local rbg = color and color.bg and utils.colors.resetBg or ""
 	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
-		-- TODO: take the background elements from the "state.screen_repr.background"
+		-- TODO: take the background elements from the "get_background_elements"
 		local fdata = clear and "  " or data
 		utils.console:write(string.format("%s%s%s%s%s%s", utils.cursor.goTo(pos.x, pos.y), fg, bg, fdata, rfg, rbg))
 	end
@@ -30,7 +64,7 @@ local function sprite_puts(data, pos, bound, clear)
 		local fstring = ""
 		for i, line in ipairs(data) do
 			for j, unit in ipairs(line) do
-				-- TODO: take the background elements from the "state.screen_repr.background"
+				-- TODO: take the background elements from the "get_background_elements"
 				local u = (clear or unit == "") and "  " or unit
 				local fpos = { x = pos.x + (j - 1) * 2, y = pos.y + i - 1 }
 				fstring = fstring .. string.format("%s%s", utils.cursor.goTo(fpos.x, fpos.y), u)
@@ -52,7 +86,7 @@ local function ortogonal_puts(data, from, to, options)
 	local bg = color and color.bg and utils.colors.bg(color.bg) or ""
 	local rfg = color and color.fg and utils.colors.resetFg or ""
 	local rbg = color and color.bg and utils.colors.resetBg or ""
-	-- TODO: take the background elements from the "state.screen_repr.background"
+	-- TODO: take the background elements from the "get_background_elements"
 	local fdata = clear and "  " or data
 	-- If is a horizontal line
 	if from.y == to.y then
@@ -108,7 +142,7 @@ local function puts(data, pos, bound, options)
 			end
 		end
 		for i, line in ipairs(fdata) do
-			-- TODO: take the background elements from the "state.screen_repr.background"
+			-- TODO: take the background elements from the "get_background_elements"
 			local fline = clear and string.rep(" ", utf8.len(line) or 1) or line
 			local x = fpos.x
 			if align and pos.x + utf8.len(line) > bound.right then
@@ -124,16 +158,8 @@ local function puts(data, pos, bound, options)
 	end
 end
 
-local screen_repr = {}
-
---- screen_repr of the foreground-ui elements.
-screen_repr.foreground = {}
-
---- screen_repr of the background-ui elements.
-screen_repr.background = {}
-
 return {
-	screen_repr = screen_repr,
+	add_layer = add_layer,
 	ortogonal_puts = ortogonal_puts,
 	sprite_puts = sprite_puts,
 	unit_puts = unit_puts,

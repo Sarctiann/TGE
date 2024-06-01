@@ -6,6 +6,7 @@ local UIEntity, ACTION, ORIENTATION = base.UIEntity, base.ACTION, base.ORIENTATI
 
 --- @class SpriteOptions
 --- @field lf number | nil
+--- @field target_layer string | nil
 
 --- @alias Behavior
 --- | "rotate"
@@ -95,7 +96,7 @@ local draw = function(self, data)
 	if data.options then
 		self.lock_frames = data.options.lf or self.lock_frames
 	end
-	state.sprite_puts(graph, self.pos, self.boundaries)
+	state.sprite_puts(graph, self.pos, self.boundaries, { target_layer = self.target_layer })
 	self.is_present = true
 end
 
@@ -103,7 +104,7 @@ end
 --- @param self Sprite
 local clear = function(self)
 	if self.pos then
-		state.sprite_puts(self.graph, self.pos, self.boundaries, true)
+		state.sprite_puts(self.graph, self.pos, self.boundaries, { clear = true, target_layer = self.target_layer })
 	end
 	self.is_present = false
 end
@@ -148,7 +149,7 @@ local update = function(self, data)
 	end
 
 	if self.pos and is_present then
-		state.sprite_puts(self.graph, self.pos, self.boundaries)
+		state.sprite_puts(self.graph, self.pos, self.boundaries, { target_layer = self.target_layer })
 	end
 	self.is_present = is_present
 end
@@ -174,7 +175,8 @@ local function new(data, boundaries)
 	self.size = size
 
 	if data.options then
-		self.lock_frames = data.options.lf
+		self.lock_frames = data.options.lf and data.options.lf
+		self.target_layer = data.options.target_layer and data.options.target_layer
 	end
 
 	self.set_random_graph = set_random_graph

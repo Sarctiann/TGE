@@ -8,6 +8,7 @@ local utils = require("tge.utils")
 -- Implementing the layer registration into simple_sprite or non_bloking_io examples
 
 local screen_repr = {}
+local layers_index = {}
 
 --- Adds a new layer to the screen representation over the previous layers
 local function add_layer(layer_name)
@@ -16,21 +17,41 @@ local function add_layer(layer_name)
 			return {}
 		end,
 	})
+	layers_index[layer_name] = #screen_repr + 1
 	table.insert(screen_repr, { name = layer_name, data = data, prev_amt = #screen_repr })
 end
 
 --- Gets the background elements of the given layer
-local function get_background_elements(layer_name, line, from, to)
-	local result = {}
-	for i = 1, screen_repr[layer_name].prev_amt do
-		local data = screen_repr[i].data
-		for j = from, to do
-			if data[line][j] then
-				table.insert(result, j, data[line][j])
-			end
-		end
+--- @param layer_name string | nil
+--- @param line integer
+--- @param col integer
+local function get_background_units(layer_name, line, col)
+	if not layer_name then
+		return "  "
 	end
-	return table.concat(result)
+	local result
+	for i = 1, screen_repr[layers_index[layer_name]].prev_amt do
+		local data = screen_repr[i].data
+		result = data[line][col] or "  "
+	end
+	return result ~= nil and result or "  "
+end
+
+--- Gets the foreground elements of the given layer or the elements of the given data
+--- @param layer_name string | nil
+--- @param line integer
+--- @param col integer
+--- @param unit string
+local function get_foreground_units(layer_name, line, col, unit)
+	if not layer_name then
+		return unit
+	end
+	local result
+	for i = layers_index[layer_name] + 1, #screen_repr do
+		local fgdata = screen_repr[i].data
+		result = fgdata[line][col] or unit
+	end
+	return result ~= nil and result or unit
 end
 
 -------------------------------------------------------------------------------
@@ -58,15 +79,17 @@ end
 --- @param data table<string[]>
 --- @param pos Point
 --- @param bound Boundaries
---- @param clear boolean | nil
-local function sprite_puts(data, pos, bound, clear)
+--- @param options {clear: boolean | nil, target_layer: string | nil} | nil
+local function sprite_puts(data, pos, bound, options)
+	local clear = options and options.clear
+	local target_layer = options and options.target_layer
 	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
 		local fstring = ""
 		for i, line in ipairs(data) do
 			for j, unit in ipairs(line) do
-				-- TODO: take the background elements from the "get_background_elements"
-				local u = (clear or unit == "") and "  " or unit
 				local fpos = { x = pos.x + (j - 1) * 2, y = pos.y + i - 1 }
+				local u = (clear or unit == "") and get_background_units(target_layer, fpos.y, fpos.x)
+					or get_foreground_units(target_layer, fpos.y, fpos.x, unit)
 				fstring = fstring .. string.format("%s%s", utils.cursor.goTo(fpos.x, fpos.y), u)
 			end
 		end

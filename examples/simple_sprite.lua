@@ -12,15 +12,40 @@ local game = tge.Game.new({
 	},
 	debug = { "MemoryUsage", "Ticks", "Key", "Char", "X", "Y" },
 })
+game.add_layer("BgLayer")
+game.add_layer("PlayerLayer")
+game.add_layer("FGLayer")
 
 local sprite_seq = game.get_sprite_seqs()
 local ui = tge.entities.ui
 
-local Sprite, ORIENTATION = ui.Sprite, ui.ORIENTATION
+local Sprite, Line, ORIENTATION, ACTION = ui.Sprite, ui.Line, ui.ORIENTATION, ui.ACTION
 local cc = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.White), "  ", tge.utils.colors.resetBg)
 local c1 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Black), " ", tge.utils.colors.resetBg)
 local c2 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Red), " ", tge.utils.colors.resetBg)
 local c3 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Yellow), " ", tge.utils.colors.resetBg)
+
+local line1 = Line.new(
+	{ pair = "  ", from = { x = 60, y = 4 }, to = { x = 60, y = 35 }, color = { bg = ui.COLOR.Green } },
+	tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2)
+)
+
+local line2 = Line.new(
+	{ pair = "  ", from = { x = 70, y = 4 }, to = { x = 70, y = 35 }, color = { bg = ui.COLOR.LightBlue } },
+	tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2)
+)
+
+game.queue.enqueue({
+	ui_element = line1,
+	action = ACTION.draw,
+	when = game.sf,
+})
+
+game.queue.enqueue({
+	ui_element = line2,
+	action = ACTION.draw,
+	when = game.sf,
+})
 
 local function new_tank()
 	local tank = Sprite.new({
@@ -30,7 +55,7 @@ local function new_tank()
 			{ cc, "", cc },
 		},
 		orientation = ORIENTATION.north,
-		options = { lf = 5 },
+		options = { lf = 5, target_layer = "PlayerLayer" },
 	}, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 	tank:set_random_graph({

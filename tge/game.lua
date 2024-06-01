@@ -3,6 +3,7 @@ local utils = require("tge.utils")
 local entities = require("tge.entities")
 local Queue = require("tge.queue")
 local sequences = require("tge.sequences")
+local state = require("tge.state")
 
 local function init_dimensions(width, height)
 	if core.checkDimensions(width, height) == false then
@@ -55,6 +56,10 @@ local function new(init)
 	--- Starts the game.
 	--- @type fun(self: Game): nil
 	self.run = run
+
+	--- Add a new line to the status bar
+	--- @type fun(layer_name: string): nil
+	self.add_layer = state.add_layer
 
 	--- Exits the game.
 	--- @type fun(exit_message: string | nil): nil

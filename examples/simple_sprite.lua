@@ -12,7 +12,7 @@ local game = tge.Game.new({
 	},
 	debug = { "MemoryUsage", "Ticks", "Key", "Char", "X", "Y" },
 })
-game.add_layer("BgLayer")
+game.add_layer("BGLayer")
 game.add_layer("PlayerLayer")
 game.add_layer("FGLayer")
 
@@ -25,15 +25,21 @@ local c1 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Black), " ", 
 local c2 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Red), " ", tge.utils.colors.resetBg)
 local c3 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Yellow), " ", tge.utils.colors.resetBg)
 
-local line1 = Line.new(
-	{ pair = "  ", from = { x = 60, y = 4 }, to = { x = 60, y = 35 }, color = { bg = ui.COLOR.Green } },
-	tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2)
-)
+local line1 = Line.new({
+	pair = "00",
+	from = { x = 10, y = 20 },
+	to = { x = 120, y = 20 },
+	color = { bg = ui.COLOR.Green },
+	target_layer = "BGLayer",
+}, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
-local line2 = Line.new(
-	{ pair = "  ", from = { x = 70, y = 4 }, to = { x = 70, y = 35 }, color = { bg = ui.COLOR.LightBlue } },
-	tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2)
-)
+local line2 = Line.new({
+	pair = "88",
+	from = { x = 70, y = 4 },
+	to = { x = 70, y = 35 },
+	color = { bg = ui.COLOR.LightBlue },
+	target_layer = "FGLayer",
+}, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 game.queue.enqueue({
 	ui_element = line1,

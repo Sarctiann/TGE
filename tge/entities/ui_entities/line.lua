@@ -15,14 +15,14 @@ local function validate_line(from, to)
 end
 
 local function draw(self)
-	state.ortogonal_puts(self.pair, self.from, self.to, { color = self.color })
+	state.ortogonal_puts(self.pair, self.from, self.to, { color = self.color, target_layer = self.target_layer })
 end
 
 local function clear(self)
-	state.ortogonal_puts("  ", self.from, self.to, { clear = true })
+	state.ortogonal_puts("  ", self.from, self.to, { clear = true, target_layer = self.target_layer })
 end
 
---- @param data { pair: string, from: Point, to: Point, color: Color | nil}
+--- @param data { pair: string, from: Point, to: Point, color: Color | nil, target_layer: string | nil }
 --- @param boundaries Boundaries
 local function new(data, boundaries)
 	--- @class Line : UIEntity to put/move/remove/delimite unit-based spaces on screen ( size: (2n*m)*o )
@@ -34,6 +34,7 @@ local function new(data, boundaries)
 	self.boundaries = boundaries
 	--- @type Color
 	self.color = data.color
+	self.target_layer = data.target_layer
 
 	self[ACTION.draw] = draw
 	self[ACTION.clear] = clear

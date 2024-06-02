@@ -18,10 +18,11 @@ local function add_layer(layer_name)
 		end,
 	})
 	layers_index[layer_name] = #screen_repr + 1
-	table.insert(screen_repr, { name = layer_name, data = data, prev_amt = #screen_repr })
+	table.insert(screen_repr, { name = layer_name, data = data })
 end
 
 --- Gets the background elements of the given layer
+--- also updates the given layer deleting the corresponding unit
 --- @param layer_name string | nil
 --- @param line integer
 --- @param col integer
@@ -30,14 +31,15 @@ local function get_background_units(layer_name, line, col)
 		return "  "
 	end
 	local result
-	for i = 1, screen_repr[layers_index[layer_name]].prev_amt do
-		local data = screen_repr[i].data
-		result = data[line][col] or "  "
+	for i = 1, layers_index[layer_name] - 1 do
+		result = screen_repr[i].data[line][col] or "  "
 	end
+	screen_repr[layers_index[layer_name]].data[line][col] = nil
 	return result ~= nil and result or "  "
 end
 
---- Gets the foreground elements of the given layer or the elements of the given data
+--- Gets the foreground elements of the given layer or the elements of the given data,
+--- also updates the given layer setting the corresponding unit
 --- @param layer_name string | nil
 --- @param line integer
 --- @param col integer
@@ -46,11 +48,15 @@ local function get_foreground_units(layer_name, line, col, unit)
 	if not layer_name then
 		return unit
 	end
+	if layers_index[layer_name] >= #screen_repr then
+		screen_repr[layers_index[layer_name]].data[line][col] = unit
+		return unit
+	end
 	local result
 	for i = layers_index[layer_name] + 1, #screen_repr do
-		local fgdata = screen_repr[i].data
-		result = fgdata[line][col] or unit
+		result = screen_repr[i].data[line][col] or unit
 	end
+	screen_repr[layers_index[layer_name]].data[line][col] = unit
 	return result ~= nil and result or unit
 end
 
@@ -101,24 +107,30 @@ end
 --- @param data string
 --- @param from Point
 --- @param to Point
---- @param options {color: Color | nil, clear: boolean | nil} | nil
+--- @param options {color: Color | nil, clear: boolean | nil, target_layer: string | nil} | nil
 local function ortogonal_puts(data, from, to, options)
 	local color = options and options.color or nil
 	local clear = options and options.clear or false
+	local target_layer = options and options.target_layer
 	local fg = color and color.fg and utils.colors.fg(color.fg) or ""
 	local bg = color and color.bg and utils.colors.bg(color.bg) or ""
 	local rfg = color and color.fg and utils.colors.resetFg or ""
 	local rbg = color and color.bg and utils.colors.resetBg or ""
-	-- TODO: take the background elements from the "get_background_elements"
-	local fdata = clear and "  " or data
 	-- If is a horizontal line
 	if from.y == to.y then
-		local line = string.rep(fdata, math.floor((to.x - from.x) / 2) + 1)
+		local line = ""
+		for i = 0, to.x - from.x, 2 do
+			local fdata = clear and get_background_units(target_layer, from.y, from.x + (i - 1))
+				or get_foreground_units(target_layer, from.y, from.x + (i - 1), data)
+			line = line .. fdata
+		end
 		utils.console:write(string.format("%s%s%s%s%s%s", utils.cursor.goTo(from.x, from.y), fg, bg, line, rfg, rbg))
 	-- If is a vertical line
 	elseif from.x == to.x then
 		for i = from.y, to.y do
-			utils.console:write(string.format("%s%s%s%s%s%s", utils.cursor.goTo(from.x, i), fg, bg, fdata, rfg, rbg))
+			local line = clear and get_background_units(target_layer, i, from.x)
+				or get_foreground_units(target_layer, i, from.x, string.format("%s%s%s%s%s", fg, bg, data, rfg, rbg))
+			utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, i), line))
 		end
 	-- else is a box
 	else

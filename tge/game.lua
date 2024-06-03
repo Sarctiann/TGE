@@ -5,6 +5,7 @@ local Queue = require("tge.queue")
 local sequences = require("tge.sequences")
 local state = require("tge.state")
 
+
 local function init_dimensions(width, height)
 	if core.checkDimensions(width, height) == false then
 		utils:exit_with_error("The terminal is too small to create the game window.")
@@ -61,6 +62,12 @@ local function new(init)
 	--- @type fun(layer_name: string): nil
 	--- Add a new line to the status bar
 	self.add_layer = state.add_layer
+
+	--- @type fun(unit_weight: UNIT_WEIGHT): nil
+	--- Set the weight of the unit (this is a global value `__UNIT_WEIGHT`).
+	self.set_unit_weight = function(unit_weight)
+		_G.__UNIT_WEIGHT = unit_weight
+	end
 
 	--- Exits the game.
 	--- @type fun(exit_message: string | nil): nil

@@ -17,7 +17,7 @@ local game = tge.Game.new({
 local SecondsFrames = tge.entities.SecondsFrames
 local ui = tge.entities.ui
 local ACTION, COLOR, DIRECTION = ui.ACTION, ui.COLOR, ui.DIRECTION
-local Text, Unit, Line, Box = ui.Text, ui.Unit, ui.Line, ui.Box
+local Text, Line, Box = ui.Text, ui.Line, ui.Box
 local q = game.queue
 
 local details = false
@@ -50,14 +50,6 @@ local t = Text.new({
 	},
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
-local u = Unit.new({
-	pair = "  ",
-	options = {
-		color = { bg = COLOR.Yellow },
-		lf = 1,
-	},
-}, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
-
 local l1 = Line.new({
 	pair = "  ",
 	from = { x = 40, y = 10 },
@@ -83,13 +75,6 @@ local b = Box.new({
 q.enqueue({
 	action = ACTION.draw,
 	when = SecondsFrames.from_frames(30, game.frame_rate),
-	ui_element = u,
-	data = { pos = { x = 10, y = 5 } },
-})
-
-q.enqueue({
-	action = ACTION.draw,
-	when = SecondsFrames.from_frames(60, game.frame_rate),
 	ui_element = t,
 	data = { pos = { x = 13, y = 5 } },
 })
@@ -176,42 +161,6 @@ game.on_event = function(e)
 			-- else
 			-- 	tge.utils:exit_with_error("Trying to write out of bound")
 		end
-	elseif e.char == "h" then
-		q.enqueue({
-			action = ACTION.move,
-			when = game.sf,
-			ui_element = u,
-			data = {
-				pos = DIRECTION.left,
-			},
-		})
-	elseif e.char == "l" then
-		q.enqueue({
-			action = ACTION.move,
-			when = game.sf,
-			ui_element = u,
-			data = {
-				pos = DIRECTION.right,
-			},
-		})
-	elseif e.char == "k" then
-		q.enqueue({
-			action = ACTION.move,
-			when = game.sf,
-			ui_element = u,
-			data = {
-				pos = DIRECTION.up,
-			},
-		})
-	elseif e.char == "j" then
-		q.enqueue({
-			action = ACTION.move,
-			when = game.sf,
-			ui_element = u,
-			data = {
-				pos = DIRECTION.down,
-			},
-		})
 	end
 end
 

@@ -160,7 +160,7 @@ local function new(data, boundaries)
 	local behavior = data.behavior or "rotate"
 	local size = validate_graph(data.graph)
 
-	--- @class Sprite : Unit to put/move/remove the minimal symmetrical ui element on screen ( size: 2,1 )
+	--- @class Sprite : UIEntity to put/move/remove the minimal symmetrical ui element on screen ( size: 2,1 )
 	local self = UIEntity.new()
 
 	--- @type {[ORIENTATION]: table<string[]>} The graph in the four orientations

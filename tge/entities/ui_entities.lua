@@ -39,7 +39,6 @@ return {
 	truecolor = utils.colors.truecolor,
 	-- UI Entities
 	Text = require("tge.entities.ui_entities.text"),
-	Unit = require("tge.entities.ui_entities.unit"),
 	Line = require("tge.entities.ui_entities.line"),
 	Box = require("tge.entities.ui_entities.box"),
 	Sprite = require("tge.entities.ui_entities.sprite"),

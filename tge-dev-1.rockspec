@@ -31,7 +31,6 @@ build = {
 		["tge.entities.ui_entities.line"] = "tge/entities/ui_entities/line.lua",
 		["tge.entities.ui_entities.sprite"] = "tge/entities/ui_entities/sprite.lua",
 		["tge.entities.ui_entities.text"] = "tge/entities/ui_entities/text.lua",
-		["tge.entities.ui_entities.unit"] = "tge/entities/ui_entities/unit.lua",
 		["tge.game"] = "tge/game.lua",
 		["tge.loader"] = "tge/loader.lua",
 		["tge.queue"] = "tge/queue.lua",

@@ -1,5 +1,6 @@
 -- related to the state of the running game/s, room/s, etc.
 local utils = require("tge.utils")
+local utf8 = require("utf8")
 
 -------------------------------------------------------------------------------
 
@@ -36,6 +37,10 @@ local function resolve_layer(layer_name, line, col, unit, clear)
 	local element = not clear and unit
 	local result
 
+	if #screen_repr == 0 then
+		return unit
+	end
+
 	if layer_name then
 		if not layers_index[layer_name] then
 			utils:exit_with_error("An UI Element is trying to write in a non-existent layer: %s ", layer_name)
@@ -62,25 +67,6 @@ local function resolve_layer(layer_name, line, col, unit, clear)
 end
 
 -------------------------------------------------------------------------------
-
---- Write in the screen checking the given boundaries
---- @param data string
---- @param pos Point
---- @param bound Boundaries
---- @param options {color: Color | nil, clear: boolean | nil} | nil
-local function unit_puts(data, pos, bound, options)
-	local color = options and options.color or nil
-	local clear = options and options.clear or false
-	local fg = color and color.fg and utils.colors.fg(color.fg) or ""
-	local bg = color and color.bg and utils.colors.bg(color.bg) or ""
-	local rfg = color and color.fg and utils.colors.resetFg or ""
-	local rbg = color and color.bg and utils.colors.resetBg or ""
-	if pos.x <= bound.right and pos.x >= bound.left and pos.y <= bound.bottom and pos.y >= bound.top then
-		-- TODO: take the background elements from the "get_background_elements"
-		local fdata = clear and "  " or data
-		utils.console:write(string.format("%s%s%s%s%s%s", utils.cursor.goTo(pos.x, pos.y), fg, bg, fdata, rfg, rbg))
-	end
-end
 
 --- Write in the screen checking the given boundaries
 --- @param data table<string[]>
@@ -132,19 +118,31 @@ local function ortogonal_puts(data, from, to, options)
 		utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, from.y), line))
 	-- If is a vertical line
 	elseif from.x == to.x then
-		for i = from.y, to.y do
+		for i = from.y, to.y - 1 do
 			local line =
 				resolve_layer(target_layer, i, from.x, string.format("%s%s%s%s%s", fg, bg, data, rfg, rbg), clear)
 			utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, i), line))
 		end
 	-- else is a box
 	else
-		local line = string.rep(fdata, math.floor((to.x - from.x) / 2) + 1)
-		utils.console:write(string.format("%s%s%s%s%s%s", utils.cursor.goTo(from.x, from.y), fg, bg, line, rfg, rbg))
-		utils.console:write(string.format("%s%s%s%s%s%s", utils.cursor.goTo(from.x, to.y), fg, bg, line, rfg, rbg))
+		-- local line = string.rep(fdata, math.floor((to.x - from.x) / 2) + 1)
+		local line = ""
+		for i = 1, to.x - from.x, 2 do
+			local fdata = resolve_layer(
+				target_layer,
+				from.y,
+				from.x + (i - 1),
+				string.format("%s%s%s%s%s", fg, bg, data, rfg, rbg),
+				clear
+			)
+			line = line .. fdata
+		end
+		utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, from.y), line))
+		utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, to.y), line))
 		for i = from.y + 1, to.y - 1 do
-			utils.console:write(string.format("%s%s%s%s%s%s", utils.cursor.goTo(from.x, i), fg, bg, fdata, rfg, rbg))
-			utils.console:write(string.format("%s%s%s%s%s%s", utils.cursor.goTo(to.x, i), fg, bg, fdata, rfg, rbg))
+			line = resolve_layer(target_layer, i, from.x, string.format("%s%s%s%s%s", fg, bg, data, rfg, rbg), clear)
+			utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, i), line))
+			utils.console:write(string.format("%s%s", utils.cursor.goTo(to.x, i), line))
 		end
 	end
 end
@@ -203,6 +201,5 @@ return {
 	init_screen_repr = init_screen_repr,
 	ortogonal_puts = ortogonal_puts,
 	sprite_puts = sprite_puts,
-	unit_puts = unit_puts,
 	puts = puts,
 }

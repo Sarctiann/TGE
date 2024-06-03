@@ -15,7 +15,6 @@ local Utils = {
 	console = initial_console,
 	cursor = luabox.cursor,
 	event = luabox.event,
-	scroll = luabox.scroll,
 	luabox_util = luabox.util,
 }
 

@@ -37,6 +37,9 @@ local function resolve_layer(layer_name, line, col, unit, clear)
 	local result
 
 	if layer_name then
+		if not layers_index[layer_name] then
+			utils:exit_with_error("An UI Element is trying to write in a non-existent layer: %s ", layer_name)
+		end
 		for i = 1, #screen_repr do
 			if layer_mode == "cur" then
 				layer_mode = "fg"
@@ -50,7 +53,10 @@ local function resolve_layer(layer_name, line, col, unit, clear)
 		end
 		screen_repr[layers_index[layer_name]].data[line][col] = element
 	else
-		result = element
+		for i = 1, #screen_repr do
+			result = element or result
+			result = element or screen_repr[i].data[line][col] or result or "  "
+		end
 	end
 	return result or "  "
 end

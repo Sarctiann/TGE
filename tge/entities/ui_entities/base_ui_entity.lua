@@ -83,8 +83,8 @@ local function new()
 	}
 	--- @type boolean flag to indicate if the ui element is on the screen
 	self.is_present = false
-	--- @type string the target layer name for the element to be drawn on
-	self.target_layer = ""
+	--- @type string | nil the target layer name for the element to be drawn on
+	self.target_layer = nil
 	return self
 end
 

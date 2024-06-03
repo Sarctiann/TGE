@@ -20,23 +20,23 @@ local sprite_seq = game.get_sprite_seqs()
 local ui = tge.entities.ui
 
 local Sprite, Line, ORIENTATION, ACTION = ui.Sprite, ui.Line, ui.ORIENTATION, ui.ACTION
-local cc = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.White), "  ", tge.utils.colors.resetBg)
+local cc = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.LightRed), "  ", tge.utils.colors.resetBg)
 local c1 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Black), " ", tge.utils.colors.resetBg)
 local c2 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Red), " ", tge.utils.colors.resetBg)
 local c3 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Yellow), " ", tge.utils.colors.resetBg)
 
 local line1 = Line.new({
-	pair = "00",
-	from = { x = 10, y = 20 },
-	to = { x = 120, y = 20 },
+	pair = "  ",
+	from = { x = 11, y = 20 },
+	to = { x = 121, y = 20 },
 	color = { bg = ui.COLOR.Green },
 	target_layer = "BGLayer",
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 local line2 = Line.new({
-	pair = "88",
-	from = { x = 70, y = 4 },
-	to = { x = 70, y = 35 },
+	pair = "  ",
+	from = { x = 71, y = 4 },
+	to = { x = 71, y = 35 },
 	color = { bg = ui.COLOR.LightBlue },
 	target_layer = "FGLayer",
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
@@ -73,7 +73,8 @@ local function new_tank()
 		orientation = ORIENTATION.east,
 	})
 
-	local rand_x = math.random(1, game.dimensions.width - 6)
+	local rand = math.floor(math.random(1, game.dimensions.width - 6) / 2)
+	local rand_x = math.floor(rand * 2 + 1)
 	local rand_y = math.random(1, game.dimensions.height - 7)
 	local rand_orientation = math.random(1, 4)
 	sprite_seq.spawn(tank, { x = rand_x, y = rand_y }, rand_orientation)

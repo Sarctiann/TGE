@@ -43,6 +43,7 @@ local function new(init)
 	}
 	--- @type Dimensions {width: integer, height: integer} The dimensions of the game window in characters
 	self.dimensions = init_dimensions(init.width, init.height)
+	state.init_screen_repr(init.height)
 
 	--- @type Queue The Brief queue of the game
 	self.queue = initial_queue
@@ -57,8 +58,8 @@ local function new(init)
 	--- @type fun(self: Game): nil
 	self.run = run
 
-	--- Add a new line to the status bar
 	--- @type fun(layer_name: string): nil
+	--- Add a new line to the status bar
 	self.add_layer = state.add_layer
 
 	--- Exits the game.

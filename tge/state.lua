@@ -2,62 +2,57 @@
 local utils = require("tge.utils")
 
 -------------------------------------------------------------------------------
--- TODO: Complete and Test all this
--- Implementing the `target` param to the put methods and updating the `clear` section
--- Implementing the `layer` attr to the base_ui_element and passing it to the draw methods
--- Implementing the layer registration into simple_sprite or non_bloking_io examples
 
 local screen_repr = {}
 local layers_index = {}
+local total_lines = 0
+
+local function init_screen_repr(lines)
+	total_lines = lines
+end
+
+local function _init_layer()
+	local data = {}
+	for _ = 1, total_lines do
+		table.insert(data, {})
+	end
+	return data
+end
 
 --- Adds a new layer to the screen representation over the previous layers
 local function add_layer(layer_name)
-	local data = setmetatable({}, {
-		__index = function()
-			return {}
-		end,
-	})
 	layers_index[layer_name] = #screen_repr + 1
-	table.insert(screen_repr, { name = layer_name, data = data })
+	table.insert(screen_repr, { name = layer_name, data = _init_layer() })
 end
 
---- Gets the background elements of the given layer
---- also updates the given layer deleting the corresponding unit
---- @param layer_name string | nil
---- @param line integer
---- @param col integer
-local function get_background_units(layer_name, line, col)
-	if not layer_name then
-		return "  "
-	end
-	local result
-	for i = 1, layers_index[layer_name] - 1 do
-		result = screen_repr[i].data[line][col] or "  "
-	end
-	screen_repr[layers_index[layer_name]].data[line][col] = nil
-	return result ~= nil and result or "  "
-end
-
---- Gets the foreground elements of the given layer or the elements of the given data,
---- also updates the given layer setting the corresponding unit
 --- @param layer_name string | nil
 --- @param line integer
 --- @param col integer
 --- @param unit string
-local function get_foreground_units(layer_name, line, col, unit)
-	if not layer_name then
-		return unit
-	end
-	if layers_index[layer_name] >= #screen_repr then
-		screen_repr[layers_index[layer_name]].data[line][col] = unit
-		return unit
-	end
+--- @param clear boolean
+--- Return the unit that should be printed in the screen
+local function resolve_layer(layer_name, line, col, unit, clear)
+	local layer_mode = "bg"
+	local element = not clear and unit
 	local result
-	for i = layers_index[layer_name] + 1, #screen_repr do
-		result = screen_repr[i].data[line][col] or unit
+
+	if layer_name then
+		for i = 1, #screen_repr do
+			if layer_mode == "cur" then
+				layer_mode = "fg"
+				result = screen_repr[i].data[line][col] or result
+			elseif screen_repr[i].name == layer_name then
+				layer_mode = "cur"
+				result = element or result
+			else
+				result = screen_repr[i].data[line][col] or result or "  "
+			end
+		end
+		screen_repr[layers_index[layer_name]].data[line][col] = element
+	else
+		result = element
 	end
-	screen_repr[layers_index[layer_name]].data[line][col] = unit
-	return result ~= nil and result or unit
+	return result or "  "
 end
 
 -------------------------------------------------------------------------------
@@ -94,8 +89,7 @@ local function sprite_puts(data, pos, bound, options)
 		for i, line in ipairs(data) do
 			for j, unit in ipairs(line) do
 				local fpos = { x = pos.x + (j - 1) * 2, y = pos.y + i - 1 }
-				local u = (clear or unit == "") and get_background_units(target_layer, fpos.y, fpos.x)
-					or get_foreground_units(target_layer, fpos.y, fpos.x, unit)
+				local u = resolve_layer(target_layer, fpos.y, fpos.x, unit, clear or false)
 				fstring = fstring .. string.format("%s%s", utils.cursor.goTo(fpos.x, fpos.y), u)
 			end
 		end
@@ -119,17 +113,22 @@ local function ortogonal_puts(data, from, to, options)
 	-- If is a horizontal line
 	if from.y == to.y then
 		local line = ""
-		for i = 0, to.x - from.x, 2 do
-			local fdata = clear and get_background_units(target_layer, from.y, from.x + (i - 1))
-				or get_foreground_units(target_layer, from.y, from.x + (i - 1), data)
+		for i = 1, to.x - from.x, 2 do
+			local fdata = resolve_layer(
+				target_layer,
+				from.y,
+				from.x + (i - 1),
+				string.format("%s%s%s%s%s", fg, bg, data, rfg, rbg),
+				clear
+			)
 			line = line .. fdata
 		end
-		utils.console:write(string.format("%s%s%s%s%s%s", utils.cursor.goTo(from.x, from.y), fg, bg, line, rfg, rbg))
+		utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, from.y), line))
 	-- If is a vertical line
 	elseif from.x == to.x then
 		for i = from.y, to.y do
-			local line = clear and get_background_units(target_layer, i, from.x)
-				or get_foreground_units(target_layer, i, from.x, string.format("%s%s%s%s%s", fg, bg, data, rfg, rbg))
+			local line =
+				resolve_layer(target_layer, i, from.x, string.format("%s%s%s%s%s", fg, bg, data, rfg, rbg), clear)
 			utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, i), line))
 		end
 	-- else is a box
@@ -195,6 +194,7 @@ end
 
 return {
 	add_layer = add_layer,
+	init_screen_repr = init_screen_repr,
 	ortogonal_puts = ortogonal_puts,
 	sprite_puts = sprite_puts,
 	unit_puts = unit_puts,

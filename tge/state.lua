@@ -105,7 +105,7 @@ local function ortogonal_puts(data, from, to, options)
 	-- If is a horizontal line
 	if from.y == to.y then
 		local line = ""
-		for i = 1, math.floor((to.x - from.x) / 2) + 1 do
+		for i = 1, to.x - from.x + 1, 2 do
 			local fdata = resolve_layer(
 				target_layer,
 				from.y,
@@ -128,7 +128,7 @@ local function ortogonal_puts(data, from, to, options)
 	-- else is a box
 	else
 		local line = ""
-		for i = 1, math.floor((to.x - from.x) / 2) + 1 do
+		for i = 1, to.x - from.x + 1, 2 do
 			local fdata = resolve_layer(
 				target_layer,
 				from.y,

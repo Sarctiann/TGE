@@ -4,7 +4,7 @@
 
 --- This global constant is used to set the weight of a unit.
 --- @type UNIT_WIDTH
-_G.__UNIT_WIDTH = 2
+_G.__UNIT_WIDTH = 2 -- Default value for normal fonts
 
 return {
 	Game = require("tge.game"),

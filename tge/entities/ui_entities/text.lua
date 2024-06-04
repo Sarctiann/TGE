@@ -55,7 +55,7 @@ local move = function(self, data)
 	end
 	clear(self)
 
-	base.try_move(self.pos, data.pos, 1, 1, self.boundaries)
+	base.try_move(self.pos, data.pos, 2, 1, self.boundaries)
 	if self.pos then
 		draw(self, {
 			pos = self.pos,

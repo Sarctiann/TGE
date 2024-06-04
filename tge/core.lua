@@ -57,6 +57,11 @@ function Core.make_event_handler(handler)
 		if event == nil then
 			return
 		end
+
+		if event.x then
+			event.x = event.x % 2 == 0 and event.x - 1 or event.x
+		end
+
 		Core.event_monitor = event
 		handler(event)
 	end

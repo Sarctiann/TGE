@@ -13,6 +13,7 @@ local game = tge.Game.new({
 	-- This will consume some memory bytes
 	debug = { "X", "Y", "QueuedBriefs", "ActiveBriefs", "MemoryUsage", "Ticks" },
 })
+game.add_layer("ui")
 
 local SecondsFrames = tge.entities.SecondsFrames
 local ui = tge.entities.ui

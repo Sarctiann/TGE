@@ -177,4 +177,14 @@ function Utils.flip_horizontaly(graph)
 	return new_graph
 end
 
+Utils.async_split_text_into_units = function(text)
+	return coroutine.wrap(function()
+		for i = 1, #text, 2 do
+			local fst = text:sub(i, i)
+			local scd = text:sub(i + 1, i + 1)
+			coroutine.yield(fst .. (scd ~= "" and scd or " "))
+		end
+	end)
+end
+
 return Utils

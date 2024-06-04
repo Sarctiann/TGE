@@ -38,7 +38,7 @@ local function resolve_layer(layer_name, line, col, unit, clear)
 	local result
 
 	if #screen_repr == 0 then
-		return unit
+		return element or "  "
 	end
 
 	if layer_name then
@@ -59,7 +59,6 @@ local function resolve_layer(layer_name, line, col, unit, clear)
 		screen_repr[layers_index[layer_name]].data[line][col] = element
 	else
 		for i = 1, #screen_repr do
-			result = element or result
 			result = element or screen_repr[i].data[line][col] or result or "  "
 		end
 	end
@@ -152,11 +151,12 @@ end
 --- @param data string | string[]
 --- @param pos Point
 --- @param bound Boundaries
---- @param options {color: Color | nil, align: boolean | nil, clear: boolean | nil} | nil
+--- @param options {color: Color | nil, align: boolean | nil, clear: boolean | nil, target_layer: string | nil} | nil
 local function puts(data, pos, bound, options)
 	local color = options and options.color or nil
 	local align = options and options.align or false
 	local clear = options and options.clear or false
+	local target_layer = options and options.target_layer or nil
 	local fg = color and color.fg and utils.colors.fg(color.fg) or ""
 	local bg = color and color.bg and utils.colors.bg(color.bg) or ""
 	local rfg = color and color.fg and utils.colors.resetFg or ""
@@ -181,18 +181,27 @@ local function puts(data, pos, bound, options)
 			end
 		end
 		for i, line in ipairs(fdata) do
-			-- TODO: take the background elements from the "get_background_elements"
-			local fline = clear and string.rep(" ", utf8.len(line) or 1) or line
 			local x = fpos.x
-			if align and pos.x + utf8.len(line) > bound.right then
-				x = bound.right + 1 - utf8.len(line)
+			local linelen = utf8.len(line) + utf8.len(line) % 2
+			if align and pos.x + linelen > bound.right then
+				x = bound.right + 1 - linelen
+			end
+			local get_unit = utils.async_split_text_into_units(line)
+			local fline = ""
+			for j = 1, #line, 2 do
+				fline = fline
+					.. resolve_layer(
+						target_layer,
+						fpos.y,
+						x + (j - 1),
+						string.format("%s%s%s%s%s", fg, bg, get_unit(), rfg, rbg),
+						clear
+					)
 			end
 			if not align and fpos.y + i > bound.bottom + 1 then
 				break
 			end
-			utils.console:write(
-				string.format("%s%s%s%s%s%s", utils.cursor.goTo(x, fpos.y + i - 1), fg, bg, fline, rfg, rbg)
-			)
+			utils.console:write(string.format("%s%s", utils.cursor.goTo(x, fpos.y + i - 1), fline))
 		end
 	end
 end

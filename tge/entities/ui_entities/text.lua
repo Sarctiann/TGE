@@ -8,6 +8,7 @@ local UIEntity, ACTION = base.UIEntity, base.ACTION
 --- @field public lf integer | nil
 --- @field public align boolean | nil
 --- @field public color Color | nil
+--- @field public target_layer string | nil
 
 --- Draws a Text ui_element and return the instance
 --- @param self Text
@@ -22,7 +23,12 @@ local draw = function(self, data)
 		end
 	end
 
-	state.puts(self.text, self.pos, self.boundaries, { color = self.color, align = self.align })
+	state.puts(
+		self.text,
+		self.pos,
+		self.boundaries,
+		{ color = self.color, align = self.align, target_layer = self.target_layer }
+	)
 	self.is_present = true
 end
 
@@ -30,7 +36,12 @@ end
 --- @param self Text
 local clear = function(self)
 	if self.pos then
-		state.puts(self.text, self.pos, self.boundaries, { clear = true, align = self.align })
+		state.puts(
+			self.text,
+			self.pos,
+			self.boundaries,
+			{ clear = true, align = self.align, target_layer = self.target_layer }
+		)
 	end
 	self.is_present = false
 end
@@ -48,7 +59,12 @@ local move = function(self, data)
 	if self.pos then
 		draw(self, {
 			pos = self.pos,
-			options = { color = self.color, lf = self.lock_frames, align = self.align },
+			options = {
+				color = self.color,
+				lf = self.lock_frames,
+				align = self.align,
+				target_layer = self.target_layer,
+			},
 		})
 	end
 	self.is_present = true
@@ -71,7 +87,12 @@ local update = function(self, data)
 		end
 	end
 	if self.pos and is_present then
-		state.puts(self.text, self.pos, self.boundaries, { color = self.color, align = self.align })
+		state.puts(
+			self.text,
+			self.pos,
+			self.boundaries,
+			{ color = self.color, align = self.align, target_layer = self.target_layer }
+		)
 	end
 	self.is_present = is_present
 end
@@ -97,6 +118,7 @@ local function new(data, boundaries)
 			or utils:exit_with_error("lock_frames should be grather or equal to 1")
 		--- @type boolean | nil if true, text will be always in the screen
 		self.align = data.options.align
+		self.target_layer = data.options.target_layer
 	end
 
 	self[ACTION.draw] = draw

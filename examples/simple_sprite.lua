@@ -29,7 +29,7 @@ local line1 = Line.new({
 	pair = "  ",
 	from = { x = 11, y = 20 },
 	to = { x = 121, y = 20 },
-	color = { bg = ui.COLOR.Green },
+	color = { bg = ui.COLOR.LightGreen },
 	target_layer = "BGLayer",
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 

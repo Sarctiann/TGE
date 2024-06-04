@@ -65,7 +65,7 @@ local function new(init)
 	--- @type fun(unit_weight: UNIT_WIDTH): nil
 	--- Set the weight of the unit (this is a global value `__UNIT_WIDTH`).
 	self.set_unit_weight = function(unit_width)
-		_G.__UNIT_WIDTH = unit_width
+		_UNIT_WIDTH = unit_width
 	end
 
 	--- Exits the game.

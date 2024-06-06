@@ -44,8 +44,7 @@ local function new(init)
 	}
 
 	if init.set_unit_width then
-		_UNIT_WIDTH = init.set_unit_width
-		print(_UNIT_WIDTH)
+		_UNIT_WIDTH = init.set_unit_width or 2
 	end
 
 	--- @type Dimensions {width: integer, height: integer} The dimensions of the game window in characters

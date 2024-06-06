@@ -28,6 +28,7 @@ is equal in width and height). But it's a feature we haven't addressed yet.
 
 - [Unicode Characters](https://www.w3.org/TR/xml-entity-names/025.html)
 - [Nerd Fonts](https://www.nerdfonts.com/)
+- [Square Nerd Font](https://github.com/codeman38/PressStart2P/releases)
 
 ## Run it
 

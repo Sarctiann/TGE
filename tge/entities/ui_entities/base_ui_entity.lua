@@ -88,11 +88,11 @@ local function new()
 	return self
 end
 
-local function validate_pair(pair)
-	if #pair ~= 2 then
-		utils:exit_with_error("The pair must have 2 characters")
+local function validate_unit(unit)
+	if #unit ~= _UNIT_WIDTH then
+		utils:exit_with_error("The unit must have %d characters", _UNIT_WIDTH)
 	end
-	return pair
+	return unit
 end
 
 --- @param from Point
@@ -120,6 +120,6 @@ return {
 	DIRECTION = DIRECTION,
 	ORIENTATION = ORIENTATION,
 	try_move = try_move,
-	validate_pair = validate_pair,
+	validate_unit = validate_unit,
 	validate_boundaries = validate_boundaries,
 }

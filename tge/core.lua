@@ -31,7 +31,7 @@ end
 --- @param height integer height of the window in characters
 function Core.checkDimensions(width, height)
 	local term_width, term_height = utils.console:getDimensions()
-	if width > term_width or height > term_height then
+	if width > _CHARS_TO_UNITS(term_width) or height > term_height then
 		return false
 	end
 	return true
@@ -59,7 +59,7 @@ function Core.make_event_handler(handler)
 		end
 
 		if event.x then
-			event.x = event.x % 2 == 0 and event.x - 1 or event.x
+			event.x = _CHARS_TO_UNITS(event.x)
 		end
 
 		Core.event_monitor = event

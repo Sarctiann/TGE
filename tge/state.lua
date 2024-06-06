@@ -33,12 +33,13 @@ end
 --- @param clear boolean
 --- Return the unit that should be printed in the screen
 local function resolve_layer(layer_name, line, col, unit, clear)
+	local default = string.rep(" ", _UNIT_WIDTH)
 	local layer_mode = "bg"
 	local element = not clear and unit
 	local result
 
 	if #screen_repr == 0 then
-		return element or "  "
+		return element or default
 	end
 
 	if layer_name then
@@ -53,16 +54,16 @@ local function resolve_layer(layer_name, line, col, unit, clear)
 				layer_mode = "cur"
 				result = element or result
 			else
-				result = screen_repr[i].data[line][col] or result or "  "
+				result = screen_repr[i].data[line][col] or result or default
 			end
 		end
 		screen_repr[layers_index[layer_name]].data[line][col] = element
 	else
 		for i = 1, #screen_repr do
-			result = element or screen_repr[i].data[line][col] or result or "  "
+			result = element or screen_repr[i].data[line][col] or result or default
 		end
 	end
-	return result or "  "
+	return result or default
 end
 
 -------------------------------------------------------------------------------
@@ -79,9 +80,9 @@ local function sprite_puts(data, pos, bound, options)
 		local fstring = ""
 		for i, line in ipairs(data) do
 			for j, unit in ipairs(line) do
-				local fpos = { x = pos.x + (j - 1) * 2, y = pos.y + i - 1 }
+				local fpos = { x = pos.x + j - 1, y = pos.y + i - 1 }
 				local u = resolve_layer(target_layer, fpos.y, fpos.x, unit, clear or false)
-				fstring = fstring .. string.format("%s%s", utils.cursor.goTo(fpos.x, fpos.y), u)
+				fstring = fstring .. string.format("%s%s", utils.cursor.goTo(_UNITS_TO_CHARS(fpos.x), fpos.y), u)
 			end
 		end
 		utils.console:write(fstring)
@@ -104,7 +105,7 @@ local function ortogonal_puts(data, from, to, options)
 	-- If is a horizontal line
 	if from.y == to.y then
 		local line = ""
-		for i = 1, to.x - from.x + 1, 2 do
+		for i = 1, to.x - from.x + 1 do
 			local fdata = resolve_layer(
 				target_layer,
 				from.y,
@@ -114,20 +115,20 @@ local function ortogonal_puts(data, from, to, options)
 			)
 			line = line .. fdata
 		end
-		utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, from.y), line))
+		utils.console:write(string.format("%s%s", utils.cursor.goTo(_UNITS_TO_CHARS(from.x), from.y), line))
 
 	-- If is a vertical line
 	elseif from.x == to.x then
-		for i = from.y, to.y - 1 do
+		for i = from.y, to.y do
 			local line =
 				resolve_layer(target_layer, i, from.x, string.format("%s%s%s%s%s", fg, bg, data, rfg, rbg), clear)
-			utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, i), line))
+			utils.console:write(string.format("%s%s", utils.cursor.goTo(_UNITS_TO_CHARS(from.x), i), line))
 		end
 
 	-- else is a box
 	else
 		local line = ""
-		for i = 1, to.x - from.x + 1, 2 do
+		for i = 1, to.x - from.x do
 			local fdata = resolve_layer(
 				target_layer,
 				from.y,
@@ -137,12 +138,13 @@ local function ortogonal_puts(data, from, to, options)
 			)
 			line = line .. fdata
 		end
-		utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, from.y), line))
-		utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, to.y), line))
-		for i = from.y + 1, to.y - 1 do
+		local from_x = _UNITS_TO_CHARS(from.x)
+		utils.console:write(string.format("%s%s", utils.cursor.goTo(from_x, from.y), line))
+		utils.console:write(string.format("%s%s", utils.cursor.goTo(from_x, to.y - 1), line))
+		for i = from.y, to.y - 1 do
 			line = resolve_layer(target_layer, i, from.x, string.format("%s%s%s%s%s", fg, bg, data, rfg, rbg), clear)
-			utils.console:write(string.format("%s%s", utils.cursor.goTo(from.x, i), line))
-			utils.console:write(string.format("%s%s", utils.cursor.goTo(to.x, i), line))
+			utils.console:write(string.format("%s%s", utils.cursor.goTo(from_x, i), line))
+			utils.console:write(string.format("%s%s", utils.cursor.goTo(_UNITS_TO_CHARS(to.x), i), line))
 		end
 	end
 end
@@ -175,20 +177,20 @@ local function puts(data, pos, bound, options)
 			end
 		else
 			for i, line in ipairs(fdata) do
-				if pos.x + utf8.len(line) + 1 > bound.right then
-					fdata[i] = string.sub(line, 1, bound.right + 1 - pos.x)
+				if pos.x + _CHARS_TO_UNITS(utf8.len(line) or 0) > bound.right then
+					fdata[i] = string.sub(line, 1, _UNITS_TO_CHARS(bound.right - pos.x) + _UNIT_WIDTH)
 				end
 			end
 		end
 		for i, line in ipairs(fdata) do
-			local x = fpos.x
+			local x = _UNITS_TO_CHARS(fpos.x)
 			local linelen = utf8.len(line) + utf8.len(line) % 2
-			if align and pos.x + linelen > bound.right then
-				x = bound.right + 1 - linelen
+			if align and pos.x + _CHARS_TO_UNITS(linelen) > bound.right then
+				x = _UNITS_TO_CHARS(bound.right) - linelen + _UNIT_WIDTH
 			end
 			local get_unit = utils.async_split_text_into_units(line)
 			local fline = ""
-			for j = 1, #line, 2 do
+			for j = 1, #line, _UNIT_WIDTH do
 				fline = fline
 					.. resolve_layer(
 						target_layer,

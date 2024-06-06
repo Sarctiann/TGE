@@ -1,7 +1,7 @@
 local tge = require("tge")
 
 local game = tge.Game.new({
-	width = 160,
+	width = 80,
 	height = 40,
 	frame_rate = 30,
 	status_bar = {
@@ -52,23 +52,23 @@ local t = Text.new({
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 local l1 = Line.new({
-	pair = "  ",
+	unit = "  ",
 	from = { x = 40, y = 10 },
 	to = { x = 40, y = 30 },
 	color = { bg = COLOR.Red },
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 local l2 = Line.new({
-	pair = "  ",
-	from = { x = 45, y = 20 },
-	to = { x = 90, y = 20 },
+	unit = "  ",
+	from = { x = 45, y = 24 },
+	to = { x = 80, y = 24 },
 	color = { bg = COLOR.Red },
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 local b = Box.new({
-	pair = "  ",
-	from = { x = 50, y = 5 },
-	to = { x = 70, y = 15 },
+	unit = "  ",
+	from = { x = 70, y = 10 },
+	to = { x = 80, y = 20 },
 	color = { bg = COLOR.Green },
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 

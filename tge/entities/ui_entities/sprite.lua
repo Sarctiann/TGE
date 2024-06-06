@@ -70,8 +70,8 @@ local function get_move_boundaries_for_sprite(size, boundaries)
 	return {
 		top = boundaries.top,
 		bottom = boundaries.bottom - size + 1,
-		left = boundaries.left + 1,
-		right = boundaries.right - size * 2,
+		left = boundaries.left,
+		right = boundaries.right - size + 1,
 	}
 end
 
@@ -118,7 +118,7 @@ local move = function(self, data)
 	end
 	clear(self)
 
-	base.try_move(self.pos, data.pos, 2, 1, get_move_boundaries_for_sprite(self.size, self.boundaries))
+	base.try_move(self.pos, data.pos, 1, 1, get_move_boundaries_for_sprite(self.size, self.boundaries))
 	if self.pos then
 		draw(self, {
 			pos = self.pos,

@@ -1,7 +1,7 @@
 local tge = require("tge")
 
 local game = tge.Game.new({
-	width = 130,
+	width = 70,
 	height = 40,
 	frame_rate = 30,
 	status_bar = {
@@ -26,17 +26,17 @@ local c2 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Red), " ", tg
 local c3 = string.format("%s%s%s", tge.utils.colors.bg(ui.COLOR.Yellow), " ", tge.utils.colors.resetBg)
 
 local line1 = Line.new({
-	pair = "  ",
-	from = { x = 11, y = 20 },
-	to = { x = 121, y = 20 },
+	unit = "  ",
+	from = { x = 1, y = 20 },
+	to = { x = 70, y = 20 },
 	color = { bg = ui.COLOR.LightGreen },
 	target_layer = "BGLayer",
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
 
 local line2 = Line.new({
-	pair = "  ",
-	from = { x = 71, y = 4 },
-	to = { x = 71, y = 35 },
+	unit = "  ",
+	from = { x = 35, y = 1 },
+	to = { x = 35, y = 38 },
 	color = { bg = ui.COLOR.LightBlue },
 	target_layer = "FGLayer",
 }, tge.entities.Boundaries.new(1, 1, game.dimensions.width, game.dimensions.height - 2))
@@ -73,8 +73,7 @@ local function new_tank()
 		orientation = ORIENTATION.east,
 	})
 
-	local rand = math.floor(math.random(1, game.dimensions.width - 6) / 2)
-	local rand_x = math.floor(rand * 2 + 1)
+	local rand_x = math.random(1, game.dimensions.width - 7)
 	local rand_y = math.random(1, game.dimensions.height - 7)
 	local rand_orientation = math.random(1, 4)
 	sprite_seq.spawn(tank, { x = rand_x, y = rand_y }, rand_orientation)
@@ -111,8 +110,8 @@ game.on_event = function(e)
 		tank = new_tank()
 	elseif e.event and (e.event == "press" or e.event == "hold") then
 		local x, y = e.x, e.y
-		if x > 2 and x <= game.dimensions.width - 2 and y > 1 and y <= game.dimensions.height - 3 then
-			sprite_seq.translate(tank, x - 2, y - 1)
+		if x > 2 and x <= game.dimensions.width - 1 and y > 1 and y <= game.dimensions.height - 3 then
+			sprite_seq.translate(tank, x - 1, y - 1)
 		end
 	end
 end

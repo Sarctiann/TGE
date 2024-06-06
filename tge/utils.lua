@@ -126,7 +126,7 @@ function Utils:show_status(game, data, y_offset, align)
 	end
 
 	local status_str = table.concat(status, " | ")
-	local line = string.rep(" ", x - 2 - status_len)
+	local line = string.rep(" ", _UNITS_TO_CHARS(x) - 1 - status_len)
 	local reset = self.colors.resetFg .. self.colors.resetBg
 	if align and align == "left" then
 		self.console:write(string.format("%s%s%s%s  %s", position, color, status_str, line, reset))
@@ -179,10 +179,14 @@ end
 
 Utils.async_split_text_into_units = function(text)
 	return coroutine.wrap(function()
-		for i = 1, #text, 2 do
+		for i = 1, #text, _UNIT_WIDTH do
 			local fst = text:sub(i, i)
-			local scd = text:sub(i + 1, i + 1)
-			coroutine.yield(fst .. (scd ~= "" and scd or " "))
+			if _UNIT_WIDTH == 2 then
+				local scd = text:sub(i + 1, i + 1)
+				coroutine.yield(fst .. (scd ~= "" and scd or " "))
+			else
+				coroutine.yield(fst)
+			end
 		end
 	end)
 end

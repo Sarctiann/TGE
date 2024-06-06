@@ -30,7 +30,8 @@ local function run(game)
 end
 
 --- Creates a new game window.
---- @param init {width: integer, height: integer, frame_rate: integer, status_bar: table | nil, debug: debug_key[] | nil}
+--- @param init {width: integer, height: integer, frame_rate: integer, status_bar: table | nil, debug: debug_key[] | nil, set_unit_width: UNIT_WIDTH | nil}
+--- @return Game
 local function new(init)
 	--- @class Game
 	local self = {
@@ -41,6 +42,12 @@ local function new(init)
 		--- @type debug_key[] | nil
 		debug = init.debug and init.debug,
 	}
+
+	if init.set_unit_width then
+		_UNIT_WIDTH = init.set_unit_width
+		print(_UNIT_WIDTH)
+	end
+
 	--- @type Dimensions {width: integer, height: integer} The dimensions of the game window in characters
 	self.dimensions = init_dimensions(init.width, init.height)
 	state.init_screen_repr(init.height)
@@ -61,12 +68,6 @@ local function new(init)
 	--- @type fun(layer_name: string): nil
 	--- Add a new line to the status bar
 	self.add_layer = state.add_layer
-
-	--- @type fun(unit_weight: UNIT_WIDTH): nil
-	--- Set the weight of the unit (this is a global value `__UNIT_WIDTH`).
-	self.set_unit_weight = function(unit_width)
-		_UNIT_WIDTH = unit_width
-	end
 
 	--- Exits the game.
 	--- @type fun(exit_message: string | nil): nil

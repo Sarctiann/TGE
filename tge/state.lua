@@ -4,17 +4,17 @@ local utf8 = require("utf8")
 
 -------------------------------------------------------------------------------
 
-local screen_repr = {}
-local layers_index = {}
-local total_lines = 0
+local _screen_repr = {}
+local _layers_index = {}
+local _total_lines = 0
 
 local function init_screen_repr(lines)
-	total_lines = lines
+	_total_lines = lines
 end
 
 local function _init_layer()
 	local data = {}
-	for _ = 1, total_lines do
+	for _ = 1, _total_lines do
 		table.insert(data, {})
 	end
 	return data
@@ -22,8 +22,8 @@ end
 
 --- Adds a new layer to the screen representation over the previous layers
 local function add_layer(layer_name)
-	layers_index[layer_name] = #screen_repr + 1
-	table.insert(screen_repr, { name = layer_name, data = _init_layer() })
+	_layers_index[layer_name] = #_screen_repr + 1
+	table.insert(_screen_repr, { name = layer_name, data = _init_layer() })
 end
 
 --- @param layer_name string | nil
@@ -38,29 +38,29 @@ local function resolve_layer(layer_name, line, col, unit, clear)
 	local element = not clear and unit
 	local result
 
-	if #screen_repr == 0 then
+	if #_screen_repr == 0 then
 		return element or default
 	end
 
 	if layer_name then
-		if not layers_index[layer_name] then
+		if not _layers_index[layer_name] then
 			utils:exit_with_error("An UI Element is trying to write in a non-existent layer: %s ", layer_name)
 		end
-		for i = 1, #screen_repr do
+		for i = 1, #_screen_repr do
 			if layer_mode == "cur" then
 				layer_mode = "fg"
-				result = screen_repr[i].data[line][col] or result
-			elseif screen_repr[i].name == layer_name then
+				result = _screen_repr[i].data[line][col] or result
+			elseif _screen_repr[i].name == layer_name then
 				layer_mode = "cur"
 				result = element or result
 			else
-				result = screen_repr[i].data[line][col] or result or default
+				result = _screen_repr[i].data[line][col] or result or default
 			end
 		end
-		screen_repr[layers_index[layer_name]].data[line][col] = element
+		_screen_repr[_layers_index[layer_name]].data[line][col] = element
 	else
-		for i = 1, #screen_repr do
-			result = element or screen_repr[i].data[line][col] or result or default
+		for i = 1, #_screen_repr do
+			result = element or _screen_repr[i].data[line][col] or result or default
 		end
 	end
 	return result or default

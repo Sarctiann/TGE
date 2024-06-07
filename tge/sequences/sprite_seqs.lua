@@ -1,26 +1,13 @@
 -- local SecondsFrames = require("tge.entities.seconds_frames")
 local utils = require("tge.utils")
 local ui = require("tge.entities.ui_entities")
+local base = require("tge.sequences.base_sequence")
 
 -- local nsf = SecondsFrames.from_frames
 
 --- @class SpriteSeqOptions
 --- @field oriented boolean | nil
 --- @field cancel_tags string | string[] | nil
-
-local function _cancel_tags(cancel_tbl, cancel_tags)
-	if type(cancel_tags) == "table" then
-		for _, v in pairs(cancel_tags) do
-			if cancel_tbl[v] then
-				utils.clear_timer(cancel_tbl[v])
-			end
-		end
-	elseif type(cancel_tags) == "string" then
-		if cancel_tbl[cancel_tags] then
-			utils.clear_timer(cancel_tbl[cancel_tags])
-		end
-	end
-end
 
 local function spawn(game, sprite, position, orientation)
 	game.queue.enqueue({
@@ -32,7 +19,7 @@ local function spawn(game, sprite, position, orientation)
 end
 
 local function delete(game, cancel_tbl, sprite, cancel_tags)
-	_cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tbl, cancel_tags)
 
 	game.queue.enqueue({
 		ui_element = sprite,
@@ -43,7 +30,7 @@ end
 
 local function translate(game, cancel_tbl, sprite, x, y, options)
 	local cancel_tags = options and options.cancel_tags
-	_cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tbl, cancel_tags)
 
 	game.queue.enqueue({
 		ui_element = sprite,
@@ -55,7 +42,7 @@ end
 
 local function move_up_now(game, cancel_tbl, sprite, options)
 	local cancel_tags = options and options.cancel_tags
-	_cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tbl, cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.north or nil
 	game.queue.enqueue({
@@ -68,7 +55,7 @@ end
 
 local function move_down_now(game, cancel_tbl, sprite, options)
 	local cancel_tags = options and options.cancel_tags
-	_cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tbl, cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.south or nil
 	game.queue.enqueue({
@@ -81,7 +68,7 @@ end
 
 local function move_left_now(game, cancel_tbl, sprite, options)
 	local cancel_tags = options and options.cancel_tags
-	_cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tbl, cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.west or nil
 	game.queue.enqueue({
@@ -94,7 +81,7 @@ end
 
 local function move_right_now(game, cancel_tbl, sprite, options)
 	local cancel_tags = options and options.cancel_tags
-	_cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tbl, cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.east or nil
 	game.queue.enqueue({
@@ -106,7 +93,7 @@ local function move_right_now(game, cancel_tbl, sprite, options)
 end
 
 local function hold_moving_up(game, cancel_tbl, sprite, frames, cancel_tags)
-	_cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tbl, cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -118,6 +105,7 @@ local function hold_moving_up(game, cancel_tbl, sprite, frames, cancel_tags)
 	end)
 
 	if cancel_tags then
+		-- FIXME: here we need a function
 		cancel_tbl[cancel_tags] = seq
 	end
 
@@ -127,7 +115,7 @@ local function hold_moving_up(game, cancel_tbl, sprite, frames, cancel_tags)
 end
 
 local function hold_moving_down(game, cancel_tbl, sprite, frames, cancel_tags)
-	_cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tbl, cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -148,7 +136,7 @@ local function hold_moving_down(game, cancel_tbl, sprite, frames, cancel_tags)
 end
 
 local function hold_moving_left(game, cancel_tbl, sprite, frames, cancel_tags)
-	_cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tbl, cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -169,7 +157,7 @@ local function hold_moving_left(game, cancel_tbl, sprite, frames, cancel_tags)
 end
 
 local function hold_moving_right(game, cancel_tbl, sprite, frames, cancel_tags)
-	_cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tbl, cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -195,7 +183,7 @@ local function cancel_sequences(cancel_tbl, cancel_tags)
 			utils.clear_timer(v)
 		end
 	else
-		_cancel_tags(cancel_tbl, cancel_tags)
+		base.cancel_tags(cancel_tbl, cancel_tags)
 	end
 end
 
@@ -273,6 +261,12 @@ local function new(game)
 		--- @type fun(cancel_tags: string | string[] | nil): nil
 		cancel_sequences = function(cancel_tags)
 			cancel_sequences(cancel_table, cancel_tags)
+		end,
+
+		--- Gets the cancel table
+		--- @type fun(): table
+		_get_cancel_table = function()
+			return cancel_table
 		end,
 	}
 

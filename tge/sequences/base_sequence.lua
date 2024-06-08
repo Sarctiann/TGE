@@ -31,22 +31,22 @@ local function create_sequence(game, frames_intervals, brief_sequences, cancel_t
 
 	local timeout
 	local cancel_function
-	local cycle = 0
-	local brief = 0
+	local cycle = 1
+	local brief = 1
 
 	local function set_next()
-		timeout = utils.set_timeout(frames_intervals[cycle + 1], function()
-			game.queue.enqueue(brief_sequences[brief + 1], { unlocked = unlocked })
-			set_next()
+		timeout = utils.set_timeout(math.floor(1000 / game.frame_rate * frames_intervals[cycle]), function()
+			game.queue.enqueue(brief_sequences[brief], { unlocked = unlocked })
 			set_next()
 			register_cancel_tags(cancel_tags, timeout)
 		end)
+		cycle = cycle == #frames_intervals and 1 or cycle + 1
+		brief = brief == #brief_sequences and 1 or brief + 1
 		cancel_function = function()
 			utils.clear_timer(timeout)
 		end
-		cycle = cycle == #frames_intervals and 0 or cycle + 1
-		brief = brief == #brief_sequences and 0 or brief + 1
 	end
+	set_next()
 
 	return cancel_function
 end

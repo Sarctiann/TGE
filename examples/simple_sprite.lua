@@ -106,6 +106,13 @@ game.on_event = function(e)
 		cs()
 	elseif e.char == "X" then
 		sprite_seq.delete(tank, "keep_moving")
+	elseif e.char == "G" then
+		game.create_sequence({ 7, 9, 5 }, {
+			{ ui_element = tank, action = ACTION.move, when = game.sf, data = { pos = 1, orientation = 1 } },
+			{ ui_element = tank, action = ACTION.move, when = game.sf, data = { pos = 2, orientation = 2 } },
+			{ ui_element = tank, action = ACTION.move, when = game.sf, data = { pos = 3, orientation = 3 } },
+			{ ui_element = tank, action = ACTION.move, when = game.sf, data = { pos = 4, orientation = 4 } },
+		}, nil, true)
 	elseif e.char == "n" and not tank.is_present then
 		tank = new_tank()
 	elseif e.event and (e.event == "press" or e.event == "hold") then

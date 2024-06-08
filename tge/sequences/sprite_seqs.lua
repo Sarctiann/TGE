@@ -18,8 +18,8 @@ local function spawn(game, sprite, position, orientation)
 	})
 end
 
-local function delete(game, cancel_tbl, sprite, cancel_tags)
-	base.cancel_tags(cancel_tbl, cancel_tags)
+local function delete(game, sprite, cancel_tags)
+	base.cancel_tags(cancel_tags)
 
 	game.queue.enqueue({
 		ui_element = sprite,
@@ -28,9 +28,9 @@ local function delete(game, cancel_tbl, sprite, cancel_tags)
 	})
 end
 
-local function translate(game, cancel_tbl, sprite, x, y, options)
+local function translate(game, sprite, x, y, options)
 	local cancel_tags = options and options.cancel_tags
-	base.cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tags)
 
 	game.queue.enqueue({
 		ui_element = sprite,
@@ -40,9 +40,9 @@ local function translate(game, cancel_tbl, sprite, x, y, options)
 	})
 end
 
-local function move_up_now(game, cancel_tbl, sprite, options)
+local function move_up_now(game, sprite, options)
 	local cancel_tags = options and options.cancel_tags
-	base.cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.north or nil
 	game.queue.enqueue({
@@ -53,9 +53,9 @@ local function move_up_now(game, cancel_tbl, sprite, options)
 	})
 end
 
-local function move_down_now(game, cancel_tbl, sprite, options)
+local function move_down_now(game, sprite, options)
 	local cancel_tags = options and options.cancel_tags
-	base.cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.south or nil
 	game.queue.enqueue({
@@ -66,9 +66,9 @@ local function move_down_now(game, cancel_tbl, sprite, options)
 	})
 end
 
-local function move_left_now(game, cancel_tbl, sprite, options)
+local function move_left_now(game, sprite, options)
 	local cancel_tags = options and options.cancel_tags
-	base.cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.west or nil
 	game.queue.enqueue({
@@ -79,9 +79,9 @@ local function move_left_now(game, cancel_tbl, sprite, options)
 	})
 end
 
-local function move_right_now(game, cancel_tbl, sprite, options)
+local function move_right_now(game, sprite, options)
 	local cancel_tags = options and options.cancel_tags
-	base.cancel_tags(cancel_tbl, cancel_tags)
+	base.cancel_tags(cancel_tags)
 
 	local orientation = options and options.oriented and ui.ORIENTATION.east or nil
 	game.queue.enqueue({
@@ -92,8 +92,8 @@ local function move_right_now(game, cancel_tbl, sprite, options)
 	})
 end
 
-local function hold_moving_up(game, cancel_tbl, sprite, frames, cancel_tags)
-	base.cancel_tags(cancel_tbl, cancel_tags)
+local function hold_moving_up(game, sprite, frames, cancel_tags)
+	base.cancel_tags(cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -101,12 +101,11 @@ local function hold_moving_up(game, cancel_tbl, sprite, frames, cancel_tags)
 			when = game.sf,
 			data = { pos = ui.DIRECTION.up, orientation = ui.ORIENTATION.north },
 			action = ui.ACTION.move,
-		}, { unlocked = true })
-	end)
+		})
+	end, true)
 
 	if cancel_tags then
-		-- FIXME: here we need a function
-		cancel_tbl[cancel_tags] = seq
+		base.register_cancel_tags(cancel_tags, seq)
 	end
 
 	return function()
@@ -114,8 +113,8 @@ local function hold_moving_up(game, cancel_tbl, sprite, frames, cancel_tags)
 	end
 end
 
-local function hold_moving_down(game, cancel_tbl, sprite, frames, cancel_tags)
-	base.cancel_tags(cancel_tbl, cancel_tags)
+local function hold_moving_down(game, sprite, frames, cancel_tags)
+	base.cancel_tags(cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -123,11 +122,11 @@ local function hold_moving_down(game, cancel_tbl, sprite, frames, cancel_tags)
 			when = game.sf,
 			data = { pos = ui.DIRECTION.down, orientation = ui.ORIENTATION.south },
 			action = ui.ACTION.move,
-		}, { unlocked = true })
-	end)
+		})
+	end, true)
 
 	if cancel_tags then
-		cancel_tbl[cancel_tags] = seq
+		base.register_cancel_tags(cancel_tags, seq)
 	end
 
 	return function()
@@ -135,8 +134,8 @@ local function hold_moving_down(game, cancel_tbl, sprite, frames, cancel_tags)
 	end
 end
 
-local function hold_moving_left(game, cancel_tbl, sprite, frames, cancel_tags)
-	base.cancel_tags(cancel_tbl, cancel_tags)
+local function hold_moving_left(game, sprite, frames, cancel_tags)
+	base.cancel_tags(cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -144,11 +143,11 @@ local function hold_moving_left(game, cancel_tbl, sprite, frames, cancel_tags)
 			when = game.sf,
 			data = { pos = ui.DIRECTION.left, orientation = ui.ORIENTATION.west },
 			action = ui.ACTION.move,
-		}, { unlocked = true })
-	end)
+		})
+	end, true)
 
 	if cancel_tags then
-		cancel_tbl[cancel_tags] = seq
+		base.register_cancel_tags(cancel_tags, seq)
 	end
 
 	return function()
@@ -156,8 +155,8 @@ local function hold_moving_left(game, cancel_tbl, sprite, frames, cancel_tags)
 	end
 end
 
-local function hold_moving_right(game, cancel_tbl, sprite, frames, cancel_tags)
-	base.cancel_tags(cancel_tbl, cancel_tags)
+local function hold_moving_right(game, sprite, frames, cancel_tags)
+	base.cancel_tags(cancel_tags)
 
 	local seq = utils.set_interval(math.floor(1000 / game.frame_rate * frames), function()
 		game.queue.enqueue({
@@ -165,11 +164,11 @@ local function hold_moving_right(game, cancel_tbl, sprite, frames, cancel_tags)
 			when = game.sf,
 			data = { pos = ui.DIRECTION.right, orientation = ui.ORIENTATION.east },
 			action = ui.ACTION.move,
-		}, { unlocked = true })
-	end)
+		})
+	end, true)
 
 	if cancel_tags then
-		cancel_tbl[cancel_tags] = seq
+		base.register_cancel_tags(cancel_tags, seq)
 	end
 
 	return function()
@@ -177,20 +176,8 @@ local function hold_moving_right(game, cancel_tbl, sprite, frames, cancel_tags)
 	end
 end
 
-local function cancel_sequences(cancel_tbl, cancel_tags)
-	if not cancel_tags then
-		for _, v in pairs(cancel_tbl) do
-			utils.clear_timer(v)
-		end
-	else
-		base.cancel_tags(cancel_tbl, cancel_tags)
-	end
-end
-
 --- @param game Game
 local function new(game)
-	local cancel_table = {}
-
 	--- @class SpriteSequences
 	local self = {
 		--- @type fun(sprite: Sprite, position: Point, orientation: ORIENTATION): nil
@@ -199,33 +186,33 @@ local function new(game)
 		end,
 		--- @type fun(sprite: Sprite, cancel_tags: string | nil): nil
 		delete = function(sprite, cancel_tags)
-			delete(game, cancel_table, sprite, cancel_tags)
+			delete(game, sprite, cancel_tags)
 		end,
 
 		--
 
 		--- @type fun(sprite: Sprite, x: number, y: number, options: SpriteSeqOptions | nil): nil
 		translate = function(sprite, x, y, options)
-			translate(game, cancel_table, sprite, x, y, options)
+			translate(game, sprite, x, y, options)
 		end,
 
 		--
 
 		--- @type fun(sprite: Sprite, options: SpriteSeqOptions | nil): nil
 		move_up_now = function(sprite, options)
-			move_up_now(game, cancel_table, sprite, options)
+			move_up_now(game, sprite, options)
 		end,
 		--- @type fun(sprite: Sprite, options: SpriteSeqOptions | nil): nil
 		move_down_now = function(sprite, options)
-			move_down_now(game, cancel_table, sprite, options)
+			move_down_now(game, sprite, options)
 		end,
 		--- @type fun(sprite: Sprite, options: SpriteSeqOptions | nil): nil
 		move_left_now = function(sprite, options)
-			move_left_now(game, cancel_table, sprite, options)
+			move_left_now(game, sprite, options)
 		end,
 		--- @type fun(sprite: Sprite, options: SpriteSeqOptions | nil): nil
 		move_right_now = function(sprite, options)
-			move_right_now(game, cancel_table, sprite, options)
+			move_right_now(game, sprite, options)
 		end,
 
 		--
@@ -234,40 +221,32 @@ local function new(game)
 		--- @return function sequence_cleaner_function
 		hold_moving_up = function(sprite, frames, options)
 			local cancel_tags = options and options.cancel_tags
-			return hold_moving_up(game, cancel_table, sprite, frames, cancel_tags)
+			return hold_moving_up(game, sprite, frames, cancel_tags)
 		end,
 		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function
 		--- @return function sequence_cleaner_function
 		hold_moving_down = function(sprite, frames, options)
 			local cancel_tags = options and options.cancel_tags
-			return hold_moving_down(game, cancel_table, sprite, frames, cancel_tags)
+			return hold_moving_down(game, sprite, frames, cancel_tags)
 		end,
 		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function
 		--- @return function sequence_cleaner_function
 		hold_moving_left = function(sprite, frames, options)
 			local cancel_tags = options and options.cancel_tags
-			return hold_moving_left(game, cancel_table, sprite, frames, cancel_tags)
+			return hold_moving_left(game, sprite, frames, cancel_tags)
 		end,
 		--- @type fun(sprite: Sprite, frames: number, options: SpriteSeqOptions | nil): function
 		--- @return function sequence_cleaner_function
 		hold_moving_right = function(sprite, frames, options)
 			local cancel_tags = options and options.cancel_tags
-			return hold_moving_right(game, cancel_table, sprite, frames, cancel_tags)
+			return hold_moving_right(game, sprite, frames, cancel_tags)
 		end,
 
 		--
 
 		--- Cancels all sequences if no `tag_or_tags` is provided
 		--- @type fun(cancel_tags: string | string[] | nil): nil
-		cancel_sequences = function(cancel_tags)
-			cancel_sequences(cancel_table, cancel_tags)
-		end,
-
-		--- Gets the cancel table
-		--- @type fun(): table
-		_get_cancel_table = function()
-			return cancel_table
-		end,
+		cancel_sequences = base.cancel_sequences,
 	}
 
 	return self

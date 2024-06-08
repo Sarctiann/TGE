@@ -74,6 +74,15 @@ local function new(init)
 
 	-- Sequences Hooks
 
+	--- @type fun(frames_intervals: number[], brief_sequences: Brief[], cancel_tags: string | string[] | nil, unlocked: boolean | nil): fun(): nil
+	--- @param frames_intervals number[] An array of timeouts for the brief cycle (in frames)
+	--- @param brief_sequences Brief[] An Array of brief to be cycled
+	--- @param cancel_tags string | string[] | nil Zero or more string tags to cancel the sequence
+	--- @param unlocked boolean | nil If the ui entity should be unlocked
+	self.create_sequence = function(frames_intervals, brief_sequences, cancel_tags, unlocked)
+		return sequences.create_sequence(self, frames_intervals, brief_sequences, cancel_tags, unlocked)
+	end
+
 	--- Initialize the collection of sprite sequences
 	--- @type fun(): SpriteSequences
 	self.get_sprite_seqs = function()

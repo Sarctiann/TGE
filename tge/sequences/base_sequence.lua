@@ -26,24 +26,23 @@ local function perform_cancel_tags(cancel_tags)
 	end
 end
 
---- @type fun(game: Game, frames_intervals: number[], brief_sequences: Brief[], cancel_tags: string | string[] | nil, unlocked: boolean | nil): fun(): nil
-local function create_sequence(game, frames_intervals, brief_sequences, cancel_tags, unlocked)
+--- @type fun(game: Game, frames_intervals: number[], briefs_or_sequences: Brief[], cancel_tags: string | string[] | nil, unlocked: boolean | nil): fun(): nil
+local function create_sequence(game, frames_intervals, briefs_or_sequences, cancel_tags, unlocked)
 	perform_cancel_tags(cancel_tags)
 
-	local timeout
 	local cancel_function
 	local cycle = 1
 	local brief = 1
+	local timeout
 
 	local function set_next()
 		timeout = utils.set_timeout(math.floor(1000 / game.frame_rate * frames_intervals[cycle]), function()
-			-- TODO: accept functions as well
-			game.queue.enqueue(brief_sequences[brief], { unlocked = unlocked })
+			game.queue.enqueue(briefs_or_sequences[brief], { unlocked = unlocked })
 			set_next()
 			register_cancel_tags(cancel_tags, timeout)
 		end)
 		cycle = cycle == #frames_intervals and 1 or cycle + 1
-		brief = brief == #brief_sequences and 1 or brief + 1
+		brief = brief == #briefs_or_sequences and 1 or brief + 1
 		cancel_function = function()
 			utils.clear_timer(timeout)
 		end
